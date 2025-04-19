@@ -1,0 +1,80 @@
+VCD info: dumpfile waveform.vcd opened for output.
+--- Loading hex file: ../fixture/Flags_Reg_test_load_instructions.hex ---
+--- RAM Content Dump ---
+RAM[0] = 80
+RAM[1] = 88
+RAM[2] = 7e
+RAM[3] = 8f
+RAM[4] = 7f
+RAM[5] = 1e
+RAM[6] = 2f
+RAM[7] = 81
+RAM[8] = e0
+RAM[9] = ff
+RAM[10] = 00
+RAM[11] = 00
+RAM[12] = 00
+RAM[13] = 00
+RAM[14] = 00
+RAM[15] = 00
+--- End RAM Dump ---
+Running LDI #0
+[0;32mAssertion Passed: A (8 bits) = 00000000[0m
+[0;32mAssertion Passed: N after LDI #0[0m
+[0;32mAssertion Passed: C after LDI #0[0m
+[0;32mAssertion Passed: Z after LDI #0[0m
+[0;32mAssertion Passed: PC (4 bits) = 00000001[0m
+Running LDI #8
+[0;32mAssertion Passed: A (8 bits) = 00000008[0m
+[0;32mAssertion Passed: N after LDI #8[0m
+[0;32mAssertion Passed: C after LDI #8[0m
+[0;32mAssertion Passed: Z after LDI #8[0m
+[0;32mAssertion Passed: PC (4 bits) = 00000002[0m
+Running STA 0xE
+[0;32mAssertion Passed: RAM[E] (8 bits) = 00000008[0m
+[0;32mAssertion Passed: N after STA (no change)[0m
+[0;32mAssertion Passed: C after STA (no change)[0m
+[0;32mAssertion Passed: Z after STA (no change)[0m
+[0;32mAssertion Passed: PC (4 bits) = 00000003[0m
+Running LDI #0xF
+[0;32mAssertion Passed: A (8 bits) = 0000000f[0m
+[0;32mAssertion Passed: N after LDI #F[0m
+[0;32mAssertion Passed: C after LDI #F[0m
+[0;32mAssertion Passed: Z after LDI #F[0m
+[0;32mAssertion Passed: PC (4 bits) = 00000004[0m
+Running STA 0xF
+[0;32mAssertion Passed: RAM[F] (8 bits) = 0000000f[0m
+[0;32mAssertion Passed: N after STA (no change)[0m
+[0;32mAssertion Passed: C after STA (no change)[0m
+[0;32mAssertion Passed: Z after STA (no change)[0m
+[0;32mAssertion Passed: PC (4 bits) = 00000005[0m
+Running LDA 0xE
+[0;32mAssertion Passed: A (8 bits) = 00000008[0m
+[0;32mAssertion Passed: N after LDA 0xE[0m
+[0;32mAssertion Passed: C after LDA 0xE[0m
+[0;32mAssertion Passed: Z after LDA 0xE[0m
+[0;32mAssertion Passed: PC (4 bits) = 00000006[0m
+Running LDB 0xF
+[0;32mAssertion Passed: B (8 bits) = 0000000f[0m
+[0;32mAssertion Passed: N after LDB 0xF[0m
+[0;32mAssertion Passed: C after LDB 0xF[0m
+[0;32mAssertion Passed: Z after LDB 0xF[0m
+[0;32mAssertion Passed: PC (4 bits) = 00000007[0m
+Running LDI #1
+[0;32mAssertion Passed: A (8 bits) = 00000001[0m
+[0;32mAssertion Passed: N after LDI #1[0m
+[0;32mAssertion Passed: C after LDI #1[0m
+[0;32mAssertion Passed: Z after LDI #1[0m
+[0;32mAssertion Passed: PC (4 bits) = 00000008[0m
+Running OUTA
+[0;32mAssertion Passed: O after OUTA (8 bits) = 00000001[0m
+[0;32mAssertion Passed: PC (4 bits) = 00000009[0m
+Running HLT
+HALT signal detected high at start of cycle 7.
+[0;32mSimulation run completed (halt detected or max cycles reached while potentially halting). Cycles run: 6[0m
+@785000: Checking state after Halt
+[0;32mAssertion Passed: Halt signal active[0m
+[0;32mAssertion Passed: Final PC (4 bits) = 0000000a[0m
+[0;32mAssertion Passed: Final Output (8 bits) = 00000001[0m
+[0;32mLoad Flags test completed successfully.[0m
+/Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:756: $finish called at 785102 (1ps)

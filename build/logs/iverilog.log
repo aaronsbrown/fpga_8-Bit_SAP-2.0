@@ -1,0 +1,12 @@
+/Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:405: warning: Port 6 (counter_out) of program_counter expects 4 bits, got 8.
+/Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:405:        : Padding 4 high bits of the expression.
+/Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:435: warning: Port 5 (latched_data) of register_nbit expects 4 bits, got 8.
+/Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:435:        : Padding 4 high bits of the expression.
+/Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:505: warning: Port 3 (address) of ram expects 4 bits, got 8.
+/Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:505:        : Pruning 4 high bits of the expression.
+/Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:405: warning: Port 6 (counter_out) of program_counter expects 4 bits, got 8.
+/Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:405:        : Padding 4 high bits of the expression.
+/Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:435: warning: Port 5 (latched_data) of register_nbit expects 4 bits, got 8.
+/Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:435:        : Padding 4 high bits of the expression.
+/Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:505: warning: Port 3 (address) of ram expects 4 bits, got 8.
+/Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:505:        : Pruning 4 high bits of the expression.

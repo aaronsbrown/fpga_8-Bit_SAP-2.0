@@ -1,0 +1,3 @@
+Warning: Resizing cell port computer.u_ram.address from 8 bits to 4 bits.
+Warning: Resizing cell port computer.u_register_memory_address.latched_data from 8 bits to 4 bits.
+Warning: Resizing cell port computer.u_program_counter.counter_out from 8 bits to 4 bits.

@@ -1,0 +1,1254 @@
+Info: constraining clock net 'clk' to 100.00 MHz
+Info: constraining clock net 'clk_out' to 20.00 MHz
+Info: constrained 'io_led[0]' to bel 'X33/Y17/io0'
+Info: constrained 'io_led[1]' to bel 'X33/Y16/io1'
+Info: constrained 'io_led[2]' to bel 'X33/Y21/io0'
+Info: constrained 'io_led[3]' to bel 'X33/Y21/io1'
+Info: constrained 'io_led[4]' to bel 'X33/Y23/io1'
+Info: constrained 'io_led[5]' to bel 'X33/Y24/io1'
+Info: constrained 'io_led[6]' to bel 'X33/Y28/io0'
+Info: constrained 'io_led[7]' to bel 'X30/Y33/io1'
+Info: constrained 'io_led[8]' to bel 'X22/Y33/io1'
+Info: constrained 'io_led[9]' to bel 'X20/Y33/io1'
+Info: constrained 'io_led[10]' to bel 'X26/Y33/io0'
+Info: constrained 'io_led[11]' to bel 'X25/Y33/io0'
+Info: constrained 'io_led[12]' to bel 'X17/Y33/io0'
+Info: constrained 'io_led[13]' to bel 'X16/Y33/io1'
+Info: constrained 'io_led[14]' to bel 'X5/Y33/io0'
+Info: constrained 'io_led[15]' to bel 'X3/Y33/io1'
+Info: constrained 'io_led[16]' to bel 'X3/Y33/io0'
+Info: constrained 'io_led[17]' to bel 'X2/Y33/io0'
+Info: constrained 'io_led[18]' to bel 'X0/Y27/io1'
+Info: constrained 'io_led[19]' to bel 'X0/Y27/io0'
+Info: constrained 'io_led[20]' to bel 'X0/Y30/io1'
+Info: constrained 'io_led[21]' to bel 'X0/Y30/io0'
+Info: constrained 'io_led[22]' to bel 'X0/Y25/io1'
+Info: constrained 'io_led[23]' to bel 'X0/Y25/io0'
+Info: constrained 'io_select[0]' to bel 'X0/Y17/io1'
+Info: constrained 'io_select[1]' to bel 'X0/Y17/io0'
+Info: constrained 'io_select[2]' to bel 'X0/Y16/io1'
+Info: constrained 'io_select[3]' to bel 'X0/Y16/io0'
+Info: constrained 'io_segment[0]' to bel 'X0/Y18/io0'
+Info: constrained 'io_segment[1]' to bel 'X0/Y18/io1'
+Info: constrained 'io_segment[2]' to bel 'X0/Y4/io1'
+Info: constrained 'io_segment[3]' to bel 'X0/Y11/io0'
+Info: constrained 'io_segment[4]' to bel 'X0/Y11/io1'
+Info: constrained 'io_segment[5]' to bel 'X0/Y6/io1'
+Info: constrained 'io_segment[6]' to bel 'X0/Y6/io0'
+Info: constrained 'clk' to bel 'X16/Y0/io1'
+Info: constrained 'rst_n' to bel 'X17/Y0/io0'
+Info: constrained 'led[0]' to bel 'X33/Y6/io0'
+Info: constrained 'led[1]' to bel 'X33/Y4/io1'
+Info: constrained 'led[2]' to bel 'X33/Y4/io0'
+Info: constrained 'led[3]' to bel 'X33/Y5/io0'
+Info: constrained 'led[4]' to bel 'X33/Y2/io0'
+Info: constrained 'led[5]' to bel 'X33/Y3/io1'
+Info: constrained 'led[6]' to bel 'X33/Y1/io0'
+Info: constrained 'led[7]' to bel 'X33/Y2/io1'
+
+Info: Packing constants..
+Info: Packing IOs..
+Info: Packing LUT-FFs..
+Info:      235 LCs used as LUT4 only
+Info:       52 LCs used as LUT4 and DFF
+Info: Packing non-LUT FFs..
+Info:       64 LCs used as DFF only
+Info: Packing carries..
+Info:       74 LCs used as CARRY only
+Info: Packing indirect carry+LUT pairs...
+Info:       10 LUTs merged into carry LCs
+Info: Packing RAMs..
+Info: Placing PLLs..
+Info:   constrained PLL 'u_pll.uut' to X16/Y33/pll_3
+Info:   (given its connections, this PLL could have been a PAD PLL)
+Info: Packing special functions..
+Info: Packing PLLs..
+Info:     Input frequency of PLL 'u_pll.uut' is constrained to 100.0 MHz
+Info:     VCO frequency of PLL 'u_pll.uut' is constrained to 640.2 MHz
+Info:   PLL 'u_pll.uut' has LOCK output, need to pass all outputs via LUT
+Info:   constrained 'sys_reset_SB_LUT4_O_LC' to X1/Y32/lc0
+Info: Promoting globals..
+Info: promoting clk_out (fanout 116)
+Info: promoting sys_reset [reset] (fanout 61)
+Info: promoting u_display.clk_div.counter_SB_DFFSR_Q_R [reset] (fanout 33)
+Info: promoting u_display.slow_clk (fanout 2)
+Info: Constraining chains...
+Info:       16 LCs used to legalise carry chains.
+Info: Checksum: 0xcf872a71
+
+Info: Device utilisation:
+Info: 	         ICESTORM_LC:     433/   7680     5%
+Info: 	        ICESTORM_RAM:       1/     32     3%
+Info: 	               SB_IO:      45/    256    17%
+Info: 	               SB_GB:       4/      8    50%
+Info: 	        ICESTORM_PLL:       1/      2    50%
+Info: 	         SB_WARMBOOT:       0/      1     0%
+
+Info: Placed 47 cells based on constraints.
+Info: Creating initial analytic placement for 290 cells, random placement wirelen = 11223.
+Info:     at initial placer iter 0, wirelen = 1333
+Info:     at initial placer iter 1, wirelen = 1152
+Info:     at initial placer iter 2, wirelen = 1116
+Info:     at initial placer iter 3, wirelen = 1134
+Info: Running main analytical placer, max placement attempts per cell = 29282.
+Info:     at iteration #1, type ALL: wirelen solved = 1138, spread = 1972, legal = 2174; time = 0.00s
+Info:     at iteration #2, type ALL: wirelen solved = 1165, spread = 1939, legal = 2059; time = 0.00s
+Info:     at iteration #3, type ALL: wirelen solved = 1198, spread = 1949, legal = 2117; time = 0.00s
+Info:     at iteration #4, type ALL: wirelen solved = 1221, spread = 1919, legal = 2082; time = 0.00s
+Info:     at iteration #5, type ALL: wirelen solved = 1195, spread = 1911, legal = 2085; time = 0.00s
+Info:     at iteration #6, type ALL: wirelen solved = 1239, spread = 1867, legal = 2147; time = 0.00s
+Info:     at iteration #7, type ALL: wirelen solved = 1262, spread = 1908, legal = 2199; time = 0.00s
+Info: HeAP Placer Time: 0.03s
+Info:   of which solving equations: 0.02s
+Info:   of which spreading cells: 0.00s
+Info:   of which strict legalisation: 0.00s
+
+Info: Running simulated annealing placer for refinement.
+Info:   at iteration #1: temp = 0.000000, timing cost = 78, wirelen = 2059
+Info:   at iteration #5: temp = 0.000000, timing cost = 64, wirelen = 1833
+Info:   at iteration #10: temp = 0.000000, timing cost = 62, wirelen = 1734
+Info:   at iteration #15: temp = 0.000000, timing cost = 72, wirelen = 1656
+Info:   at iteration #17: temp = 0.000000, timing cost = 71, wirelen = 1637 
+Info: SA placement time 0.06s
+
+Info: Max frequency for clock            'clk_out_$glb_clk': 84.67 MHz (PASS at 20.00 MHz)
+Info: Max frequency for clock 'u_display.slow_clk_$glb_clk': 655.31 MHz (PASS at 12.00 MHz)
+
+Info: Max delay <async>                             -> posedge clk_out_$glb_clk           : 13.22 ns
+Info: Max delay <async>                             -> posedge u_display.slow_clk_$glb_clk: 10.55 ns
+Info: Max delay posedge clk_out_$glb_clk            -> <async>                            : 36.92 ns
+Info: Max delay posedge u_display.slow_clk_$glb_clk -> <async>                            : 6.40 ns
+
+Info: Slack histogram:
+Info:  legend: * represents 1 endpoint(s)
+Info:          + represents [1,1) endpoint(s)
+Info: [ 38190,  40375) |*****+
+Info: [ 40375,  42560) |************************************************************ 
+Info: [ 42560,  44745) |***********************************+
+Info: [ 44745,  46930) |*******************************+
+Info: [ 46930,  49115) |*************************************************+
+Info: [ 49115,  51300) | 
+Info: [ 51300,  53485) | 
+Info: [ 53485,  55670) | 
+Info: [ 55670,  57855) | 
+Info: [ 57855,  60040) | 
+Info: [ 60040,  62225) | 
+Info: [ 62225,  64410) | 
+Info: [ 64410,  66595) | 
+Info: [ 66595,  68780) | 
+Info: [ 68780,  70965) | 
+Info: [ 70965,  73150) | 
+Info: [ 73150,  75335) | 
+Info: [ 75335,  77520) | 
+Info: [ 77520,  79705) | 
+Info: [ 79705,  81890) |**+
+Info: Checksum: 0x05aa3100
+
+Info: Routing..
+Info: Setting up routing queue.
+Info: Routing 1324 arcs.
+Info:            |   (re-)routed arcs  |   delta    | remaining|       time spent     |
+Info:    IterCnt |  w/ripup   wo/ripup |  w/r  wo/r |      arcs| batch(sec) total(sec)|
+Info:       1000 |      258        698 |  258   698 |       647|       0.04       0.04|
+Info:       1738 |      339       1279 |   81   581 |         0|       0.06       0.10|
+Info: Routing complete.
+Info: Router1 time 0.10s
+Info: Checksum: 0xa8954826
+
+Info: Critical path report for clock 'clk_out_$glb_clk' (posedge -> posedge):
+Info:       type curr  total name
+Info:   clk-to-q  0.54  0.54 Source u_computer.u_control_unit.current_step_SB_DFFESR_Q_D_SB_LUT4_O_LC.O
+Info:    routing  0.59  1.13 Net u_computer.u_control_unit.current_step[3] (30,26) -> (30,27)
+Info:                          Sink u_computer.u_register_instr.instruction_SB_LUT4_I2_1_LC.I1
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:207.12-207.24
+Info:      logic  0.26  1.39 Source u_computer.u_register_instr.instruction_SB_LUT4_I2_1_LC.COUT
+Info:    routing  0.00  1.39 Net u_computer.u_register_instr.instruction_SB_CARRY_I1_2_CO (30,27) -> (30,27)
+Info:                          Sink u_computer.u_register_instr.instruction_SB_LUT4_I2_2_LC.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:0.0-0.0
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  1.51 Source u_computer.u_register_instr.instruction_SB_LUT4_I2_2_LC.COUT
+Info:    routing  0.00  1.51 Net u_computer.u_register_instr.instruction_SB_CARRY_I1_1_CO (30,27) -> (30,27)
+Info:                          Sink u_computer.u_register_instr.instruction_SB_LUT4_I2_3_LC.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:0.0-0.0
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  1.64 Source u_computer.u_register_instr.instruction_SB_LUT4_I2_3_LC.COUT
+Info:    routing  0.26  1.90 Net u_computer.u_register_instr.instruction_SB_CARRY_I1_CO (30,27) -> (30,27)
+Info:                          Sink u_computer.u_register_instr.instruction_SB_LUT4_I2_LC.I3
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:0.0-0.0
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.31  2.21 Source u_computer.u_register_instr.instruction_SB_LUT4_I2_LC.O
+Info:    routing  0.59  2.80 Net u_computer.flag_carry_o_SB_DFFESR_Q_D_SB_LUT4_O_I0_SB_CARRY_CO_CI_SB_LUT4_I3_O_SB_LUT4_I0_O_SB_LUT4_O_I2_SB_LUT4_O_I3_SB_LUT4_I3_O[0] (30,27) -> (29,26)
+Info:                          Sink u_computer.u_control_unit.current_state_SB_DFFESR_Q_D_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_LUT4_O_1_LC.I3
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.31  3.12 Source u_computer.u_control_unit.current_state_SB_DFFESR_Q_D_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_LUT4_O_1_LC.O
+Info:    routing  0.96  4.07 Net u_computer.u_control_unit.current_state_SB_DFFESR_Q_D_SB_LUT4_O_I3_SB_LUT4_O_I3[1] (29,26) -> (29,23)
+Info:                          Sink u_computer.u_control_unit.current_state_SB_DFFESR_Q_D_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_LUT4_I2_LC.I3
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.31  4.39 Source u_computer.u_control_unit.current_state_SB_DFFESR_Q_D_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_LUT4_I2_LC.O
+Info:    routing  0.59  4.98 Net u_computer.u_control_unit.current_state_SB_DFFESR_Q_D_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_LUT4_I2_O[2] (29,23) -> (29,22)
+Info:                          Sink u_computer.u_ram.mem.0.0_RDATA_8_SB_LUT4_I0_O_SB_LUT4_O_I2_SB_LUT4_I2_LC.I3
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.31  5.29 Source u_computer.u_ram.mem.0.0_RDATA_8_SB_LUT4_I0_O_SB_LUT4_O_I2_SB_LUT4_I2_LC.O
+Info:    routing  0.59  5.88 Net u_computer.u_ram.mem.0.0_RDATA_8_SB_LUT4_I0_O_SB_LUT4_O_I2_SB_LUT4_I2_O[2] (29,22) -> (29,22)
+Info:                          Sink u_computer.u_ram.mem.0.0_RDATA_1_SB_LUT4_I0_O_SB_LUT4_O_LC.I3
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.31  6.20 Source u_computer.u_ram.mem.0.0_RDATA_1_SB_LUT4_I0_O_SB_LUT4_O_LC.O
+Info:    routing  0.59  6.78 Net u_computer.u_ram.mem.0.0_RDATA_1_SB_LUT4_I0_O[2] (29,22) -> (28,22)
+Info:                          Sink u_computer.u_ram.mem.0.0_RDATA_1_SB_LUT4_I0_O_SB_LUT4_I2_LC.I2
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.38  7.16 Source u_computer.u_ram.mem.0.0_RDATA_1_SB_LUT4_I0_O_SB_LUT4_I2_LC.O
+Info:    routing  0.59  7.75 Net u_computer.u_ram.mem.0.0_RDATA_3_SB_LUT4_I0_O_SB_LUT4_I2_O[1] (28,22) -> (29,23)
+Info:                          Sink u_computer.u_ram.mem.0.0_RDATA_8_SB_LUT4_I0_O_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_LC.I1
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.40  8.15 Source u_computer.u_ram.mem.0.0_RDATA_8_SB_LUT4_I0_O_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_LC.O
+Info:    routing  0.59  8.74 Net u_computer.u_ram.mem.0.0_RDATA_8_SB_LUT4_I0_O_SB_LUT4_I2_O_SB_LUT4_I3_O[2] (29,23) -> (29,23)
+Info:                          Sink u_computer.u_ram.mem.0.0_RDATA_SB_LUT4_I0_O_SB_LUT4_I2_O_SB_LUT4_O_LC.I3
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.31  9.05 Source u_computer.u_ram.mem.0.0_RDATA_SB_LUT4_I0_O_SB_LUT4_I2_O_SB_LUT4_O_LC.O
+Info:    routing  0.59  9.64 Net u_computer.u_ram.mem.0.0_RDATA_SB_LUT4_I0_O_SB_LUT4_I2_O[3] (29,23) -> (28,23)
+Info:                          Sink u_computer.flag_zero_o_SB_DFFESR_Q_D_SB_LUT4_O_I1_SB_LUT4_O_1_I1_SB_LUT4_O_1_LC.I3
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.31  9.95 Source u_computer.flag_zero_o_SB_DFFESR_Q_D_SB_LUT4_O_I1_SB_LUT4_O_1_I1_SB_LUT4_O_1_LC.O
+Info:    routing  0.59  10.54 Net u_computer.flag_zero_o_SB_DFFESR_Q_D_SB_LUT4_O_I1_SB_LUT4_O_1_I1[3] (28,23) -> (29,24)
+Info:                          Sink u_computer.flag_zero_o_SB_DFFESR_Q_D_SB_LUT4_O_I1_SB_LUT4_O_1_LC.I3
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.31  10.86 Source u_computer.flag_zero_o_SB_DFFESR_Q_D_SB_LUT4_O_I1_SB_LUT4_O_1_LC.O
+Info:    routing  0.59  11.45 Net u_computer.flag_zero_o_SB_DFFESR_Q_D_SB_LUT4_O_I1[1] (29,24) -> (29,24)
+Info:                          Sink u_computer.flag_zero_o_SB_DFFESR_Q_D_SB_LUT4_O_LC.I2
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      setup  0.40  11.84 Source u_computer.flag_zero_o_SB_DFFESR_Q_D_SB_LUT4_O_LC.I2
+Info: 4.75 ns logic, 7.10 ns routing
+
+Info: Critical path report for clock 'u_display.slow_clk_$glb_clk' (posedge -> posedge):
+Info:       type curr  total name
+Info:   clk-to-q  0.54  0.54 Source u_display.clk_div.clk_out_SB_DFFR_C_D_SB_LUT4_O_1_LC.O
+Info:    routing  0.59  1.13 Net io_segment_SB_LUT4_O_1_I2[0] (2,16) -> (2,16)
+Info:                          Sink u_display.clk_div.clk_out_SB_DFFR_C_D_SB_LUT4_O_LC.I2
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      setup  0.40  1.53 Source u_display.clk_div.clk_out_SB_DFFR_C_D_SB_LUT4_O_LC.I2
+Info: 0.94 ns logic, 0.59 ns routing
+
+Info: Critical path report for cross-domain path '<async>' -> 'posedge clk_out_$glb_clk':
+Info:       type curr  total name
+Info:     source  0.00  0.00 Source rst_n$sb_io.D_IN_0
+Info:    routing  3.88  3.88 Net rst_n$SB_IO_IN (17,0) -> (1,32)
+Info:                          Sink sys_reset_SB_LUT4_O_LC.I2
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/top.v:3.11-3.16
+Info:      logic  0.38  4.26 Source sys_reset_SB_LUT4_O_LC.O
+Info:    routing  3.57  7.83 Net sys_reset (1,32) -> (30,23)
+Info:                          Sink u_computer.flag_zero_o_SB_LUT4_I2_O_SB_LUT4_I1_O_SB_LUT4_I2_O_SB_LUT4_O_LC.I3
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:3.11-3.16
+Info:      logic  0.31  8.14 Source u_computer.flag_zero_o_SB_LUT4_I2_O_SB_LUT4_I1_O_SB_LUT4_I2_O_SB_LUT4_O_LC.O
+Info:    routing  0.59  8.73 Net u_computer.flag_zero_o_SB_LUT4_I2_O_SB_LUT4_I1_O_SB_LUT4_I2_O[0] (30,23) -> (30,22)
+Info:                          Sink u_computer.u_program_counter.counter_out_SB_DFFESR_Q_E_SB_LUT4_O_LC.I2
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.38  9.11 Source u_computer.u_program_counter.counter_out_SB_DFFESR_Q_E_SB_LUT4_O_LC.O
+Info:    routing  1.30  10.41 Net u_computer.u_program_counter.counter_out_SB_DFFESR_Q_E (30,22) -> (30,21)
+Info:                          Sink u_computer.u_program_counter.counter_out_SB_DFFESR_Q_1_D_SB_LUT4_O_LC.CEN
+Info:      setup  0.10  10.51 Source u_computer.u_program_counter.counter_out_SB_DFFESR_Q_1_D_SB_LUT4_O_LC.CEN
+Info: 1.17 ns logic, 9.34 ns routing
+
+Info: Critical path report for cross-domain path '<async>' -> 'posedge u_display.slow_clk_$glb_clk':
+Info:       type curr  total name
+Info:     source  0.00  0.00 Source rst_n$sb_io.D_IN_0
+Info:    routing  3.88  3.88 Net rst_n$SB_IO_IN (17,0) -> (1,32)
+Info:                          Sink sys_reset_SB_LUT4_O_LC.I2
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/top.v:3.11-3.16
+Info:      logic  0.38  4.26 Source sys_reset_SB_LUT4_O_LC.O
+Info:    routing  2.02  6.28 Net sys_reset (1,32) -> (16,33)
+Info:                          Sink $gbuf_sys_reset_$glb_sr.USER_SIGNAL_TO_GLOBAL_BUFFER
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:3.11-3.16
+Info:      logic  0.62  6.90 Source $gbuf_sys_reset_$glb_sr.GLOBAL_BUFFER_OUTPUT
+Info:    routing  0.46  7.36 Net sys_reset_$glb_sr (16,33) -> (2,16)
+Info:                          Sink u_display.clk_div.clk_out_SB_DFFR_C_D_SB_LUT4_O_LC.SR
+Info:      setup  0.10  7.46 Source u_display.clk_div.clk_out_SB_DFFR_C_D_SB_LUT4_O_LC.SR
+Info: 1.10 ns logic, 6.37 ns routing
+
+Info: Critical path report for cross-domain path 'posedge clk_out_$glb_clk' -> '<async>':
+Info:       type curr  total name
+Info:   clk-to-q  0.54  0.54 Source u_computer.u_register_OUT.latched_data_SB_DFFESR_Q_4_DFFLC.O
+Info:    routing  2.80  3.34 Net io_led[19]$SB_IO_OUT (24,22) -> (1,23)
+Info:                          Sink $nextpnr_ICESTORM_LC_0.I1
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:4.17-4.23
+Info:      logic  0.26  3.60 Source $nextpnr_ICESTORM_LC_0.COUT
+Info:    routing  0.00  3.60 Net $nextpnr_ICESTORM_LC_0$O (1,23) -> (1,23)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_O_I3_SB_CARRY_CO$CARRY.CIN
+Info:      logic  0.13  3.73 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_O_I3_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  3.73 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_O_I3 (1,23) -> (1,23)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_O_LC.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  3.85 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_O_LC.COUT
+Info:    routing  0.00  3.85 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_O_I3_SB_CARRY_CI_CO (1,23) -> (1,23)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  3.98 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  3.98 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_CARRY_CI_CO (1,23) -> (1,23)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  4.11 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.26  4.36 Net $nextpnr_ICESTORM_LC_1$I3 (1,23) -> (1,23)
+Info:                          Sink $nextpnr_ICESTORM_LC_1.I3
+Info:      logic  0.31  4.68 Source $nextpnr_ICESTORM_LC_1.O
+Info:    routing  0.90  5.58 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (1,23) -> (2,23)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.I3
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.31  5.90 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.O
+Info:    routing  0.59  6.49 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_I0 (2,23) -> (2,23)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.I1
+Info:      logic  0.26  6.74 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  6.74 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,23) -> (2,23)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  6.87 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  6.87 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,23) -> (2,23)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  7.00 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  7.00 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,23) -> (2,23)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  7.12 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  7.12 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,23) -> (2,23)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  7.25 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  7.25 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,23) -> (2,23)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  7.37 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  7.37 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,23) -> (2,23)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  7.50 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.20  7.70 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,23) -> (2,24)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  7.82 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  7.82 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,24) -> (2,24)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  7.95 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  7.95 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,24) -> (2,24)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  8.07 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  8.07 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,24) -> (2,24)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  8.20 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  8.20 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,24) -> (2,24)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  8.33 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  8.33 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,24) -> (2,24)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  8.45 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  8.45 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,24) -> (2,24)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  8.58 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  8.58 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,24) -> (2,24)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  8.70 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.20  8.90 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,24) -> (2,25)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  9.03 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  9.03 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,25) -> (2,25)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  9.15 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  9.15 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,25) -> (2,25)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  9.28 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  9.28 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,25) -> (2,25)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  9.40 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  9.40 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,25) -> (2,25)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  9.53 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  9.53 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,25) -> (2,25)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  9.66 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  9.66 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,25) -> (2,25)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  9.78 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  9.78 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,25) -> (2,25)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  9.91 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.20  10.10 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,25) -> (2,26)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  10.23 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  10.23 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,26) -> (2,26)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  10.36 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  10.36 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,26) -> (2,26)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  10.48 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  10.48 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,26) -> (2,26)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  10.61 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  10.61 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_CI (2,26) -> (2,26)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  10.73 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  10.73 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO_CI (2,26) -> (2,26)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  10.86 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.26  11.12 Net $nextpnr_ICESTORM_LC_5$I3 (2,26) -> (2,26)
+Info:                          Sink $nextpnr_ICESTORM_LC_5.I3
+Info:      logic  0.31  11.43 Source $nextpnr_ICESTORM_LC_5.O
+Info:    routing  1.33  12.76 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3 (2,26) -> (2,21)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_LUT4_I3_LC.I3
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.31  13.08 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_LUT4_I3_LC.O
+Info:    routing  0.59  13.67 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_LUT4_I3_O[2] (2,21) -> (2,22)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_LUT4_I3_O_SB_LUT4_I2_LC.I2
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.17-40.40
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.23  13.90 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_LUT4_I3_O_SB_LUT4_I2_LC.COUT
+Info:    routing  0.00  13.90 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2[3] (2,22) -> (2,22)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_LC.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.17-40.40
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  14.02 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_LC.COUT
+Info:    routing  0.00  14.02 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I3_SB_CARRY_CI_CO (2,22) -> (2,22)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_LUT4_I3_LC.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.17-40.40
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  14.15 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_LUT4_I3_LC.COUT
+Info:    routing  0.00  14.15 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_O_I3_SB_LUT4_I3_O[3] (2,22) -> (2,22)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_LUT4_I3_LC.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.17-40.40
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  14.28 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_LUT4_I3_LC.COUT
+Info:    routing  0.00  14.28 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_CI (2,22) -> (2,22)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_LC.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.17-40.40
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.13  14.40 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_LC.COUT
+Info:    routing  0.00  14.40 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI (2,22) -> (2,22)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.17-40.40
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  14.53 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1$CARRY.COUT
+Info:    routing  0.00  14.53 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CO (2,22) -> (2,22)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.17-40.40
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  14.65 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.26  14.91 Net $nextpnr_ICESTORM_LC_9$I3 (2,22) -> (2,22)
+Info:                          Sink $nextpnr_ICESTORM_LC_9.I3
+Info:      logic  0.31  15.23 Source $nextpnr_ICESTORM_LC_9.O
+Info:    routing  0.59  15.82 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CO_SB_CARRY_CI_CO[7] (2,22) -> (3,22)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO$CARRY.I3
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.17-40.40
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:51.21-51.22
+Info:      logic  0.31  16.13 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO$CARRY.O
+Info:    routing  0.59  16.72 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_O[7] (3,22) -> (3,22)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO$CARRY.I1
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.26  16.98 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.26  17.24 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_LUT4_I3_O_SB_LUT4_O_I3 (3,22) -> (3,22)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_LUT4_I3_O_SB_LUT4_O_LC.I3
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.31  17.55 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_LUT4_I3_O_SB_LUT4_O_LC.O
+Info:    routing  0.59  18.14 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I3_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_LUT4_I3_O[2] (3,22) -> (2,21)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_O_LC.I3
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.31  18.45 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_O_LC.O
+Info:    routing  0.59  19.04 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0[1] (2,21) -> (2,21)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.I1
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.26  19.30 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  19.30 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI (2,21) -> (2,21)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  19.43 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.26  19.69 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3 (2,21) -> (2,21)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_LC.I3
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.31  20.00 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_LC.O
+Info:    routing  0.59  20.59 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O[2] (2,21) -> (2,20)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.I3
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.31  20.91 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.O
+Info:    routing  0.59  21.49 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0[1] (2,20) -> (2,20)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.I1
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.26  21.75 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  21.75 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI (2,20) -> (2,20)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  21.88 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.26  22.14 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O[3] (2,20) -> (2,20)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_LC.I3
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.31  22.45 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_LC.O
+Info:    routing  0.59  23.04 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3[0] (2,20) -> (2,19)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_CARRY_I0_CI_SB_CARRY_CO$CARRY.I3
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.31  23.35 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_CARRY_I0_CI_SB_CARRY_CO$CARRY.O
+Info:    routing  0.59  23.94 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_CARRY_I0_CI_SB_CARRY_CO_I0[1] (2,19) -> (2,19)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_CARRY_I0_CI_SB_CARRY_CO$CARRY.I1
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.26  24.20 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_CARRY_I0_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  24.20 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_CARRY_I0_CI (2,19) -> (2,19)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_CARRY_I0$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  24.33 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_CARRY_I0$CARRY.COUT
+Info:    routing  0.26  24.59 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O[3] (2,19) -> (2,19)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_LUT4_I3_LC.I3
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.31  24.90 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_LUT4_I3_LC.O
+Info:    routing  0.96  25.86 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O[2] (2,19) -> (3,17)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.I3
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:376.74-376.78
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:377.54-377.58
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.31  26.18 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.O
+Info:    routing  0.59  26.76 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CI_SB_CARRY_CO_CI_SB_CARRY_CO_I0 (3,17) -> (3,17)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.I1
+Info:      logic  0.26  27.02 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CI_SB_CARRY_CO_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  27.02 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CI_SB_CARRY_CO_CI (3,17) -> (3,17)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CI_SB_CARRY_CO$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  27.15 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CI_SB_CARRY_CO$CARRY.COUT
+Info:    routing  0.00  27.15 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CI (3,17) -> (3,17)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  27.27 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0$CARRY.COUT
+Info:    routing  0.00  27.27 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO (3,17) -> (3,17)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  27.40 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  27.40 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO (3,17) -> (3,17)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  27.53 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  27.53 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,17) -> (3,17)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  27.65 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  27.65 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,17) -> (3,17)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  27.78 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.20  27.98 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,17) -> (3,18)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  28.10 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  28.10 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,18) -> (3,18)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  28.23 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  28.23 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,18) -> (3,18)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  28.35 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  28.35 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,18) -> (3,18)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  28.48 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  28.48 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,18) -> (3,18)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  28.60 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  28.60 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,18) -> (3,18)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  28.73 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  28.73 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,18) -> (3,18)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  28.86 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  28.86 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,18) -> (3,18)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  28.98 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.20  29.18 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,18) -> (3,19)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  29.31 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  29.31 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,19) -> (3,19)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  29.43 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  29.43 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,19) -> (3,19)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  29.56 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  29.56 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,19) -> (3,19)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  29.68 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  29.68 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,19) -> (3,19)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  29.81 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  29.81 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,19) -> (3,19)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  29.93 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  29.93 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,19) -> (3,19)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  30.06 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  30.06 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,19) -> (3,19)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  30.19 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.20  30.38 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,19) -> (3,20)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  30.51 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  30.51 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,20) -> (3,20)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  30.64 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  30.64 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,20) -> (3,20)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  30.76 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  30.76 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,20) -> (3,20)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  30.89 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  30.89 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,20) -> (3,20)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  31.01 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  31.01 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,20) -> (3,20)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  31.14 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.00  31.14 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,20) -> (3,20)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.CIN
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.13  31.26 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI$CARRY.COUT
+Info:    routing  0.26  31.52 Net $nextpnr_ICESTORM_LC_15$I3 (3,20) -> (3,20)
+Info:                          Sink $nextpnr_ICESTORM_LC_15.I3
+Info:      logic  0.31  31.84 Source $nextpnr_ICESTORM_LC_15.O
+Info:    routing  0.96  32.80 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO_SB_CARRY_CI_CO_SB_LUT4_I3_I1_SB_LUT4_O_I2_SB_CARRY_I1_CI_SB_CARRY_CO_I1_SB_LUT4_I2_O_SB_LUT4_I3_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_O_I3_SB_CARRY_CO_CI_SB_CARRY_CO_I0_SB_LUT4_I2_O_SB_LUT4_I2_O_SB_CARRY_I0_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO_SB_CARRY_CI_CO (3,20) -> (2,18)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_LUT4_O_LC.I3
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:332.28-332.64
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:369.4-374.3
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.31  33.11 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_LUT4_O_LC.O
+Info:    routing  0.59  33.70 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3 (2,18) -> (2,18)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_LUT4_I2_LC.I2
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:40.16-40.46
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:376.74-376.78
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:377.54-377.58
+Info:                               /opt/homebrew/bin/../share/yosys/techmap.v:401.4-405.3
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:39.20-39.32
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.23  33.93 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_LUT4_I2_LC.COUT
+Info:    routing  0.26  34.19 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_CARRY_I1_CO (2,18) -> (2,18)
+Info:                          Sink io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_LUT4_I2_O_SB_LUT4_O_LC.I3
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:41.16-41.51
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/arith_map.v:62.5-70.4
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/abc9_model.v:4.9-4.11
+Info:      logic  0.31  34.51 Source io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_LUT4_I2_O_SB_LUT4_O_LC.O
+Info:    routing  0.96  35.47 Net io_segment_SB_LUT4_O_1_I2[1] (2,18) -> (1,16)
+Info:                          Sink io_segment_SB_LUT4_O_2_I0_SB_LUT4_O_1_LC.I3
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.31  35.78 Source io_segment_SB_LUT4_O_2_I0_SB_LUT4_O_1_LC.O
+Info:    routing  0.59  36.37 Net io_segment_SB_LUT4_O_2_I0[2] (1,16) -> (1,16)
+Info:                          Sink io_segment_SB_LUT4_O_2_LC.I2
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.38  36.75 Source io_segment_SB_LUT4_O_2_LC.O
+Info:    routing  2.25  38.99 Net io_segment[2]$SB_IO_OUT (1,16) -> (0,4)
+Info:                          Sink io_segment[2]$sb_io.D_OUT_0
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:5.22-5.26
+Info: 17.68 ns logic, 21.31 ns routing
+
+Info: Critical path report for cross-domain path 'posedge u_display.slow_clk_$glb_clk' -> '<async>':
+Info:       type curr  total name
+Info:   clk-to-q  0.54  0.54 Source u_display.clk_div.clk_out_SB_DFFR_C_D_SB_LUT4_O_1_LC.O
+Info:    routing  0.59  1.13 Net io_segment_SB_LUT4_O_1_I2[0] (2,16) -> (1,17)
+Info:                          Sink io_select_SB_LUT4_O_LC.I2
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.38  1.51 Source io_select_SB_LUT4_O_LC.O
+Info:    routing  0.96  2.46 Net io_segment_SB_LUT4_O_1_I2_SB_LUT4_O_I3_SB_LUT4_O_I3_SB_LUT4_I2_O[1] (1,17) -> (1,16)
+Info:                          Sink io_segment_SB_LUT4_O_2_I0_SB_LUT4_O_1_LC.I1
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:6.22-6.28
+Info:      logic  0.40  2.86 Source io_segment_SB_LUT4_O_2_I0_SB_LUT4_O_1_LC.O
+Info:    routing  0.59  3.45 Net io_segment_SB_LUT4_O_2_I0[2] (1,16) -> (1,16)
+Info:                          Sink io_segment_SB_LUT4_O_2_LC.I2
+Info:                          Defined in:
+Info:                               /opt/homebrew/bin/../share/yosys/ice40/cells_map.v:6.21-6.22
+Info:      logic  0.38  3.83 Source io_segment_SB_LUT4_O_2_LC.O
+Info:    routing  2.25  6.08 Net io_segment[2]$SB_IO_OUT (1,16) -> (0,4)
+Info:                          Sink io_segment[2]$sb_io.D_OUT_0
+Info:                          Defined in:
+Info:                               /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/src/utils/seg7_display.v:5.22-5.26
+Info: 1.70 ns logic, 4.38 ns routing
+
+Info: Max frequency for clock            'clk_out_$glb_clk': 84.43 MHz (PASS at 20.00 MHz)
+Info: Max frequency for clock 'u_display.slow_clk_$glb_clk': 655.31 MHz (PASS at 12.00 MHz)
+
+Info: Max delay <async>                             -> posedge clk_out_$glb_clk           : 10.51 ns
+Info: Max delay <async>                             -> posedge u_display.slow_clk_$glb_clk: 7.46 ns
+Info: Max delay posedge clk_out_$glb_clk            -> <async>                            : 38.99 ns
+Info: Max delay posedge u_display.slow_clk_$glb_clk -> <async>                            : 6.08 ns
+
+Info: Slack histogram:
+Info:  legend: * represents 1 endpoint(s)
+Info:          + represents [1,1) endpoint(s)
+Info: [ 38156,  40342) |***+
+Info: [ 40342,  42528) |************************************************************ 
+Info: [ 42528,  44714) |***********************************************************+
+Info: [ 44714,  46900) |************************************+
+Info: [ 46900,  49086) |******************************************************+
+Info: [ 49086,  51272) | 
+Info: [ 51272,  53458) | 
+Info: [ 53458,  55644) | 
+Info: [ 55644,  57830) | 
+Info: [ 57830,  60016) | 
+Info: [ 60016,  62202) | 
+Info: [ 62202,  64388) | 
+Info: [ 64388,  66574) | 
+Info: [ 66574,  68760) | 
+Info: [ 68760,  70946) | 
+Info: [ 70946,  73132) | 
+Info: [ 73132,  75318) | 
+Info: [ 75318,  77504) | 
+Info: [ 77504,  79690) | 
+Info: [ 79690,  81876) |*** 
+
+Info: Program finished normally.
