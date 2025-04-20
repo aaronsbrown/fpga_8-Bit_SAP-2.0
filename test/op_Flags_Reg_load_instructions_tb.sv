@@ -2,7 +2,7 @@
 import test_utils_pkg::*;
 import arch_defs_pkg::*;
 
-module computer_tb;
+module cpu_tb;
 
   localparam string HEX_FILE = "../fixture/Flags_Reg_test_load_instructions.hex"; // Use final hex
   localparam EXPECTED_FINAL_OUTPUT = 8'h01; // Success code
@@ -13,7 +13,7 @@ module computer_tb;
   wire [DATA_WIDTH-1:0] out_val;
   wire flag_zero_o, flag_carry_o, flag_negative_o;
 
-  computer uut (
+  cpu uut (
         .clk(clk), .reset(reset), .out_val(out_val),
         .flag_zero_o(flag_zero_o), .flag_carry_o(flag_carry_o), .flag_negative_o(flag_negative_o) );
 
@@ -21,7 +21,7 @@ module computer_tb;
   // --- End Standard Setup ---
 
   initial begin
-    $dumpfile("waveform.vcd"); $dumpvars(0, computer_tb);
+    $dumpfile("waveform.vcd"); $dumpvars(0, cpu_tb);
     $display("--- Loading hex file: %s ---", HEX_FILE);
     $readmemh(HEX_FILE, uut.u_ram.mem); uut.u_ram.dump();
     reset_and_wait(0);

@@ -2,7 +2,7 @@
 import test_utils_pkg::*; // Import test helpers
 import arch_defs_pkg::*;  // Import architecture definitions (DATA_WIDTH, ADDR_WIDTH, etc.)
 
-module computer_tb;
+module cpu_tb;
 
   // Define the program to load for this specific test
   localparam string HEX_FILE = "../fixture/HLT.hex";
@@ -12,11 +12,11 @@ module computer_tb;
   reg reset;
   wire [DATA_WIDTH-1:0] out_val;
   // Declare wires for flag outputs, even if not checked in this specific test,
-  // if the 'computer' module defines them as outputs.
+  // if the 'cpu' module defines them as outputs.
   wire flag_zero_o, flag_carry_o, flag_negative_o;
 
   // --- Instantiate the Device Under Test (DUT) ---
-  computer uut (
+  cpu uut (
         .clk(clk),
         .reset(reset),
         .out_val(out_val),
@@ -38,7 +38,7 @@ module computer_tb;
 
     // Setup waveform dumping
     $dumpfile("waveform.vcd");
-    $dumpvars(0, computer_tb); // Dump all signals in this module and below
+    $dumpvars(0, cpu_tb); // Dump all signals in this module and below
 
     $display("--- Loading hex file: %s ---", HEX_FILE);
     $readmemh(HEX_FILE, uut.u_ram.mem); 

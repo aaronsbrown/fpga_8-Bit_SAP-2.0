@@ -345,7 +345,7 @@ module control_unit (
 	end
 	initial _sv2v_0 = 0;
 endmodule
-module computer (
+module cpu (
 	clk,
 	reset,
 	out_val,
@@ -555,43 +555,32 @@ module computer (
 	end
 	initial _sv2v_0 = 0;
 endmodule
-module computer_tb;
-	localparam HEX_FILE = "../fixture/Flags_Reg_test_load_instructions.hex";
-	localparam EXPECTED_FINAL_OUTPUT = 8'h01;
+module alu_tb;
 	reg clk;
 	reg reset;
 	localparam signed [31:0] arch_defs_pkg_DATA_WIDTH = 8;
-	wire [7:0] out_val;
-	wire flag_zero_o;
-	wire flag_carry_o;
-	wire flag_negative_o;
-	computer uut(
+	reg [7:0] tb_a_in;
+	reg [7:0] tb_b_in;
+	reg [1:0] tb_alu_op;
+	wire [7:0] dut_latched_result;
+	wire dut_zero_flag;
+	wire dut_carry_flag;
+	wire dut_negative_flag;
+	alu uut(
 		.clk(clk),
 		.reset(reset),
-		.out_val(out_val),
-		.flag_zero_o(flag_zero_o),
-		.flag_carry_o(flag_carry_o),
-		.flag_negative_o(flag_negative_o)
+		.a_in(tb_a_in),
+		.b_in(tb_b_in),
+		.alu_op(tb_alu_op),
+		.latched_result(dut_latched_result),
+		.zero_flag(dut_zero_flag),
+		.carry_flag(dut_carry_flag),
+		.negative_flag(dut_negative_flag)
 	);
 	initial begin
 		clk = 0;
 		forever #(5) clk = ~clk;
 	end
-	localparam signed [31:0] arch_defs_pkg_ADDR_WIDTH = 4;
-	task test_utils_pkg_inspect_register;
-		input [31:0] actual;
-		input [31:0] expected;
-		input string name;
-		input reg signed [31:0] expected_width;
-		reg [31:0] mask;
-		begin
-			mask = (expected_width == 32 ? 32'hffffffff : (32'h00000001 << expected_width) - 1);
-			if ((actual & mask) !== (expected & mask))
-				$display("\033[0;31mAssertion Failed: %s (%0d bits). Actual: %h, Expected: %h\033[0m", name, expected_width, actual & mask, expected & mask);
-			else
-				$display("\033[0;32mAssertion Passed: %s (%0d bits) = %h\033[0m", name, expected_width, actual & mask);
-		end
-	endtask
 	task test_utils_pkg_pretty_print_assert_vec;
 		input [31:0] actual;
 		input [31:0] expected;
@@ -601,158 +590,79 @@ module computer_tb;
 		else
 			$display("\033[0;32mAssertion Passed: %s\033[0m", msg);
 	endtask
-	task test_utils_pkg_reset_and_wait;
-		input reg signed [31:0] cycles;
+	task apply_and_check;
+		input [7:0] a;
+		input [7:0] b;
+		input reg [1:0] op;
+		input string op_name;
+		input [7:0] exp_result;
+		input reg exp_c;
+		input reg exp_z;
+		input reg exp_n;
+		input string description;
 		begin
-			reset = 1;
-			@(posedge clk)
-				;
 			@(negedge clk)
 				;
-			reset = 0;
-			repeat (cycles) @(posedge clk)
+			tb_a_in = a;
+			tb_b_in = b;
+			tb_alu_op = op;
+			$display("Applying: %s (A=%h, B=%h, Op=%s)", description, a, b, op_name);
+			@(posedge clk)
 				;
-		end
-	endtask
-	task test_utils_pkg_run_until_halt;
-		input reg signed [31:0] max_cycles;
-		reg signed [31:0] cycle;
-		reg [0:1] _sv2v_jump;
-		begin
-			_sv2v_jump = 2'b00;
-			cycle = 0;
-			while ((cycle < max_cycles) && (_sv2v_jump < 2'b10)) begin
-				_sv2v_jump = 2'b00;
-				#(1ps)
-					;
-				if (uut.halt == 1) begin
-					$display("HALT signal detected high at start of cycle %0d.", cycle + 1);
-					_sv2v_jump = 2'b10;
-				end
-				if (_sv2v_jump == 2'b00) begin
-					@(posedge clk)
-						;
-					cycle = cycle + 1;
-				end
-			end
-			if (_sv2v_jump != 2'b11)
-				_sv2v_jump = 2'b00;
-			if (_sv2v_jump == 2'b00) begin
-				#(1ps)
-					;
-				if ((uut.halt == 0) && (cycle >= max_cycles)) begin
-					$display("\033[0;31mSimulation timed out. HALT signal not asserted after %0d cycles.\033[0m", cycle);
-					$display("Error [%0t] /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/test/test_utilities_pkg.sv:61:9 - computer_tb.test_utils_pkg_run_until_halt.<unnamed_block>.<unnamed_block>\n msg: ", $time, "Simulation timed out.");
-					$finish;
-				end
-				else
-					$display("\033[0;32mSimulation run completed (halt detected or max cycles reached while potentially halting). Cycles run: %0d\033[0m", cycle);
-			end
+			#(1)
+				;
+			test_utils_pkg_pretty_print_assert_vec(dut_latched_result, exp_result, $sformatf("%s - Result", description));
+			test_utils_pkg_pretty_print_assert_vec(dut_carry_flag, exp_c, $sformatf("%s - Carry Flag", description));
+			test_utils_pkg_pretty_print_assert_vec(dut_zero_flag, exp_z, $sformatf("%s - Zero Flag", description));
+			test_utils_pkg_pretty_print_assert_vec(dut_negative_flag, exp_n, $sformatf("%s - Negative Flag", description));
+			$display("----------------------------------------");
 		end
 	endtask
 	initial begin
 		$dumpfile("waveform.vcd");
-		$dumpvars(0, computer_tb);
-		$display("--- Loading hex file: %s ---", HEX_FILE);
-		$readmemh(HEX_FILE, uut.u_ram.mem);
-		uut.u_ram.dump;
-		test_utils_pkg_reset_and_wait(0);
-		$display("Running LDI #0");
-		repeat (8) @(posedge clk)
+		$dumpvars(0, alu_tb);
+		$display("--- ALU Testbench Start ---");
+		reset = 1;
+		tb_a_in = 1'sbx;
+		tb_b_in = 1'sbx;
+		tb_alu_op = 1'sbx;
+		@(posedge clk)
 			;
-		#(0.1)
+		#(1)
 			;
-		test_utils_pkg_inspect_register(uut.u_register_A.latched_data, 8'h00, "A", arch_defs_pkg_DATA_WIDTH);
-		test_utils_pkg_pretty_print_assert_vec(flag_negative_o, 1'b0, "N after LDI #0");
-		test_utils_pkg_pretty_print_assert_vec(flag_carry_o, 1'b0, "C after LDI #0");
-		test_utils_pkg_pretty_print_assert_vec(flag_zero_o, 1'b1, "Z after LDI #0");
-		test_utils_pkg_inspect_register(uut.u_program_counter.counter_out, 8'h01, "PC", arch_defs_pkg_ADDR_WIDTH);
-		$display("Running LDI #8");
-		repeat (7) @(posedge clk)
+		test_utils_pkg_pretty_print_assert_vec(dut_latched_result, {arch_defs_pkg_DATA_WIDTH {1'b0}}, "Reset - Result");
+		$display("Reset Applied");
+		@(negedge clk)
 			;
-		#(0.1)
+		reset = 0;
+		$display("Reset Released");
+		$display("----------------------------------------");
+		@(posedge clk)
 			;
-		test_utils_pkg_inspect_register(uut.u_register_A.latched_data, 8'h08, "A", arch_defs_pkg_DATA_WIDTH);
-		test_utils_pkg_pretty_print_assert_vec(flag_negative_o, 1'b1, "N after LDI #8");
-		test_utils_pkg_pretty_print_assert_vec(flag_carry_o, 1'b0, "C after LDI #8");
-		test_utils_pkg_pretty_print_assert_vec(flag_zero_o, 1'b0, "Z after LDI #8");
-		test_utils_pkg_inspect_register(uut.u_program_counter.counter_out, 8'h02, "PC", arch_defs_pkg_ADDR_WIDTH);
-		$display("Running STA 0xE");
-		repeat (9) @(posedge clk)
+		#(1)
 			;
-		#(0.1)
+		apply_and_check(8'h05, 8'h03, 2'b00, "ADD", 8'h08, 1'b0, 1'b0, 1'b0, "ADD: 5 + 3");
+		apply_and_check(8'h00, 8'h00, 2'b00, "ADD", 8'h00, 1'b0, 1'b1, 1'b0, "ADD: 0 + 0");
+		apply_and_check(8'hff, 8'h01, 2'b00, "ADD", 8'h00, 1'b1, 1'b1, 1'b0, "ADD: 255 + 1");
+		apply_and_check(8'h80, 8'h01, 2'b00, "ADD", 8'h81, 1'b0, 1'b0, 1'b1, "ADD: 128 + 1");
+		apply_and_check(8'h7f, 8'h01, 2'b00, "ADD", 8'h80, 1'b0, 1'b0, 1'b1, "ADD: 127 + 1");
+		apply_and_check(8'hf0, 8'hf0, 2'b00, "ADD", 8'he0, 1'b1, 1'b0, 1'b1, "ADD: 240 + 240");
+		apply_and_check(8'h08, 8'h03, 2'b01, "SUB", 8'h05, 1'b1, 1'b0, 1'b0, "SUB: 8 - 3");
+		apply_and_check(8'h05, 8'h05, 2'b01, "SUB", 8'h00, 1'b1, 1'b1, 1'b0, "SUB: 5 - 5");
+		apply_and_check(8'h03, 8'h05, 2'b01, "SUB", 8'hfe, 1'b0, 1'b0, 1'b1, "SUB: 3 - 5");
+		apply_and_check(8'h00, 8'h01, 2'b01, "SUB", 8'hff, 1'b0, 1'b0, 1'b1, "SUB: 0 - 1");
+		apply_and_check(8'h80, 8'h01, 2'b01, "SUB", 8'h7f, 1'b1, 1'b0, 1'b0, "SUB: -128 - 1");
+		apply_and_check(8'h55, 8'haa, 2'b10, "AND", 8'h00, 1'b0, 1'b1, 1'b0, "AND: 55 & AA");
+		apply_and_check(8'hcd, 8'hff, 2'b10, "AND", 8'hcd, 1'b0, 1'b0, 1'b1, "AND: CD & FF");
+		apply_and_check(8'hcd, 8'h0f, 2'b10, "AND", 8'h0d, 1'b0, 1'b0, 1'b0, "AND: CD & 0F");
+		apply_and_check(8'hf0, 8'h0f, 2'b10, "AND", 8'h00, 1'b0, 1'b1, 1'b0, "AND: F0 & 0F");
+		apply_and_check(8'h55, 8'haa, 2'b11, "OR", 8'hff, 1'b0, 1'b0, 1'b1, "OR: 55 | AA");
+		apply_and_check(8'hcd, 8'h00, 2'b11, "OR", 8'hcd, 1'b0, 1'b0, 1'b1, "OR: CD | 00");
+		apply_and_check(8'h0f, 8'h00, 2'b11, "OR", 8'h0f, 1'b0, 1'b0, 1'b0, "OR: 0F | 00");
+		apply_and_check(8'hf0, 8'h0f, 2'b11, "OR", 8'hff, 1'b0, 1'b0, 1'b1, "OR: F0 | 0F");
+		$display("--- ALU Testbench Complete ---");
+		@(posedge clk)
 			;
-		test_utils_pkg_inspect_register(uut.u_ram.mem[14], 8'h08, "RAM[E]", arch_defs_pkg_DATA_WIDTH);
-		test_utils_pkg_pretty_print_assert_vec(flag_negative_o, 1'b1, "N after STA (no change)");
-		test_utils_pkg_pretty_print_assert_vec(flag_carry_o, 1'b0, "C after STA (no change)");
-		test_utils_pkg_pretty_print_assert_vec(flag_zero_o, 1'b0, "Z after STA (no change)");
-		test_utils_pkg_inspect_register(uut.u_program_counter.counter_out, 8'h03, "PC", arch_defs_pkg_ADDR_WIDTH);
-		$display("Running LDI #0xF");
-		repeat (7) @(posedge clk)
-			;
-		#(0.1)
-			;
-		test_utils_pkg_inspect_register(uut.u_register_A.latched_data, 8'h0f, "A", arch_defs_pkg_DATA_WIDTH);
-		test_utils_pkg_pretty_print_assert_vec(flag_negative_o, 1'b1, "N after LDI #F");
-		test_utils_pkg_pretty_print_assert_vec(flag_carry_o, 1'b0, "C after LDI #F");
-		test_utils_pkg_pretty_print_assert_vec(flag_zero_o, 1'b0, "Z after LDI #F");
-		test_utils_pkg_inspect_register(uut.u_program_counter.counter_out, 8'h04, "PC", arch_defs_pkg_ADDR_WIDTH);
-		$display("Running STA 0xF");
-		repeat (9) @(posedge clk)
-			;
-		#(0.1)
-			;
-		test_utils_pkg_inspect_register(uut.u_ram.mem[15], 8'h0f, "RAM[F]", arch_defs_pkg_DATA_WIDTH);
-		test_utils_pkg_pretty_print_assert_vec(flag_negative_o, 1'b1, "N after STA (no change)");
-		test_utils_pkg_pretty_print_assert_vec(flag_carry_o, 1'b0, "C after STA (no change)");
-		test_utils_pkg_pretty_print_assert_vec(flag_zero_o, 1'b0, "Z after STA (no change)");
-		test_utils_pkg_inspect_register(uut.u_program_counter.counter_out, 8'h05, "PC", arch_defs_pkg_ADDR_WIDTH);
-		$display("Running LDA 0xE");
-		repeat (9) @(posedge clk)
-			;
-		#(0.1)
-			;
-		test_utils_pkg_inspect_register(uut.u_register_A.latched_data, 8'h08, "A", arch_defs_pkg_DATA_WIDTH);
-		test_utils_pkg_pretty_print_assert_vec(flag_negative_o, 1'b0, "N after LDA 0xE");
-		test_utils_pkg_pretty_print_assert_vec(flag_carry_o, 1'b0, "C after LDA 0xE");
-		test_utils_pkg_pretty_print_assert_vec(flag_zero_o, 1'b0, "Z after LDA 0xE");
-		test_utils_pkg_inspect_register(uut.u_program_counter.counter_out, 8'h06, "PC", arch_defs_pkg_ADDR_WIDTH);
-		$display("Running LDB 0xF");
-		repeat (9) @(posedge clk)
-			;
-		#(0.1)
-			;
-		test_utils_pkg_inspect_register(uut.u_register_B.latched_data, 8'h0f, "B", arch_defs_pkg_DATA_WIDTH);
-		test_utils_pkg_pretty_print_assert_vec(flag_negative_o, 1'b0, "N after LDB 0xF");
-		test_utils_pkg_pretty_print_assert_vec(flag_carry_o, 1'b0, "C after LDB 0xF");
-		test_utils_pkg_pretty_print_assert_vec(flag_zero_o, 1'b0, "Z after LDB 0xF");
-		test_utils_pkg_inspect_register(uut.u_program_counter.counter_out, 8'h07, "PC", arch_defs_pkg_ADDR_WIDTH);
-		$display("Running LDI #1");
-		repeat (7) @(posedge clk)
-			;
-		#(0.1)
-			;
-		test_utils_pkg_inspect_register(uut.u_register_A.latched_data, 8'h01, "A", arch_defs_pkg_DATA_WIDTH);
-		test_utils_pkg_pretty_print_assert_vec(flag_negative_o, 1'b0, "N after LDI #1");
-		test_utils_pkg_pretty_print_assert_vec(flag_carry_o, 1'b0, "C after LDI #1");
-		test_utils_pkg_pretty_print_assert_vec(flag_zero_o, 1'b0, "Z after LDI #1");
-		test_utils_pkg_inspect_register(uut.u_program_counter.counter_out, 8'h08, "PC", arch_defs_pkg_ADDR_WIDTH);
-		$display("Running OUTA");
-		repeat (7) @(posedge clk)
-			;
-		#(0.1)
-			;
-		test_utils_pkg_inspect_register(uut.u_register_OUT.latched_data, EXPECTED_FINAL_OUTPUT, "O after OUTA", arch_defs_pkg_DATA_WIDTH);
-		test_utils_pkg_inspect_register(uut.u_program_counter.counter_out, 8'h09, "PC", arch_defs_pkg_ADDR_WIDTH);
-		$display("Running HLT");
-		test_utils_pkg_run_until_halt(50);
-		#(0.1)
-			;
-		$display("@%0t: Checking state after Halt", $time);
-		test_utils_pkg_pretty_print_assert_vec(uut.halt, 1'b1, "Halt signal active");
-		test_utils_pkg_inspect_register(uut.u_program_counter.counter_out, 8'h0a, "Final PC", arch_defs_pkg_ADDR_WIDTH);
-		test_utils_pkg_inspect_register(uut.u_register_OUT.latched_data, EXPECTED_FINAL_OUTPUT, "Final Output", arch_defs_pkg_DATA_WIDTH);
-		$display("\033[0;32mLoad Flags test completed successfully.\033[0m");
 		$finish;
 	end
 endmodule

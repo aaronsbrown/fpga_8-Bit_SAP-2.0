@@ -14,12 +14,12 @@ This document organizes all proposed extensions to the SAP‑1.5 FPGA CPU into d
 ## Phase 1: Core Bus Interface Refactor
 
 1. **Extract CPU Core (`cpu.sv`)**  
-   - Rename `computer.sv` → `cpu.sv`.  
+   - Rename `cpu.sv` → `cpu.sv`.  
    - Expose a minimal memory‑bus interface:  
      - `mem_addr[7:0]`, `mem_data_out[7:0]`, `mem_data_in[7:0]`, `mem_read`, `mem_write`.  
    - Internally replace direct `ram` and `u_register_OUT` instantiations with bus signals.
 
-2. **Create Top‑Level Wrapper (`computer.sv`)**  
+2. **Create Top‑Level Wrapper (`cpu.sv`)**  
    - Instantiate `cpu.sv` and implement address decode + bus multiplexer.  
    - Route `mem_read/write` & `mem_addr` to underlying RAM or I/O blocks.
 
@@ -34,7 +34,7 @@ This document organizes all proposed extensions to the SAP‑1.5 FPGA CPU into d
    - Document each address’s function (LEDs, status, command, data registers).
 
 2. **Implement I/O Registers in Wrapper**  
-   - For each reserved address, add flip‑flops or small logic in `computer.sv`:  
+   - For each reserved address, add flip‑flops or small logic in `cpu.sv`:  
      ```verilog
      if (mem_write && mem_addr == 8'hF0) led_reg <= mem_data_out;
      if (mem_read  && mem_addr == 8'hF1) mem_data_in = key_status_reg;

@@ -1,80 +1,122 @@
 VCD info: dumpfile waveform.vcd opened for output.
---- Loading hex file: ../fixture/Flags_Reg_test_load_instructions.hex ---
---- RAM Content Dump ---
-RAM[0] = 80
-RAM[1] = 88
-RAM[2] = 7e
-RAM[3] = 8f
-RAM[4] = 7f
-RAM[5] = 1e
-RAM[6] = 2f
-RAM[7] = 81
-RAM[8] = e0
-RAM[9] = ff
-RAM[10] = 00
-RAM[11] = 00
-RAM[12] = 00
-RAM[13] = 00
-RAM[14] = 00
-RAM[15] = 00
---- End RAM Dump ---
-Running LDI #0
-[0;32mAssertion Passed: A (8 bits) = 00000000[0m
-[0;32mAssertion Passed: N after LDI #0[0m
-[0;32mAssertion Passed: C after LDI #0[0m
-[0;32mAssertion Passed: Z after LDI #0[0m
-[0;32mAssertion Passed: PC (4 bits) = 00000001[0m
-Running LDI #8
-[0;32mAssertion Passed: A (8 bits) = 00000008[0m
-[0;32mAssertion Passed: N after LDI #8[0m
-[0;32mAssertion Passed: C after LDI #8[0m
-[0;32mAssertion Passed: Z after LDI #8[0m
-[0;32mAssertion Passed: PC (4 bits) = 00000002[0m
-Running STA 0xE
-[0;32mAssertion Passed: RAM[E] (8 bits) = 00000008[0m
-[0;32mAssertion Passed: N after STA (no change)[0m
-[0;32mAssertion Passed: C after STA (no change)[0m
-[0;32mAssertion Passed: Z after STA (no change)[0m
-[0;32mAssertion Passed: PC (4 bits) = 00000003[0m
-Running LDI #0xF
-[0;32mAssertion Passed: A (8 bits) = 0000000f[0m
-[0;32mAssertion Passed: N after LDI #F[0m
-[0;32mAssertion Passed: C after LDI #F[0m
-[0;32mAssertion Passed: Z after LDI #F[0m
-[0;32mAssertion Passed: PC (4 bits) = 00000004[0m
-Running STA 0xF
-[0;32mAssertion Passed: RAM[F] (8 bits) = 0000000f[0m
-[0;32mAssertion Passed: N after STA (no change)[0m
-[0;32mAssertion Passed: C after STA (no change)[0m
-[0;32mAssertion Passed: Z after STA (no change)[0m
-[0;32mAssertion Passed: PC (4 bits) = 00000005[0m
-Running LDA 0xE
-[0;32mAssertion Passed: A (8 bits) = 00000008[0m
-[0;32mAssertion Passed: N after LDA 0xE[0m
-[0;32mAssertion Passed: C after LDA 0xE[0m
-[0;32mAssertion Passed: Z after LDA 0xE[0m
-[0;32mAssertion Passed: PC (4 bits) = 00000006[0m
-Running LDB 0xF
-[0;32mAssertion Passed: B (8 bits) = 0000000f[0m
-[0;32mAssertion Passed: N after LDB 0xF[0m
-[0;32mAssertion Passed: C after LDB 0xF[0m
-[0;32mAssertion Passed: Z after LDB 0xF[0m
-[0;32mAssertion Passed: PC (4 bits) = 00000007[0m
-Running LDI #1
-[0;32mAssertion Passed: A (8 bits) = 00000001[0m
-[0;32mAssertion Passed: N after LDI #1[0m
-[0;32mAssertion Passed: C after LDI #1[0m
-[0;32mAssertion Passed: Z after LDI #1[0m
-[0;32mAssertion Passed: PC (4 bits) = 00000008[0m
-Running OUTA
-[0;32mAssertion Passed: O after OUTA (8 bits) = 00000001[0m
-[0;32mAssertion Passed: PC (4 bits) = 00000009[0m
-Running HLT
-HALT signal detected high at start of cycle 7.
-[0;32mSimulation run completed (halt detected or max cycles reached while potentially halting). Cycles run: 6[0m
-@785000: Checking state after Halt
-[0;32mAssertion Passed: Halt signal active[0m
-[0;32mAssertion Passed: Final PC (4 bits) = 0000000a[0m
-[0;32mAssertion Passed: Final Output (8 bits) = 00000001[0m
-[0;32mLoad Flags test completed successfully.[0m
-/Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/build/combined.v:756: $finish called at 785102 (1ps)
+--- ALU Testbench Start ---
+[0;32mAssertion Passed: Reset - Result[0m
+Reset Applied
+Reset Released
+----------------------------------------
+Applying: ADD: 5 + 3 (A=05, B=03, Op=ADD)
+[0;32mAssertion Passed: ADD: 5 + 3 - Result[0m
+[0;32mAssertion Passed: ADD: 5 + 3 - Carry Flag[0m
+[0;32mAssertion Passed: ADD: 5 + 3 - Zero Flag[0m
+[0;32mAssertion Passed: ADD: 5 + 3 - Negative Flag[0m
+----------------------------------------
+Applying: ADD: 0 + 0 (A=00, B=00, Op=ADD)
+[0;32mAssertion Passed: ADD: 0 + 0 - Result[0m
+[0;32mAssertion Passed: ADD: 0 + 0 - Carry Flag[0m
+[0;32mAssertion Passed: ADD: 0 + 0 - Zero Flag[0m
+[0;32mAssertion Passed: ADD: 0 + 0 - Negative Flag[0m
+----------------------------------------
+Applying: ADD: 255 + 1 (A=ff, B=01, Op=ADD)
+[0;32mAssertion Passed: ADD: 255 + 1 - Result[0m
+[0;32mAssertion Passed: ADD: 255 + 1 - Carry Flag[0m
+[0;32mAssertion Passed: ADD: 255 + 1 - Zero Flag[0m
+[0;32mAssertion Passed: ADD: 255 + 1 - Negative Flag[0m
+----------------------------------------
+Applying: ADD: 128 + 1 (A=80, B=01, Op=ADD)
+[0;32mAssertion Passed: ADD: 128 + 1 - Result[0m
+[0;32mAssertion Passed: ADD: 128 + 1 - Carry Flag[0m
+[0;32mAssertion Passed: ADD: 128 + 1 - Zero Flag[0m
+[0;32mAssertion Passed: ADD: 128 + 1 - Negative Flag[0m
+----------------------------------------
+Applying: ADD: 127 + 1 (A=7f, B=01, Op=ADD)
+[0;32mAssertion Passed: ADD: 127 + 1 - Result[0m
+[0;32mAssertion Passed: ADD: 127 + 1 - Carry Flag[0m
+[0;32mAssertion Passed: ADD: 127 + 1 - Zero Flag[0m
+[0;32mAssertion Passed: ADD: 127 + 1 - Negative Flag[0m
+----------------------------------------
+Applying: ADD: 240 + 240 (A=f0, B=f0, Op=ADD)
+[0;32mAssertion Passed: ADD: 240 + 240 - Result[0m
+[0;32mAssertion Passed: ADD: 240 + 240 - Carry Flag[0m
+[0;32mAssertion Passed: ADD: 240 + 240 - Zero Flag[0m
+[0;32mAssertion Passed: ADD: 240 + 240 - Negative Flag[0m
+----------------------------------------
+Applying: SUB: 8 - 3 (A=08, B=03, Op=SUB)
+[0;32mAssertion Passed: SUB: 8 - 3 - Result[0m
+[0;32mAssertion Passed: SUB: 8 - 3 - Carry Flag[0m
+[0;32mAssertion Passed: SUB: 8 - 3 - Zero Flag[0m
+[0;32mAssertion Passed: SUB: 8 - 3 - Negative Flag[0m
+----------------------------------------
+Applying: SUB: 5 - 5 (A=05, B=05, Op=SUB)
+[0;32mAssertion Passed: SUB: 5 - 5 - Result[0m
+[0;32mAssertion Passed: SUB: 5 - 5 - Carry Flag[0m
+[0;32mAssertion Passed: SUB: 5 - 5 - Zero Flag[0m
+[0;32mAssertion Passed: SUB: 5 - 5 - Negative Flag[0m
+----------------------------------------
+Applying: SUB: 3 - 5 (A=03, B=05, Op=SUB)
+[0;32mAssertion Passed: SUB: 3 - 5 - Result[0m
+[0;32mAssertion Passed: SUB: 3 - 5 - Carry Flag[0m
+[0;32mAssertion Passed: SUB: 3 - 5 - Zero Flag[0m
+[0;32mAssertion Passed: SUB: 3 - 5 - Negative Flag[0m
+----------------------------------------
+Applying: SUB: 0 - 1 (A=00, B=01, Op=SUB)
+[0;32mAssertion Passed: SUB: 0 - 1 - Result[0m
+[0;32mAssertion Passed: SUB: 0 - 1 - Carry Flag[0m
+[0;32mAssertion Passed: SUB: 0 - 1 - Zero Flag[0m
+[0;32mAssertion Passed: SUB: 0 - 1 - Negative Flag[0m
+----------------------------------------
+Applying: SUB: -128 - 1 (A=80, B=01, Op=SUB)
+[0;32mAssertion Passed: SUB: -128 - 1 - Result[0m
+[0;32mAssertion Passed: SUB: -128 - 1 - Carry Flag[0m
+[0;32mAssertion Passed: SUB: -128 - 1 - Zero Flag[0m
+[0;32mAssertion Passed: SUB: -128 - 1 - Negative Flag[0m
+----------------------------------------
+Applying: AND: 55 & AA (A=55, B=aa, Op=AND)
+[0;32mAssertion Passed: AND: 55 & AA - Result[0m
+[0;32mAssertion Passed: AND: 55 & AA - Carry Flag[0m
+[0;32mAssertion Passed: AND: 55 & AA - Zero Flag[0m
+[0;32mAssertion Passed: AND: 55 & AA - Negative Flag[0m
+----------------------------------------
+Applying: AND: CD & FF (A=cd, B=ff, Op=AND)
+[0;32mAssertion Passed: AND: CD & FF - Result[0m
+[0;32mAssertion Passed: AND: CD & FF - Carry Flag[0m
+[0;32mAssertion Passed: AND: CD & FF - Zero Flag[0m
+[0;32mAssertion Passed: AND: CD & FF - Negative Flag[0m
+----------------------------------------
+Applying: AND: CD & 0F (A=cd, B=0f, Op=AND)
+[0;32mAssertion Passed: AND: CD & 0F - Result[0m
+[0;32mAssertion Passed: AND: CD & 0F - Carry Flag[0m
+[0;32mAssertion Passed: AND: CD & 0F - Zero Flag[0m
+[0;32mAssertion Passed: AND: CD & 0F - Negative Flag[0m
+----------------------------------------
+Applying: AND: F0 & 0F (A=f0, B=0f, Op=AND)
+[0;32mAssertion Passed: AND: F0 & 0F - Result[0m
+[0;32mAssertion Passed: AND: F0 & 0F - Carry Flag[0m
+[0;32mAssertion Passed: AND: F0 & 0F - Zero Flag[0m
+[0;32mAssertion Passed: AND: F0 & 0F - Negative Flag[0m
+----------------------------------------
+Applying: OR: 55 | AA (A=55, B=aa, Op=OR)
+[0;32mAssertion Passed: OR: 55 | AA - Result[0m
+[0;32mAssertion Passed: OR: 55 | AA - Carry Flag[0m
+[0;32mAssertion Passed: OR: 55 | AA - Zero Flag[0m
+[0;32mAssertion Passed: OR: 55 | AA - Negative Flag[0m
+----------------------------------------
+Applying: OR: CD | 00 (A=cd, B=00, Op=OR)
+[0;32mAssertion Passed: OR: CD | 00 - Result[0m
+[0;32mAssertion Passed: OR: CD | 00 - Carry Flag[0m
+[0;32mAssertion Passed: OR: CD | 00 - Zero Flag[0m
+[0;32mAssertion Passed: OR: CD | 00 - Negative Flag[0m
+----------------------------------------
+Applying: OR: 0F | 00 (A=0f, B=00, Op=OR)
+[0;32mAssertion Passed: OR: 0F | 00 - Result[0m
+[0;32mAssertion Passed: OR: 0F | 00 - Carry Flag[0m
+[0;32mAssertion Passed: OR: 0F | 00 - Zero Flag[0m
+[0;32mAssertion Passed: OR: 0F | 00 - Negative Flag[0m
+----------------------------------------
+Applying: OR: F0 | 0F (A=f0, B=0f, Op=OR)
+[0;32mAssertion Passed: OR: F0 | 0F - Result[0m
+[0;32mAssertion Passed: OR: F0 | 0F - Carry Flag[0m
+[0;32mAssertion Passed: OR: F0 | 0F - Zero Flag[0m
+[0;32mAssertion Passed: OR: F0 | 0F - Negative Flag[0m
+----------------------------------------
+--- ALU Testbench Complete ---
+/Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/build/combined.v:666: $finish called at 215000 (1ps)

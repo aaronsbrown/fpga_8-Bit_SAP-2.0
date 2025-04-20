@@ -36,26 +36,26 @@
 [markername] XX
 [markername] YY
 [markername] ZZ
-[treeopen] computer_tb.
+[treeopen] cpu_tb.
 [sst_width] 255
 [signals_width] 177
 [sst_expanded] 1
 [sst_vpaned_height] 159
 @28
-computer_tb.uut.clk
-computer_tb.uut.reset
+cpu_tb.uut.clk
+cpu_tb.uut.reset
 @22
-computer_tb.uut.counter_out[3:0]
+cpu_tb.uut.counter_out[3:0]
 @2028
 ^1 /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/sim/filter_state.txt
-computer_tb.uut.current_state[2:0]
+cpu_tb.uut.current_state[2:0]
 ^2 /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/sim/filter_timestep.txt
-computer_tb.uut.current_step[3:0]
+cpu_tb.uut.current_step[3:0]
 ^3 /Users/aaronbrown/Documents/Code/2_Ben_Eater_FPGA/sim/filter_opcode.txt
-computer_tb.uut.opcode[3:0]
+cpu_tb.uut.opcode[3:0]
 @23
-computer_tb.uut.operand[3:0]
+cpu_tb.uut.operand[3:0]
 @22
-computer_tb.uut.bus[7:0]
+cpu_tb.uut.bus[7:0]
 [pattern_trace] 1
 [pattern_trace] 0

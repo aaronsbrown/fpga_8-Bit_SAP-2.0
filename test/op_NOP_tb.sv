@@ -2,7 +2,7 @@
 import test_utils_pkg::*;
 import arch_defs_pkg::*; 
 
-module computer_tb;
+module cpu_tb;
 
     localparam string HEX_FILE = "../fixture/NOP.hex";
     
@@ -11,7 +11,7 @@ module computer_tb;
     wire [DATA_WIDTH-1:0] out_val; 
     wire out_flag_zero, out_flag_carry, out_flag_negative; // Output flags from the DUT
   
-    computer uut (
+    cpu uut (
             .clk(clk),
             .reset(reset),
             .out_val(out_val),
@@ -27,7 +27,7 @@ module computer_tb;
     initial begin
         
         $dumpfile("waveform.vcd");
-        $dumpvars(0, computer_tb);
+        $dumpvars(0, cpu_tb);
 
 
         //         # Address | Instruction | Opcode | Comment

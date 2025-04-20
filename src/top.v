@@ -34,7 +34,7 @@ module top (
     //     .clk_out(clk_div)
     // );
 
-    computer u_computer (
+    cpu u_cpu (
         .clk(clk_out),
         .reset(sys_reset),
         .out_val(output_value),

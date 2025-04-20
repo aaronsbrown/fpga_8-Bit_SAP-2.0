@@ -3,7 +3,7 @@ import arch_defs_pkg::*;
 // This module implements a simple microcoded CPU architecture. It includes a program counter, registers, 
 // a RAM interface, and a microcode ROM to control the CPU's operations based on opcodes and microsteps.
 
-module computer (
+module cpu (
     input wire  clk,
     input wire  reset, 
     output wire [DATA_WIDTH-1:0] out_val,
