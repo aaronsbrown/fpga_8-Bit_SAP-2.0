@@ -12,7 +12,7 @@ This document organizes all proposed extensions to the SAP‑1.5 FPGA CPU into d
 
 ---
 
-## Phase 1: Core Bus Interface Refactor
+## ~~Phase 1: Core Bus Interface Refactor~~ (DONE)
 
 1. **Extract CPU Core (`cpu_core.sv`)**
     - Rename `cpu.sv` → `cpu_core.sv`.
