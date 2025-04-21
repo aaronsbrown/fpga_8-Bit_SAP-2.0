@@ -6,7 +6,25 @@ import arch_defs_pkg::*;
 module cpu (
     input wire  clk,
     input wire  reset, 
-    output wire [DATA_WIDTH-1:0] out_val,
+    
+    output wire [ADDR_WIDTH-1:0] mem_address,
+
+    // RAM READ
+    // TODO remove mem_read 
+    output wire mem_read, 
+    input wire  [DATA_WIDTH-1:0] mem_data_in,
+    
+    // RAM WRITE
+    output wire mem_write,
+    output wire [DATA_WIDTH-1:0] mem_data_out,
+    
+    output wire load_o,
+    output logic oe_ram,
+    output logic oe_a,
+    output wire [DATA_WIDTH-1:0] a_out_bus,
+
+    output wire halt,
+
     output wire flag_zero_o,
     output wire flag_carry_o,
     output wire flag_negative_o,
@@ -38,25 +56,24 @@ module cpu (
     // Control word is initialized to zero to avoid 'x' propagation in the system.
     control_word_t control_word = '{default: 0};
 
-    logic halt;
     logic pc_enable;
 
     // Control signals for loading data from the bus into registers
-    logic load_o, load_a, load_b, load_ir, load_pc, load_flags, load_sets_zn, load_ram, load_mar;
+    logic load_a, load_b, load_ir, load_pc, load_flags, load_sets_zn, load_mar;
     
     // Control signals for outputting data to the bus
-    logic oe_a, oe_alu, oe_ir, oe_pc, oe_ram;
+    logic oe_alu, oe_ir, oe_pc;
 
     
     // ================= BUS INTERFACE and 'bus staging' registers ==================
     // ==============================================================================
     logic [DATA_WIDTH-1:0] bus;
-    logic [DATA_WIDTH-1:0] o_out, a_out, b_out, alu_out, ram_out;
-    logic [DATA_WIDTH-1:0] counter_out, memory_address_out;
+    logic [DATA_WIDTH-1:0] a_out, b_out, alu_out;
+    logic [ADDR_WIDTH-1:0] counter_out;
     
     // Tri-state bus logic modeled using a priority multiplexer
     assign bus =    (oe_pc)     ? { {(DATA_WIDTH-ADDR_WIDTH){1'b0} }, counter_out } :
-                    (oe_ram)    ? ram_out :
+                    (oe_ram)    ? mem_data_in :
                     (oe_ir)     ? { {(DATA_WIDTH-OPERAND_WIDTH){1'b0} }, operand } :
                     (oe_alu)    ? alu_out :
                     (oe_a)      ? a_out : 
@@ -74,14 +91,6 @@ module cpu (
         .counter_out(counter_out)
     );
 
-    register_nbit #( .N(DATA_WIDTH) ) u_register_OUT (
-        .clk(clk),
-        .reset(reset),
-        .load(load_o),
-        .data_in(bus),
-        .latched_data(o_out)
-    );
-    assign out_val = o_out;    
     
     register_nbit #( .N(DATA_WIDTH) ) u_register_A (
         .clk(clk),
@@ -90,6 +99,8 @@ module cpu (
         .data_in(bus),
         .latched_data(a_out)
     );
+    assign mem_data_out = a_out;
+    assign a_out_bus = a_out;
 
     register_nbit #( .N(DATA_WIDTH) ) u_register_B (
         .clk(clk),
@@ -105,7 +116,7 @@ module cpu (
         .reset(reset),
         .load(load_mar),
         .data_in(bus[ADDR_WIDTH-1:0]),
-        .latched_data(memory_address_out)
+        .latched_data(mem_address)
     );
 
     // Instruction register to hold the current instruction
@@ -160,7 +171,7 @@ module cpu (
     assign load_ir = control_word.load_ir;
     assign load_pc = control_word.load_pc;
     assign load_mar = control_word.load_mar;
-    assign load_ram = control_word.load_ram;
+    assign mem_write = control_word.load_ram;
     assign oe_a = control_word.oe_a;
     assign oe_ir = control_word.oe_ir;
     assign oe_pc = control_word.oe_pc;
@@ -184,14 +195,6 @@ module cpu (
         .negative_flag(flag_alu_negative)
     );
 
-    ram u_ram (
-        .clk(clk),
-        .we(load_ram),
-        .address(memory_address_out),  
-        .data_in(bus),
-        .data_out(ram_out)
-    );
-    
 
     // ================================ FLAG LOGIC ===============================
     // ===========================================================================

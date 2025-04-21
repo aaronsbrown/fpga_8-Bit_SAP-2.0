@@ -34,10 +34,10 @@ module top (
     //     .clk_out(clk_div)
     // );
 
-    cpu u_cpu (
+    computer u_computer (
         .clk(clk_out),
         .reset(sys_reset),
-        .out_val(output_value),
+        .final_out(output_value),
         .flag_zero_o(led[0]),    
         .flag_carry_o(led[1]),
         .flag_negative_o(led[2]),

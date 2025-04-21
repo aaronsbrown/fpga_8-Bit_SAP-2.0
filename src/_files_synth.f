@@ -21,4 +21,5 @@ src/register_instruction.sv
 src/register_nbit.sv
 src/control_unit.sv
 src/cpu.sv
+src/computer.sv
 src/top.v

@@ -2,7 +2,7 @@
 import test_utils_pkg::*; // Import test helpers
 import arch_defs_pkg::*;  // Import architecture definitions (DATA_WIDTH, ADDR_WIDTH, etc.)
 
-module cpu_tb;
+module computer_tb;
 
   // Define the program to load for this specific test
   localparam string HEX_FILE = "../fixture/HLT.hex";
@@ -16,10 +16,10 @@ module cpu_tb;
   wire flag_zero_o, flag_carry_o, flag_negative_o;
 
   // --- Instantiate the Device Under Test (DUT) ---
-  cpu uut (
+  computer uut (
         .clk(clk),
         .reset(reset),
-        .out_val(out_val),
+        .final_out(out_val),
         // Connect flag outputs
         .flag_zero_o(flag_zero_o),
         .flag_carry_o(flag_carry_o),
@@ -38,7 +38,7 @@ module cpu_tb;
 
     // Setup waveform dumping
     $dumpfile("waveform.vcd");
-    $dumpvars(0, cpu_tb); // Dump all signals in this module and below
+    $dumpvars(0, computer_tb); // Dump all signals in this module and below
 
     $display("--- Loading hex file: %s ---", HEX_FILE);
     $readmemh(HEX_FILE, uut.u_ram.mem); 
@@ -56,8 +56,8 @@ module cpu_tb;
     #0.1;
     pretty_print_assert_vec(uut.halt, 1'b1, "Halt signal active");
     // Inlined expected value:
-    inspect_register(uut.u_program_counter.counter_out, 32'd1, "PC after HLT fetch", ADDR_WIDTH);
-    inspect_register(uut.u_register_A.latched_data, {DATA_WIDTH{1'b0}}, "Register A after HLT", DATA_WIDTH);
+    inspect_register(uut.u_cpu.u_program_counter.counter_out, 32'd1, "PC after HLT fetch", ADDR_WIDTH);
+    inspect_register(uut.u_cpu.u_register_A.latched_data, {DATA_WIDTH{1'b0}}, "Register A after HLT", DATA_WIDTH);
     inspect_register(uut.u_register_OUT.latched_data, {DATA_WIDTH{1'b0}}, "Output Reg O after HLT", DATA_WIDTH);
     $display("\033[0;32mHLT instruction test completed successfully.\033[0m");
     $finish;

@@ -2,7 +2,7 @@
 import test_utils_pkg::*;
 import arch_defs_pkg::*; 
 
-module cpu_tb;
+module computer_tb;
   
   localparam string HEX_FILE = "../fixture/Flags_Reg_AND.hex";
 
@@ -12,10 +12,10 @@ module cpu_tb;
   wire [DATA_WIDTH-1:0] out_val; // Output value from the DUT
   
   // Instantiate the DUT (assumed to be named 'cpu')
-  cpu uut (
+  computer uut (
         .clk(clk),
         .reset(reset),
-        .out_val(out_val),
+        .final_out(out_val),
         .flag_zero_o(flag_zero),
         .flag_carry_o(flag_carry),
         .flag_negative_o(flag_negative)
@@ -34,7 +34,7 @@ module cpu_tb;
     // C: 1'b0, Z: 1'b1,  N: 1'b0, "AND: F0 & 0F");
 
     $dumpfile("waveform.vcd");
-    $dumpvars(0, cpu_tb);
+    $dumpvars(0, computer_tb);
 
     $display("--- Loading hex file: %s ---", HEX_FILE);
     $readmemh(HEX_FILE, uut.u_ram.mem);
@@ -43,7 +43,7 @@ module cpu_tb;
     reset_and_wait(0);
     
     // REG A == 0x00
-    inspect_register(uut.u_register_A.latched_data, 8'h00, "initial state: A is 0", DATA_WIDTH);
+    inspect_register(uut.u_cpu.u_register_A.latched_data, 8'h00, "initial state: A is 0", DATA_WIDTH);
     
     // LDA: (5 + 4) = 9 cycles
     repeat (9) @(posedge clk); 
@@ -51,13 +51,13 @@ module cpu_tb;
     // + 1 for latching A register
     repeat (1) @(posedge clk); 
     #0.1;
-    inspect_register(uut.u_register_A.latched_data, 8'hF0, "after LDA: A is F0", DATA_WIDTH);
+    inspect_register(uut.u_cpu.u_register_A.latched_data, 8'hF0, "after LDA: A is F0", DATA_WIDTH);
 
     // AND: (5 + 6) = 11
     repeat (11) @(posedge clk);
     #0.1; 
-    inspect_register(uut.u_register_A.latched_data, 8'h00, "after AND: A is 00", DATA_WIDTH);
-    inspect_register(uut.u_register_B.latched_data, 8'h0F, "after AND: B is 0F", DATA_WIDTH);
+    inspect_register(uut.u_cpu.u_register_A.latched_data, 8'h00, "after AND: A is 00", DATA_WIDTH);
+    inspect_register(uut.u_cpu.u_register_B.latched_data, 8'h0F, "after AND: B is 0F", DATA_WIDTH);
     pretty_print_assert_vec(flag_zero, 1'b1, "Flag Zero");
     pretty_print_assert_vec(flag_carry, 1'b0, "Flag Carry");
     pretty_print_assert_vec(flag_negative, 1'b0, "Flag Negative");

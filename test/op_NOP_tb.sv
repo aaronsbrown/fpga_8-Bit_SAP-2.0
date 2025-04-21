@@ -2,7 +2,7 @@
 import test_utils_pkg::*;
 import arch_defs_pkg::*; 
 
-module cpu_tb;
+module computer_tb;
 
     localparam string HEX_FILE = "../fixture/NOP.hex";
     
@@ -11,10 +11,10 @@ module cpu_tb;
     wire [DATA_WIDTH-1:0] out_val; 
     wire out_flag_zero, out_flag_carry, out_flag_negative; // Output flags from the DUT
   
-    cpu uut (
+    computer uut (
             .clk(clk),
             .reset(reset),
-            .out_val(out_val),
+            .final_out(out_val),
             .flag_zero_o(out_flag_zero),
             .flag_carry_o(out_flag_carry),
             .flag_negative_o(out_flag_negative)
@@ -27,7 +27,7 @@ module cpu_tb;
     initial begin
         
         $dumpfile("waveform.vcd");
-        $dumpvars(0, cpu_tb);
+        $dumpvars(0, computer_tb);
 
 
         //         # Address | Instruction | Opcode | Comment
@@ -53,13 +53,13 @@ module cpu_tb;
         run_until_halt(100);
 
             // 1. Check PC: Should be at address 8 (after HLT at address 7)
-        inspect_register(uut.u_program_counter.counter_out, 8, "PC", ADDR_WIDTH);
+        inspect_register(uut.u_cpu.u_program_counter.counter_out, 8, "PC", ADDR_WIDTH);
 
         // 2. Check Register A: Should be -2 (0xE) from the SUB 3, 5 instruction
-        inspect_register(uut.u_register_A.latched_data, 8'hFE, "A", DATA_WIDTH); // FE is two's complement -2
+        inspect_register(uut.u_cpu.u_register_A.latched_data, 8'hFE, "A", DATA_WIDTH); // FE is two's complement -2
 
         // 3. Check Register B: Should be 3 (0x03) from the LDB 0xD instruction *before* NOP
-        inspect_register(uut.u_register_B.latched_data, 8'h03, "B", DATA_WIDTH);
+        inspect_register(uut.u_cpu.u_register_B.latched_data, 8'h03, "B", DATA_WIDTH);
 
         
         // 4. Check Flags (CRITICAL - Requires Flags Register Implementation):

@@ -2,7 +2,7 @@
 import test_utils_pkg::*; 
 import arch_defs_pkg::*; 
 
-module cpu_tb;
+module computer_tb;
 
   localparam string HEX_FILE = "../fixture/LDB.hex";
 
@@ -11,11 +11,10 @@ module cpu_tb;
   wire [DATA_WIDTH-1:0] out_val; // Output value from the DUT
  
   // Instantiate the DUT (assumed to be named 'cpu')
-  cpu uut (
+  computer uut (
         .clk(clk),
         .reset(reset),
-        .out_val(out_val),
-    );
+  );
 
   // Clock generation: 10ns period (5ns high, 5ns low)
   initial begin
@@ -27,7 +26,7 @@ module cpu_tb;
   initial begin
     
     $dumpfile("waveform.vcd");
-    $dumpvars(0, cpu_tb);
+    $dumpvars(0, computer_tb);
 
     $display("--- Loading hex file: %s ---", HEX_FILE);
     $readmemh(HEX_FILE, uut.u_ram.mem);
@@ -36,7 +35,7 @@ module cpu_tb;
     reset_and_wait(0);
     run_until_halt(50);
 
-    inspect_register(uut.u_register_B.latched_data, 8'h11, "B", DATA_WIDTH);
+    inspect_register(uut.u_cpu.u_register_B.latched_data, 8'h11, "B", DATA_WIDTH);
 
     $display("\033[0;32mLDB instruction test completed successfully.\033[0m");
     $finish;

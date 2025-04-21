@@ -2,7 +2,7 @@
 import test_utils_pkg::*;
 import arch_defs_pkg::*; 
 
-module cpu_tb;
+module computer_tb;
   
   localparam string HEX_FILE = "../fixture/prg_count_up_down.hex";
 
@@ -11,10 +11,10 @@ module cpu_tb;
   wire [DATA_WIDTH-1:0] out_val; // Output value from the DUT
   
   // Instantiate the DUT (assumed to be named 'cpu')
-  cpu uut (
+  computer uut (
         .clk(clk),
         .reset(reset),
-        .out_val(out_val),
+        .final_out(out_val),
     );
 
   // Clock generation: 10ns period (5ns high, 5ns low)
@@ -27,7 +27,7 @@ module cpu_tb;
   initial begin
     
     $dumpfile("waveform.vcd");
-    $dumpvars(0, cpu_tb);
+    $dumpvars(0, computer_tb);
 
     $display("--- Loading hex file: %s ---", HEX_FILE);
     $readmemh(HEX_FILE, uut.u_ram.mem);
