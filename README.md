@@ -1,4 +1,4 @@
-# SAP‑1.5 Extensions: Phased Roadmap
+# SAP‑1.5 Extensions: Phased Roadmap (Revised)
 
 This document organizes all proposed extensions to the SAP‑1.5 FPGA CPU into discrete phases, ordered by prerequisites. Use this as a checklist to progressively evolve the design toward a SAP‑2–style architecture and richer I/O capabilities.
 
@@ -6,159 +6,226 @@ This document organizes all proposed extensions to the SAP‑1.5 FPGA CPU into d
 
 ## Prerequisites
 
-- **Stable SAP‑1.5 Core**: 8‑bit data, 4‑bit address, microcoded control unit, 16‑instruction set (including conditional jumps and flags register), shared bus, synchronous design.  
-- **Toolchain & Testbench**: Working simulation (Icarus + GTKWave), open‑source synthesis (Yosys + nextpnr), existing monitor code & assembler for hex file loading.
+- **Stable SAP‑1.5 Core**: 8‑bit data, 4‑bit address, microcoded control unit, 16‑instruction set (including conditional jumps and flags register), shared bus, synchronous design.
+- **Toolchain & Testbench**: Working simulation (Icarus + GTKWave), open‑source synthesis (Yosys + nextpnr for iCE40), existing monitor code & assembler for hex file loading (if any, maybe just hand-assembled hex initially).
+- **Target Platform:** Confirmed FPGA board and toolchain (e.g., iCE40 + Yosys/nextpnr).
 
 ---
 
-## Phase 1: Core Bus Interface Refactor
+## Phase 1: Core Bus Interface Refactor
 
-1. **Extract CPU Core (`cpu.sv`)**  
-   - Rename `cpu.sv` → `cpu.sv`.  
-   - Expose a minimal memory‑bus interface:  
-     - `mem_addr[7:0]`, `mem_data_out[7:0]`, `mem_data_in[7:0]`, `mem_read`, `mem_write`.  
-   - Internally replace direct `ram` and `u_register_OUT` instantiations with bus signals.
+1. **Extract CPU Core (`cpu_core.sv`)**
+    - Rename `cpu.sv` → `cpu_core.sv`.
+    - Expose a minimal memory bus interface:
+        - `mem_addr[ADDR_WIDTH-1:0]`
+        - `mem_data_out[DATA_WIDTH-1:0]` (Data CPU writes TO bus)
+        - `mem_data_in[DATA_WIDTH-1:0]` (Data CPU reads FROM bus)
+        - `mem_write` (Write enable strobe from CPU)
+        - `oe_ram` (Used internally/externally to indicate CPU read cycle)
+    - Expose necessary signals for external Output Register (`load_o`, `oe_a`, `a_out_bus`).
+    - Internally replace direct `ram` and `u_register_OUT` instantiations with bus signals connected to ports. Update internal bus logic.
 
-2. **Create Top‑Level Wrapper (`cpu.sv`)**  
-   - Instantiate `cpu.sv` and implement address decode + bus multiplexer.  
-   - Route `mem_read/write` & `mem_addr` to underlying RAM or I/O blocks.
+2. **Create Top‑Level Wrapper (`computer.sv` or `top.sv`)**
+    - Instantiate `cpu_core.sv`, `ram.sv`, and the Output Register (`register_nbit`).
+    - Connect the memory interface between the core and RAM.
+    - Implement logic to drive the Output Register based on control signals from the core.
 
 > **Prerequisite:** Existing SAP‑1.5 design, familiarity with Verilog module I/O refactoring.
+> **Goal:** Modular CPU core separated from memory system.
 
 ---
 
-## Phase 2: Memory‑Mapped I/O Infrastructure
+## Phase 2: Memory‑Mapped I/O Infrastructure
 
-1. **Define I/O Address Map**  
-   - Reserve high addresses, e.g. `0xF0–0xFF`, for peripherals.  
-   - Document each address’s function (LEDs, status, command, data registers).
+1. **Define I/O Address Map**
+    - Decide on an address range (e.g., `0xF0–0xFF` if still 4-bit address, or higher range after expansion) reserved for peripherals.
+    - Document each planned I/O address’s function (LEDs, UART status, UART data, etc.).
 
-2. **Implement I/O Registers in Wrapper**  
-   - For each reserved address, add flip‑flops or small logic in `cpu.sv`:  
-     ```verilog
-     if (mem_write && mem_addr == 8'hF0) led_reg <= mem_data_out;
-     if (mem_read  && mem_addr == 8'hF1) mem_data_in = key_status_reg;
-     ```
-3. **Update Testbench**  
-   - Simulate reads/writes to I/O addresses and verify register behavior.
+2. **Implement Address Decoder in Wrapper**
+    - In the top-level module (`computer.sv`), add logic that checks the `mem_addr` from the CPU core.
+    - Generate chip-select signals (`cs_ram`, `cs_io_device_1`, etc.) based on the address.
 
-> **Prerequisite:** Phase 1 complete.
+3. **Route Bus Signals based on Decode**
+    - Use chip selects to route `mem_write` and `mem_read` (`oe_ram`) signals appropriately (to RAM or I/O).
+    - Multiplex data read onto `mem_data_in`: If `cs_ram` is active during a read, route `ram.data_out`; if `cs_io_device_1` is active, route data from that device.
+    - Route `mem_data_out` to RAM *or* I/O devices based on chip selects during a write.
 
----
+4. **Add Basic I/O Register (e.g., LEDs)**
+    - Instantiate a simple register (e.g., 8-bit flip-flop) in the wrapper at a specific I/O address (e.g., `0xF0`).
+    - Connect its `load` input to `mem_write` ANDed with its chip select (`cs_led_reg`).
+    - Connect its `data_in` to `mem_data_out`.
+    - Connect its output to board LEDs.
 
-## Phase 3: Basic Peripherals (UART/Keyboard & Display)
+5. **Update Testbench**
+    - Simulate reads/writes to RAM and the new I/O LED register address. Verify correct behavior and chip select logic.
 
-1. **UART Receiver & Transmitter**  
-   - Build memory‑mapped UART with status & data registers.  
-   - Map to addresses, e.g. `0xF2` (status), `0xF3` (data).
-
-2. **Character LCD Controller (HD44780, 4‑bit mode)**  
-   - Create an FSM that latches `cmd` and `data` registers and toggles RS/E, D4–D7 with proper timing.  
-   - Memory‑map to `LCD_CMD_ADDR` and `LCD_DATA_ADDR`.
-
-3. **PS/2 Keyboard (Optional)**  
-   - Add a small PS/2 interface FSM.  
-   - Expose scancode and status via memory‑mapped registers.
-
-### Demo Project: Snake on OLED
-
-- **Hardware:** SPI‑driven SSD1306 or SH1106 128×64 OLED module, PS/2 keyboard or directional buttons for input. Utilize memory‑mapped SPI command and data registers defined in Phase 3.  
-- **Software:**  
-  1. Allocate a portion of RAM as a framebuffer (8×8 or 16×16 pixel grid, scaled to 128×64).  
-  2. Implement framebuffer routines in assembly: `DRAW_PIXEL`, `CLEAR_SCREEN`, `BLIT_FRAMEBUFFER` via SPI.  
-  3. Develop a game loop: maintain a linked list or circular buffer of snake segments in memory; poll input for direction changes; advance the head; detect collisions (self or walls); update tail.  
-  4. Use a simple timer or delay loop (`OUT TIMER_REG`) to pace movement.  
-- **Learning Goals:**  
-  - Memory‑mapped SPI I/O and OLED controller timing.  
-  - Framebuffer organization and efficient screen updates.  
-  - Real‑time game logic in constrained assembly (list management, collision detection).  
-  - Integration of peripherals, timer, and CPU in a cohesive demo.
-
-> **Prerequisite:** Phase 2 complete.
+> **Prerequisite:** Phase 1 complete.
+> **Goal:** Mechanism to interact with specific memory addresses as distinct I/O devices.
 
 ---
 
-## Phase 4: Monitor & Assembler Integration
+## Phase 3: Address Bus Expansion
 
-1. **Monitor Program**  
-   - Write a bootloader in RAM that:  
-     - Prompts for commands (`LOAD`, `GO`, `DUMP`).  
-     - Reads hex bytes via UART/keyboard.  
-     - Stores them to memory (`STA addr`).  
-     - Jumps to user code on `GO`.
+1. **Increase `ADDR_WIDTH` Parameter**
+    - Update `ADDR_WIDTH` in `arch_defs_pkg.sv` (e.g., to 8 for 256 bytes).
+    - Update dependent parameters like `RAM_DEPTH`.
 
-2. **Custom Python Assembler**  
-   - Adapt your Hack assembler: map mnemonics → opcodes, support labels, generate `.hex` files.  
-   - Automate building monitor+user programs into FPGA ROM or `.hex` fixtures.
+2. **Update Core Components**
+    - Modify `program_counter.sv` and `register_nbit.sv` (for MAR) to use the new `ADDR_WIDTH`.
+    - Ensure `cpu_core.sv` uses the updated width for `mem_address` port and internal connections.
 
-> **Prerequisite:** Phases 1–3 complete.
+3. **Expand RAM Module**
+    - Update `ram.sv` to use the new `ADDR_WIDTH` and `RAM_DEPTH`.
 
----
+4. **Update Top-Level Wrapper**
+    - Ensure address decoding logic (Phase 2) handles the wider address bus correctly. Adjust I/O address map if necessary (e.g., move to `0xFFF0` if using 16-bit address).
 
-## Phase 5: Stack & Subroutine Support
+5. **Update Testbenches & Fixtures**
+    - Adapt tests to use wider addresses.
+    - Update `.hex` file fixtures if needed, potentially clearing or initializing larger RAM space.
 
-1. **Stack Pointer (`SP`) Register**  
-   - Add an 8‑bit `SP` register initialized to `0xFF`.  
-   - Memory at `0x0100+SP` becomes the hardware stack.
-
-2. **`CALL` / `RET` Instructions**  
-   - Microcode for `CALL addr`:  
-     1. Push `PC+1` high & low bytes onto stack.  
-     2. Set `PC ← addr`.  
-   - Microcode for `RET`:  
-     1. Pop low & high bytes, set `PC ← popped + 1`.
-
-3. **Assembler Support**  
-   - Recognize `CALL`/`RET`, manage label resolution.
-
-> **Prerequisite:** Phases 1–4 complete.
+> **Prerequisite:** Phase 2 complete.
+> **Goal:** Provide sufficient memory space for more complex software. Crucial blocker removed.
 
 ---
 
-## Phase 6: Expanded Instruction Set
+## Phase 4: Basic I/O & Assembler
 
-1. **Compare & Branch**  
-   - Add `CMP addr` (sets flags only).  
-   - Add `BNE`, `BCC`, `BCS`, etc., as needed.
+1. **UART Receiver & Transmitter**
+    - Implement or integrate memory-mapped UART Verilog modules.
+    - Assign addresses (e.g., `0xFFF0` status, `0xFFF1` data if using 8-bit address) and connect via MMIO infrastructure.
+    - Connect UART TX/RX pins in top-level constraints.
 
-2. **Arithmetic & Logic**  
-   - Implement `XOR`, `INC`, `DEC`, `SHL`, `SHR`, `ROL`, `ROR`.
+2. **Custom Python Assembler**
+    - Develop or adapt a simple two-pass assembler (Python recommended).
+    - Map current instruction mnemonics to opcodes.
+    - Support labels for addresses and jumps.
+    - Generate `.hex` files suitable for `$readmemh`.
+    - *Develop this concurrently with UART testing.* Use the assembler to write test programs for the UART.
 
-3. **Immediate & Accumulator Variants**  
-   - Extend microcode or addressing‑mode sequencer to support immediate operands.
+3. **(Optional) Other Basic Peripherals**
+    - Implement PS/2 Keyboard interface if needed early.
+    - Refine LED output register (if added in Phase 2).
 
-> **Prerequisite:** Phases 1–5 complete.
+4. **Toolchain Integration**
+    - Integrate assembler into build scripts (e.g., `build.sh` could optionally run `assemble.py` first).
 
----
-
-## Phase 7: Two‑Phase Microcode (Towards SAP‑2)
-
-1. **Address‑Mode ROM**  
-   - Extract common fetch & operand‑fetch sequences into a small table indexed by mode.
-
-2. **Operation ROM**  
-   - Extract ALU/memory‑write sequences into a table indexed by operation.
-
-3. **Microsequencer FSM**  
-   - Three phases: Fetch → Addr‑Mode → Execute.
-
-> **Prerequisite:** Phases 1–6 complete.
+> **Prerequisite:** Phase 3 complete.
+> **Goal:** Enable text-based I/O and significantly improve software development efficiency. Crucial blocker removed.
 
 ---
 
-## Phase 8: Wider Address & Multi‑Byte Instructions
+## Phase 5: Monitor Program
 
-1. **Increase `ADDR_WIDTH` to 8**  
-   - Parameterize address bus & RAM depth.
+1. **Design Monitor Functionality**
+    - Define simple commands (`LOAD`, `GO`, `DUMP`, `PEEK`, `POKE`?).
+    - Plan how commands and data (hex characters) will be input via UART/Keyboard.
 
-2. **Multi‑Byte Fetch FSM**  
-   - Support 2‑ or 3‑byte instructions (op + immediate or 16‑bit address) in your microsequencer.
+2. **Implement Monitor in Assembly**
+    - Write the monitor program using your new assembler.
+    - Implement routines for reading input, parsing hex, writing to memory (`STA`), reading from memory (`LDA`), jumping (`JMP`), outputting to UART.
 
-3. **Assembler & Monitor Updates**  
-   - Emit 2‑byte or 3‑byte instruction words in `.hex` output.
+3. **Loading the Monitor**
+    - Decide how the monitor gets into RAM initially (e.g., initialized via `$readmemh` in simulation/synthesis, or a smaller hardware bootloader). Update `.hex` fixtures.
 
-> **Prerequisite:** Phases 1–7 complete.
+4. **Test Monitor**
+    - Use simulation or hardware with a serial terminal to interact with the monitor. Load and run simple test programs via the monitor.
+
+> **Prerequisite:** Phase 4 complete.
+> **Goal:** Basic operating environment on the CPU for loading and running user code.
 
 ---
 
-**By following these phases in order, you’ll gradually transform your SAP‑1.5 FPGA CPU into a far more powerful, modular companion—ultimately approaching a full SAP‑2/6502‑style architecture with robust I/O and software support.**
+## Phase 6: Stack & Subroutine Support
+
+1. **Stack Pointer (`SP`) Register**
+    - Add an 8‑bit `SP` register to `cpu_core.sv` (or wider if data width increases later). Initialize appropriately (e.g., `0xFF`).
+    - Define stack memory area (implicitly `0x0100 + SP` if `ADDR_WIDTH` becomes > 8, or within the current address space if SP is only 8-bit and `ADDR_WIDTH`=8).
+
+2. **`PUSH A`/`POP A` Instructions (Example)**
+    - Add microcode for `PUSH A`: Decrement SP, write A to address SP.
+    - Add microcode for `POP A`: Read from address SP, increment SP, load A.
+    - (Consider PUSH/POP B, or maybe PUSH/POP Flags later).
+
+3. **`CALL addr` / `RET` Instructions**
+    - Microcode for `CALL addr`: Push `PC+1` (return address) onto stack (handle high/low bytes if PC > 8 bits), Set `PC ← addr`.
+    - Microcode for `RET`: Pop return address from stack into PC.
+
+4. **Assembler Support**
+    - Add mnemonics for new stack/subroutine instructions.
+
+> **Prerequisite:** Phase 5 complete (Monitor helps test).
+> **Goal:** Enable structured programming with subroutines.
+
+---
+
+## Phase 7: Expanded Instruction Set
+
+1. **Add More Instructions**
+    - Add `CMP` (sets flags based on A - Mem).
+    - Add more conditional branches (`BNE`, `BCC`, `BCS`, `BMI`, `BPL` etc.) using flags.
+    - Implement missing logical/arithmetic (`XOR`, `INC A`, `DEC A`, `SHL`, `SHR`, `ROL`, `ROR`).
+    - Consider `INX`, `DEX`, `INY`, `DEY` if Index Registers are planned.
+
+2. **Update Microcode**
+    - Add entries to the microcode ROM for all new instructions.
+
+3. **Update Assembler**
+    - Add mnemonics and operand handling for new instructions.
+
+> **Prerequisite:** Phase 6 complete.
+> **Goal:** Increase the computational power and flexibility of the CPU.
+
+---
+
+## Phase 8: Two‑Phase Microcode (Optimization - Optional)
+
+1. **Analyze Microcode Redundancy**
+    - Identify common sequences (e.g., operand fetch based on addressing mode).
+
+2. **Split ROMs (Conceptual)**
+    - Design an Address‑Mode ROM/sequencer.
+    - Design an Operation ROM/sequencer.
+
+3. **Implement Microsequencer FSM**
+    - Refactor `control_unit.sv` to use the two-phase approach (e.g., Fetch Opcode -> Fetch Operand/Address -> Execute).
+
+> **Prerequisite:** Phase 7 complete (provides a rich instruction set to optimize).
+> **Goal:** Potentially reduce microcode ROM size and complexity, structure control flow. May not be necessary depending on complexity.
+
+---
+
+## Phase 9: Multi‑Byte Instructions & Addressing Modes
+
+1. **Multi‑Byte Fetch FSM**
+    - Modify the microsequencer (Phase 8 or existing) to fetch 2 or 3 bytes for instructions needing immediate data or 16-bit addresses (if `ADDR_WIDTH` >= 16). Example: `LDA #$12`, `LDA $1234`.
+
+2. **Implement Addressing Modes**
+    - Add microcode sequences to handle different addressing modes (Immediate, Zero Page, Absolute, Indexed Indirect, etc.) if desired, potentially linking to Phase 8.
+
+3. **Assembler & Monitor Updates**
+    - Modify assembler to generate multi-byte instruction encodings.
+    - Update monitor (if necessary) to handle loading multi-byte values correctly.
+
+> **Prerequisite:** Phase 3 (Wide Address), Phase 7 (Expanded Instructions), Phase 8 (useful for complex modes).
+> **Goal:** Support more complex instructions and memory access patterns similar to 6502/Z80.
+
+---
+
+## Phase 10: Advanced Peripherals & Demo Projects (e.g., Snake)
+
+1. **Implement Advanced Peripherals**
+    - Add SPI controller (memory-mapped registers for control/data).
+    - Interface with target device (e.g., SSD1306 OLED).
+    - Finish PS/2 Keyboard or other input devices.
+
+2. **Demo Project: Snake on OLED**
+    - **Hardware:** Requires SPI OLED, input device (Keyboard/buttons).
+    - **Software (using Assembler):**
+        - Allocate framebuffer in RAM (now feasible due to Phase 3).
+        - Write graphics primitives (`DRAW_PIXEL`, `CLEAR_SCREEN`, etc.) using MMIO SPI.
+        - Implement game loop, snake logic (list/buffer management), collision detection, input handling in assembly.
+        - Utilize timer/delay loops if needed.
+
+> **Prerequisite:** Phase 3 (Wide Address), Phase 4 (Assembler, Basic I/O), Phase 5 (Monitor helps load), Phase 9 (if needed for SPI), MMIO SPI controller.
+> **Goal:** Integrate multiple components into a functional, interactive application. Showcase the capabilities of the expanded SAP CPU.
