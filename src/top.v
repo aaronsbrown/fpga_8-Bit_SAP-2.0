@@ -18,8 +18,8 @@ module top (
     );
 
     // Generate a system reset that remains active until both rst_n is high and the PLL is locked
-    wire sys_reset;
     // sys_reset is active-high: asserted if external reset is active (rst_n is low) or PLL is not locked
+    wire sys_reset;
     assign sys_reset = ~rst_n || ~pll_locked;
 
     wire [7:0] output_value;
@@ -37,13 +37,13 @@ module top (
     computer u_computer (
         .clk(clk_out),
         .reset(sys_reset),
-        .final_out(output_value),
-        .flag_zero_o(led[0]),    
-        .flag_carry_o(led[1]),
-        .flag_negative_o(led[2]),
-        .debug_out_B(io_led[15:8]),
-        .debug_out_IR(io_led[7:0]),
-        .debug_out_PC(led[7:4])
+        .register_OUT(output_value),
+        .cpu_flag_zero_o(led[0]),    
+        .cpu_flag_carry_o(led[1]),
+        .cpu_flag_negative_o(led[2]),
+        .cpu_debug_out_B(io_led[15:8]),
+        .cpu_debug_out_IR(io_led[7:0]),
+        .cpu_debug_out_PC(led[7:4])
     );
   
     // Assign the remaining LEDs to 0

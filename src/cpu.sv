@@ -7,76 +7,120 @@ module cpu (
     input wire  clk,
     input wire  reset, 
     
-    output wire [ADDR_WIDTH-1:0] mem_address,
-
-    // RAM READ
-    // TODO remove mem_read 
-    output wire mem_read, 
-    input wire  [DATA_WIDTH-1:0] mem_data_in,
+    // ================= MEMORY BUS INTERFACE ==============
+    output wire [ADDR_WIDTH-1:0] mem_address,   // address driven by cpu
+    output wire mem_read,                       // read request strobe 
+    output wire mem_write,                      // write request strobe
+    input  wire [DATA_WIDTH-1:0] mem_data_in,   // data driven *to* cpu 
+    output wire [DATA_WIDTH-1:0] mem_data_out,  // data driven *from* cpu
     
-    // RAM WRITE
-    output wire mem_write,
-    output wire [DATA_WIDTH-1:0] mem_data_out,
-    
+    // ================= EXTERNAL OUTPUT REGISTER ========
     output wire load_o,
-    output logic oe_ram,
-    output logic oe_a,
-    output wire [DATA_WIDTH-1:0] a_out_bus,
+    output logic oe_ram,                        // OUTM: source is ram
+    output logic oe_a,                          // OUTA: source is A register
+    output wire [DATA_WIDTH-1:0] a_out_bus,     // output bus from A register
 
+    // ================= HALT SIGNAL ================
     output wire halt,
 
+    // ================= FLAGS ======================
     output wire flag_zero_o,
     output wire flag_carry_o,
     output wire flag_negative_o,
+
+    // ================= DEBUG SIGNALS ==============
     output wire [DATA_WIDTH-1:0] debug_out_B,
     output wire [DATA_WIDTH-1:0] debug_out_IR,
     output wire [ADDR_WIDTH-1:0] debug_out_PC
-);
+
+); // END PORT DEFS
+
     
-    // ===================== DEBUG SIGNALS =================
-    // =====================================================
+    // ================ CONNECT DEBUG SIGNALS ===============
+    // ======================================================
     assign debug_out_B = b_out;
     assign debug_out_IR = { opcode, operand };
     assign debug_out_PC = counter_out;
 
+
+    // =============== CONNECT  RAM INTERFACE ==============
+    // =====================================================
+    assign mem_read = control_word.oe_ram;
+    assign mem_write = control_word.load_ram;
+    assign mem_address = mar_out;
+    assign mem_data_out = a_out; 
     
-    // ===================== MICROCODE STRUCTURAL DEFINITION ==============
-    // ====================================================================
+
+    // =============== CONNECT OUTPUT REG  =================
+    // =====================================================
+    assign load_o = control_word.load_o;
+    assign oe_a = control_word.oe_a;
+    assign oe_ram = control_word.oe_ram;
+    assign a_out_bus = a_out;
+
+    // =============== CONNECT FLAGS  ======================
+    // =====================================================
+    assign flag_zero_o = flags_out[0];
+    assign flag_carry_o = flags_out[1];
+    assign flag_negative_o = flags_out[2];
+
+
+    // =============== MICROCODE STRUCTURAL DEFINITION ==============
+    // ==============================================================
     logic [OPCODE_WIDTH-1:0] opcode; 
     logic [OPERAND_WIDTH-1:0] operand; 
     
     
-    // ===================== ALU OPERATIONS ==============
-    // ===================================================
+    // =============== ALU OPERATIONS =====================
+    // ====================================================
     logic [1:0] alu_op;
-
-    
-    // ================= CONTROL SIGNALS =================
+  
+   
+    // =============== CONTROL SIGNALS ===================
     // ===================================================
-    // Control word is initialized to zero to avoid 'x' propagation in the system.
-    control_word_t control_word = '{default: 0};
 
+    // Control signal to enable program counter
     logic pc_enable;
 
-    // Control signals for loading data from the bus into registers
+    // Control signals for loading data from the internal_bus into registers
     logic load_a, load_b, load_ir, load_pc, load_flags, load_sets_zn, load_mar;
     
-    // Control signals for outputting data to the bus
+    // Control signals for outputting data to the internal_bus
     logic oe_alu, oe_ir, oe_pc;
 
+    control_word_t control_word = '{default: 0};
+    // assign load_o = control_word.load_o;
+    assign load_a = control_word.load_a;
+    assign load_b = control_word.load_b;
+    assign load_ir = control_word.load_ir;
+    assign load_pc = control_word.load_pc;
+    assign load_mar = control_word.load_mar;
+    // assign mem_write = control_word.load_ram;
+    // assign oe_a = control_word.oe_a;
+    assign oe_ir = control_word.oe_ir;
+    assign oe_pc = control_word.oe_pc;
+    assign oe_alu = control_word.oe_alu;
+    // assign oe_ram = control_word.oe_ram;
+    assign alu_op = control_word.alu_op;
+    assign pc_enable = control_word.pc_enable; 
+    assign halt = control_word.halt; 
+    assign load_flags = control_word.load_flags;
+    assign load_sets_zn = control_word.load_sets_zn; 
     
-    // ================= BUS INTERFACE and 'bus staging' registers ==================
+    
+    // ================= BUS INTERFACE and 'internal_bus staging' registers ==================
     // ==============================================================================
-    logic [DATA_WIDTH-1:0] bus;
-    logic [DATA_WIDTH-1:0] a_out, b_out, alu_out;
+    logic [DATA_WIDTH-1:0] internal_bus;
+    logic [DATA_WIDTH-1:0] a_out, b_out, alu_out, mar_out;
     logic [ADDR_WIDTH-1:0] counter_out;
     
     // Tri-state bus logic modeled using a priority multiplexer
-    assign bus =    (oe_pc)     ? { {(DATA_WIDTH-ADDR_WIDTH){1'b0} }, counter_out } :
-                    (oe_ram)    ? mem_data_in :
-                    (oe_ir)     ? { {(DATA_WIDTH-OPERAND_WIDTH){1'b0} }, operand } :
-                    (oe_alu)    ? alu_out :
-                    (oe_a)      ? a_out : 
+    assign internal_bus =    
+                    (oe_pc)  ? { {(DATA_WIDTH-ADDR_WIDTH){1'b0} }, counter_out } :
+                    (oe_ram) ? mem_data_in :
+                    (oe_ir)  ? { {(DATA_WIDTH-OPERAND_WIDTH){1'b0} }, operand } :
+                    (oe_alu) ? alu_out :
+                    (oe_a)   ? a_out : 
                     { DATA_WIDTH {1'b0} };
 
 
@@ -87,7 +131,7 @@ module cpu (
         .reset(reset),
         .enable(pc_enable),
         .load(load_pc),
-        .counter_in(bus[ADDR_WIDTH-1:0]),
+        .counter_in(internal_bus[ADDR_WIDTH-1:0]),
         .counter_out(counter_out)
     );
 
@@ -96,17 +140,15 @@ module cpu (
         .clk(clk),
         .reset(reset),
         .load(load_a),
-        .data_in(bus),
+        .data_in(internal_bus),
         .latched_data(a_out)
     );
-    assign mem_data_out = a_out;
-    assign a_out_bus = a_out;
-
+    
     register_nbit #( .N(DATA_WIDTH) ) u_register_B (
         .clk(clk),
         .reset(reset),
         .load(load_b),
-        .data_in(bus),
+        .data_in(internal_bus),
         .latched_data(b_out)
     );
 
@@ -115,8 +157,8 @@ module cpu (
         .clk(clk),
         .reset(reset),
         .load(load_mar),
-        .data_in(bus[ADDR_WIDTH-1:0]),
-        .latched_data(mem_address)
+        .data_in(internal_bus[ADDR_WIDTH-1:0]),
+        .latched_data(mar_out)
     );
 
     // Instruction register to hold the current instruction
@@ -124,7 +166,7 @@ module cpu (
         .clk(clk),
         .reset(reset),
         .load(load_ir),
-        .data_in(bus),
+        .data_in(internal_bus),
         .opcode(opcode),
         .operand(operand)
     );
@@ -148,13 +190,10 @@ module cpu (
         .data_in( {N_in, C_in, Z_in} ),
         .latched_data(flags_out)
     );
-    assign flag_zero_o = flags_out[0];
-    assign flag_carry_o = flags_out[1];
-    assign flag_negative_o = flags_out[2];
 
     
 
-    // ================ MAIN COMPONENTS: ALU, CONTROL UNIT, RAM ================
+    // ================ MAIN COMPONENTS: ALU, CONTROL UNIT ================
     // =========================================================================
     control_unit u_control_unit (
         .clk(clk),
@@ -164,25 +203,6 @@ module cpu (
         .control_word(control_word)
     );
     
-    // Assign control signals from the control word
-    assign load_o = control_word.load_o;
-    assign load_a = control_word.load_a;
-    assign load_b = control_word.load_b;
-    assign load_ir = control_word.load_ir;
-    assign load_pc = control_word.load_pc;
-    assign load_mar = control_word.load_mar;
-    assign mem_write = control_word.load_ram;
-    assign oe_a = control_word.oe_a;
-    assign oe_ir = control_word.oe_ir;
-    assign oe_pc = control_word.oe_pc;
-    assign oe_alu = control_word.oe_alu;
-    assign oe_ram = control_word.oe_ram;
-    assign alu_op = control_word.alu_op;
-    assign pc_enable = control_word.pc_enable; 
-    assign halt = control_word.halt; 
-    assign load_flags = control_word.load_flags;
-    assign load_sets_zn = control_word.load_sets_zn; 
-
     alu u_alu (
         .clk(clk),
         .reset(reset),
@@ -217,14 +237,14 @@ module cpu (
                     load_data_is_negative = operand[OPERAND_WIDTH - 1];
                 end
                 LDA: begin
-                    // LDA sets the flags based on the bus
-                    load_data_is_zero = ( bus == {DATA_WIDTH{1'b0}} );
-                    load_data_is_negative = bus[DATA_WIDTH - 1];
+                    // LDA sets the flags based on the internal_bus
+                    load_data_is_zero = ( internal_bus == {DATA_WIDTH{1'b0}} );
+                    load_data_is_negative = internal_bus[DATA_WIDTH - 1];
                 end
                 LDB: begin
-                    // LDB sets the flags based on the bus
-                    load_data_is_zero = ( bus == {DATA_WIDTH{1'b0}} ) ;
-                    load_data_is_negative = bus[DATA_WIDTH - 1];
+                    // LDB sets the flags based on the internal_bus
+                    load_data_is_zero = ( internal_bus == {DATA_WIDTH{1'b0}} ) ;
+                    load_data_is_negative = internal_bus[DATA_WIDTH - 1];
                 end
                 default: begin
                     load_data_is_zero = 1'b0;

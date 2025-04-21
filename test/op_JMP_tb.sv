@@ -13,7 +13,7 @@ module computer_tb;
   computer uut (
         .clk(clk),
         .reset(reset),
-        .final_out(out_val)
+        .register_OUT(out_val)
     );
 
   initial begin

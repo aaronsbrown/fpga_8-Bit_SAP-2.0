@@ -14,8 +14,8 @@ module computer_tb;
   wire flag_zero_o, flag_carry_o, flag_negative_o;
 
   computer uut (
-        .clk(clk), .reset(reset), .final_out(out_val),
-        .flag_zero_o(flag_zero_o), .flag_carry_o(flag_carry_o), .flag_negative_o(flag_negative_o) );
+        .clk(clk), .reset(reset), .register_OUT(out_val),
+        .cpu_flag_zero_o(flag_zero_o), .cpu_flag_carry_o(flag_carry_o), .cpu_flag_negative_o(flag_negative_o) );
 
   initial begin clk = 0; forever #5 clk = ~clk; end
   // --- End Standard Setup ---
@@ -109,7 +109,7 @@ module computer_tb;
     run_until_halt(50);
 
     #0.1; $display("@%0t: Checking state after Halt", $time);
-    pretty_print_assert_vec(uut.halt, 1'b1, "Halt signal active");
+    pretty_print_assert_vec(uut.cpu_halt, 1'b1, "Halt signal active");
     inspect_register(uut.u_cpu.u_program_counter.counter_out, 8'h0A, "Final PC", ADDR_WIDTH);
     inspect_register(uut.u_register_OUT.latched_data, EXPECTED_FINAL_OUTPUT, "Final Output", DATA_WIDTH);
 

@@ -14,10 +14,10 @@ module computer_tb;
     computer uut (
             .clk(clk),
             .reset(reset),
-            .final_out(out_val),
-            .flag_zero_o(out_flag_zero),
-            .flag_carry_o(out_flag_carry),
-            .flag_negative_o(out_flag_negative)
+            .register_OUT(out_val),
+            .cpu_flag_zero_o(out_flag_zero),
+            .cpu_flag_carry_o(out_flag_carry),
+            .cpu_flag_negative_o(out_flag_negative)
     );
 
     // Clock generation: 10ns period (5ns high, 5ns low)

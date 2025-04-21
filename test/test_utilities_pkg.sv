@@ -47,7 +47,7 @@ package test_utils_pkg;
       cycle = 0;
       while (cycle < max_cycles) begin 
         #1ps; 
-        if (`UUT_PATH.halt == 1) begin 
+        if (`UUT_PATH.cpu_halt == 1) begin 
             $display("HALT signal detected high at start of cycle %0d.", cycle + 1);
             break; 
         end 
@@ -56,7 +56,7 @@ package test_utils_pkg;
       end 
 
       #1ps; // Allow final state signals to settle
-      if (`UUT_PATH.halt == 0 && cycle >= max_cycles) begin // If timeout begin
+      if (`UUT_PATH.cpu_halt == 0 && cycle >= max_cycles) begin // If timeout begin
         $display("\033[0;31mSimulation timed out. HALT signal not asserted after %0d cycles.\033[0m", cycle);
         $error("Simulation timed out.");
         $finish;

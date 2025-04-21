@@ -15,10 +15,10 @@ module computer_tb;
   computer uut (
         .clk(clk),
         .reset(reset),
-        .final_out(out_val),
-        .flag_zero_o(flag_zero_o),
-        .flag_carry_o(flag_carry_o),
-        .flag_negative_o(flag_negative_o)
+        .register_OUT(out_val),
+        .cpu_flag_zero_o(flag_zero_o),
+        .cpu_flag_carry_o(flag_carry_o),
+        .cpu_flag_negative_o(flag_negative_o)
     );
 
   initial begin

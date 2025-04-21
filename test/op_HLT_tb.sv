@@ -19,11 +19,10 @@ module computer_tb;
   computer uut (
         .clk(clk),
         .reset(reset),
-        .final_out(out_val),
-        // Connect flag outputs
-        .flag_zero_o(flag_zero_o),
-        .flag_carry_o(flag_carry_o),
-        .flag_negative_o(flag_negative_o)
+        .register_OUT(out_val),
+        .cpu_flag_zero_o(flag_zero_o),
+        .cpu_flag_carry_o(flag_carry_o),
+        .cpu_flag_negative_o(flag_negative_o)
     );
 
   // --- Clock Generation ---
@@ -54,7 +53,7 @@ module computer_tb;
 
     // --- Checks After Halt ---
     #0.1;
-    pretty_print_assert_vec(uut.halt, 1'b1, "Halt signal active");
+    pretty_print_assert_vec(uut.cpu_halt, 1'b1, "Halt signal active");
     // Inlined expected value:
     inspect_register(uut.u_cpu.u_program_counter.counter_out, 32'd1, "PC after HLT fetch", ADDR_WIDTH);
     inspect_register(uut.u_cpu.u_register_A.latched_data, {DATA_WIDTH{1'b0}}, "Register A after HLT", DATA_WIDTH);
