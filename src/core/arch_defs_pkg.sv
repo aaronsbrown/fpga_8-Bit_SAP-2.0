@@ -1,7 +1,7 @@
 package arch_defs_pkg;
 
     parameter int DATA_WIDTH = 8;
-    parameter int ADDR_WIDTH = 4;
+    parameter int ADDR_WIDTH = 16;
     parameter int FLAG_COUNT = 3;
 
     parameter int RAM_DEPTH = (1 << ADDR_WIDTH);
@@ -76,6 +76,10 @@ package arch_defs_pkg;
         logic oe_a;               
         logic load_b;             
         logic oe_b;               
+        logic load_c;
+        logic oe_c;
+        logic load_tmp;
+        logic oe_tmp;
         logic load_o;             
 
     } control_word_t;

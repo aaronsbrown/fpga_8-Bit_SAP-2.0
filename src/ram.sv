@@ -3,7 +3,7 @@ import arch_defs_pkg::*;
 module ram (
     input   logic clk,
     input   logic we,
-    input   logic [ADDR_WIDTH-1:0] address, // 4-bit address (16 bytes)  
+    input   logic [ADDR_WIDTH-1:0] address, // 16-bit address (2^16=64Kbytes)  
     input   logic [DATA_WIDTH-1:0] data_in,
     output  logic [DATA_WIDTH-1:0] data_out
 );
@@ -26,10 +26,13 @@ module ram (
     task dump;
       integer j;
       begin
+
         $display("--- RAM Content Dump ---");
-        for (j = 0; j < RAM_DEPTH; j = j + 1) begin
-          $display("RAM[%0d] = %02h", j, mem[j]);
-        end
+        // TODO figure out how to print ROM not RAM
+        // iterate over ROM memory addresses
+        // for (j = 0; j < RAM_DEPTH; j = j + 1) begin
+          // $display("RAM[%0d] = %02h", j, mem[j]);
+        // end
         $display("--- End RAM Dump ---");
       end
     endtask

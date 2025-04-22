@@ -42,8 +42,9 @@ module top (
         .cpu_flag_carry_o(led[1]),
         .cpu_flag_negative_o(led[2]),
         .cpu_debug_out_B(io_led[15:8]),
-        .cpu_debug_out_IR(io_led[7:0]),
-        .cpu_debug_out_PC(led[7:4])
+        .cpu_debug_out_IR(io_led[7:0])
+        // todo PC is now 16bit
+        // .cpu_debug_out_PC(led[7:4]) 
     );
   
     // Assign the remaining LEDs to 0

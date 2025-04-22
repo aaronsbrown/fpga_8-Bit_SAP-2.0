@@ -83,24 +83,22 @@ module cpu (
     logic pc_enable;
 
     // Control signals for loading data from the internal_bus into registers
-    logic load_a, load_b, load_ir, load_pc, load_flags, load_sets_zn, load_mar;
+    logic load_a, load_b, load_c, load_tmp, load_ir, load_pc, load_flags, load_sets_zn, load_mar;
     
     // Control signals for outputting data to the internal_bus
-    logic oe_alu, oe_ir, oe_pc;
+    logic oe_b, oe_c, oe_tmp, oe_alu;
 
     control_word_t control_word = '{default: 0};
-    // assign load_o = control_word.load_o;
     assign load_a = control_word.load_a;
     assign load_b = control_word.load_b;
+    assign load_c = control_word.load_c;
+    assign load_tmp = control_word.load_tmp;
     assign load_ir = control_word.load_ir;
     assign load_pc = control_word.load_pc;
     assign load_mar = control_word.load_mar;
-    // assign mem_write = control_word.load_ram;
-    // assign oe_a = control_word.oe_a;
     assign oe_ir = control_word.oe_ir;
     assign oe_pc = control_word.oe_pc;
     assign oe_alu = control_word.oe_alu;
-    // assign oe_ram = control_word.oe_ram;
     assign alu_op = control_word.alu_op;
     assign pc_enable = control_word.pc_enable; 
     assign halt = control_word.halt; 
@@ -111,26 +109,29 @@ module cpu (
     // ================= BUS INTERFACE and 'internal_bus staging' registers ==================
     // ==============================================================================
     logic [DATA_WIDTH-1:0] internal_bus;
-    logic [DATA_WIDTH-1:0] a_out, b_out, alu_out, mar_out;
+    logic [DATA_WIDTH-1:0] a_out, b_out, c_out, tmp_out, alu_out, mar_out;
     logic [ADDR_WIDTH-1:0] counter_out;
     
     // Tri-state bus logic modeled using a priority multiplexer
     assign internal_bus =    
-                    (oe_pc)  ? { {(DATA_WIDTH-ADDR_WIDTH){1'b0} }, counter_out } :
                     (oe_ram) ? mem_data_in :
-                    (oe_ir)  ? { {(DATA_WIDTH-OPERAND_WIDTH){1'b0} }, operand } :
                     (oe_alu) ? alu_out :
-                    (oe_a)   ? a_out : 
+                    (oe_a)   ? a_out :
+                    (oe_b)   ? b_out :
+                    (oe_c)   ? c_out :
+                    (oe_tmp) ? tmp_out :
                     { DATA_WIDTH {1'b0} };
 
 
     // ================ REGISTER DECLARATIONS ===========
     // ==================================================
+    logic load_pc_high_byte, load_pc_low_byte;
     program_counter u_program_counter (
         .clk(clk),
         .reset(reset),
         .enable(pc_enable),
-        .load(load_pc),
+        .load_high_byte(load_pc_high_byte),
+        .load_low_byte(load_pc_low_byte),
         .counter_in(internal_bus[ADDR_WIDTH-1:0]),
         .counter_out(counter_out)
     );
@@ -152,12 +153,28 @@ module cpu (
         .latched_data(b_out)
     );
 
+    register_nbit #( .N(DATA_WIDTH) ) u_register_C (
+        .clk(clk),
+        .reset(reset),
+        .load(load_c),
+        .data_in(internal_bus),
+        .latched_data(c_out)
+    );
+    
+    register_nbit #( .N(DATA_WIDTH) ) u_register_TMP (
+        .clk(clk),
+        .reset(reset),
+        .load(load_tmp),
+        .data_in(internal_bus),
+        .latched_data(tmp_out)
+    );
+    
     // Memory address register for RAM operations
     register_nbit #( .N(ADDR_WIDTH) ) u_register_memory_address (
         .clk(clk),
         .reset(reset),
         .load(load_mar),
-        .data_in(internal_bus[ADDR_WIDTH-1:0]),
+        .data_in(counter_out),
         .latched_data(mar_out)
     );
 
