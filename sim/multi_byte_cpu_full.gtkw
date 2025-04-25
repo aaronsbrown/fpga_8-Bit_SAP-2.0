@@ -1,10 +1,10 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Fri Apr 25 02:34:25 2025
+[*] Fri Apr 25 14:31:45 2025
 [*]
 [dumpfile] "/Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/build/waveform.vcd"
-[dumpfile_mtime] "Fri Apr 25 02:24:26 2025"
-[dumpfile_size] 11541
+[dumpfile_mtime] "Fri Apr 25 14:31:36 2025"
+[dumpfile_size] 11496
 [savefile] "/Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/sim/multi_byte_cpu_full.gtkw"
 [timestart] 0
 [size] 1496 600
@@ -50,10 +50,10 @@ computer_tb.uut.reset
 computer_tb.uut.u_cpu.counter_out[15:0]
 @2029
 ^1 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/sim/filter_state.txt
-computer_tb.uut.u_cpu.u_control_unit.current_state[2:0]
+computer_tb.uut.u_cpu.u_control_unit.next_state[2:0]
 @2028
 ^1 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/sim/filter_state.txt
-computer_tb.uut.u_cpu.u_control_unit.next_state[2:0]
+computer_tb.uut.u_cpu.u_control_unit.current_state[2:0]
 ^2 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/sim/filter_timestep.txt
 computer_tb.uut.u_cpu.u_control_unit.current_step[3:0]
 @22

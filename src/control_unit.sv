@@ -72,20 +72,20 @@ module control_unit (
         case (current_state)
             
             S_RESET: begin
-                next_state = S_FETCH_BYTES_0; 
+                next_state = S_LATCH_ADDR; 
             end
             
-            S_FETCH_BYTES_0: begin
+            S_LATCH_ADDR: begin
                 control_word.load_mar_pc = 1'b1; // Load MAR with PC
-                next_state = S_FETCH_BYTES_1; 
+                next_state = S_READ_BYTE; 
             end 
 
-            S_FETCH_BYTES_1: begin
+            S_READ_BYTE: begin
                 control_word = '{default: 0, oe_ram: 1};
-                next_state = S_FETCH_BYTES_2; // Read from RAM
+                next_state = S_LATCH_BYTE; // Read from RAM
             end
 
-            S_FETCH_BYTES_2: begin
+            S_LATCH_BYTE: begin
                 control_word = '{default: 0, oe_ram: 1, pc_enable: 1};
 
                 if (current_byte_count == 2'b00) begin // opcode
@@ -96,16 +96,16 @@ module control_unit (
                     control_word.load_temp_2 = 1'b1;
                 end
                 
-                next_state = S_WAIT; 
+                next_state = S_CHK_MORE_BYTES; 
                 next_byte_count = current_byte_count + 1; 
             end
             
-            S_WAIT: begin
+            S_CHK_MORE_BYTES: begin
                 if ( current_byte_count > num_operand_bytes ) begin
                     next_state = S_EXECUTE;
                     next_byte_count = 2'b00;
                 end else begin
-                    next_state = S_FETCH_BYTES_0;
+                    next_state = S_LATCH_ADDR;
                 end 
             end
             
@@ -128,7 +128,7 @@ module control_unit (
                 //    next_step = MS0; 
                 
                 end else if (control_word.last_step) begin
-                    next_state = S_FETCH_BYTES_0; 
+                    next_state = S_LATCH_ADDR; 
                     next_step = MS0; 
                 end else begin
                     next_state = S_EXECUTE;

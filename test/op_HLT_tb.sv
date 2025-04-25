@@ -41,8 +41,8 @@ module computer_tb;
 
     repeat (2) @(posedge clk); // Wait for 20 clock cycles
     #0.1;
-    pretty_print_assert_vec(uut.u_cpu.mem_read, 1'b1, "Memory read signal active during S_FETCH_BYTES_1");
-    pretty_print_assert_vec(uut.ram_data_out, HLT, "OPCODE == HLT during S_FETCH_BYTES_1");
+    pretty_print_assert_vec(uut.u_cpu.mem_read, 1'b1, "Memory read signal active during S_READ_BYTE");
+    pretty_print_assert_vec(uut.ram_data_out, HLT, "OPCODE == HLT during S_READ_BYTE");
 
 
     repeat (3) @(posedge clk); // Wait for 50 clock cycles

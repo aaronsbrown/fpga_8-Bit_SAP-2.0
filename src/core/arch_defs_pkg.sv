@@ -24,11 +24,11 @@ package arch_defs_pkg;
 
     typedef enum logic [2:0] {
         S_RESET,
-        S_FETCH_BYTES_0, 
-        S_FETCH_BYTES_1,
-        S_FETCH_BYTES_2,
+        S_LATCH_ADDR, 
+        S_READ_BYTE,
+        S_LATCH_BYTE,
+        S_CHK_MORE_BYTES,
         S_EXECUTE,
-        S_WAIT,
         S_HALT
     } fsm_state_t;
 
