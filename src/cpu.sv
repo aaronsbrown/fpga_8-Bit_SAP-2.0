@@ -75,6 +75,12 @@ module cpu (
     logic [1:0] alu_op;
   
    
+    // =============== DEFAULT ROM ORIGIN ================
+    // ===================================================
+    logic [ADDR_WIDTH-1:0] default_rom_origin;
+    assign default_rom_origin = RESET_VECTOR;
+
+
     // =============== CONTROL SIGNALS ===================
     // ===================================================
 
@@ -95,6 +101,7 @@ module cpu (
     assign load_temp_1 = control_word.load_temp_1;
     assign load_temp_2 = control_word.load_temp_2;
     assign load_ir = control_word.load_ir;
+    assign load_origin = control_word.load_origin;
     assign load_pc = control_word.load_pc;
     assign load_mar_pc = control_word.load_mar_pc;
     assign load_mar_addr_high = control_word.load_mar_addr_high;
@@ -112,8 +119,8 @@ module cpu (
     // ================= BUS INTERFACE and 'internal_bus staging' registers ==================
     // ==============================================================================
     logic [DATA_WIDTH-1:0] internal_bus;
-    logic [DATA_WIDTH-1:0] a_out, b_out, c_out, temp_1_out, temp_2_out, alu_out, mar_out;
-    logic [ADDR_WIDTH-1:0] counter_out;
+    logic [DATA_WIDTH-1:0] a_out, b_out, c_out, temp_1_out, temp_2_out, alu_out;
+    logic [ADDR_WIDTH-1:0] counter_out, mar_out;
     
     // Tri-state bus logic modeled using a priority multiplexer
     assign internal_bus =    
@@ -129,13 +136,15 @@ module cpu (
 
     // ================ REGISTER DECLARATIONS ===========
     // ==================================================
-    logic load_pc_high_byte, load_pc_low_byte;
+    logic load_pc_high_byte, load_pc_low_byte, load_origin;
     program_counter u_program_counter (
         .clk(clk),
         .reset(reset),
         .enable(pc_enable),
+        .load_origin(load_origin),
         .load_high_byte(load_pc_high_byte),
         .load_low_byte(load_pc_low_byte),
+        .origin_address(default_rom_origin),
         .counter_in(internal_bus),
         .counter_out(counter_out)
     );

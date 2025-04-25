@@ -8,6 +8,8 @@ package arch_defs_pkg;
     parameter int OPCODE_WIDTH = DATA_WIDTH;
     parameter int OPERAND_WIDTH = DATA_WIDTH;
 
+    parameter RESET_VECTOR = 16'hF000; // hardcoded reset vector
+
     typedef enum logic [OPCODE_WIDTH-1:0] {
         NOP =   8'h00, 
         HLT =   8'h01,
@@ -24,6 +26,7 @@ package arch_defs_pkg;
 
     typedef enum logic [2:0] {
         S_RESET,
+        S_INIT,
         S_LATCH_ADDR, 
         S_READ_BYTE,
         S_LATCH_BYTE,
@@ -39,6 +42,7 @@ package arch_defs_pkg;
     typedef struct packed {
         logic halt;               
         logic last_step;         
+        logic load_origin;
         logic pc_enable;           
         logic load_pc;            
         logic oe_pc;              

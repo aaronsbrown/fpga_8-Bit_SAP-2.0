@@ -30,8 +30,8 @@ module computer_tb;
 
     // load the hex file into RAM
     $display("--- Loading hex file: %s ---", HEX_FILE);
-    $readmemh(HEX_FILE, uut.u_ram.mem); 
-    uut.u_ram.dump(); 
+    $readmemh(HEX_FILE, uut.u_rom.mem); 
+    uut.u_rom.dump(); 
 
     // Apply reset and wait for it to release
     reset_and_wait(0); 
@@ -39,19 +39,22 @@ module computer_tb;
     // --- Execute the HLT instruction ---
     $display("Running HLT instruction");
 
-    repeat (2) @(posedge clk); // Wait for 20 clock cycles
+    repeat (3) @(posedge clk); // Wait for 20 clock cycles
     #0.1;
     pretty_print_assert_vec(uut.u_cpu.mem_read, 1'b1, "Memory read signal active during S_READ_BYTE");
-    pretty_print_assert_vec(uut.ram_data_out, HLT, "OPCODE == HLT during S_READ_BYTE");
 
+    repeat (2) @(posedge clk); // Wait for 10 clock cycles
+    #0.1; 
+    pretty_print_assert_vec(uut.u_cpu.u_register_instr.latched_data, HLT, "OPCODE == HLT during S_READ_BYTE");
+    
 
-    repeat (3) @(posedge clk); // Wait for 50 clock cycles
+    repeat (1) @(posedge clk); // Wait for 50 clock cycles
     #0.1;
     pretty_print_assert_vec(uut.cpu_halt, 1'b1, "Halt signal active during S_EXECUTE");
     
     repeat (10) @(posedge clk); // Wait for 10 more clock cycles
 
-    inspect_register(uut.u_cpu.u_program_counter.counter_out, 32'd1, "PC after HLT", ADDR_WIDTH);
+    inspect_register(uut.u_cpu.u_program_counter.counter_out, 16'hF001, "PC after HLT", ADDR_WIDTH);
     inspect_register(uut.u_cpu.u_control_unit.current_state, S_HALT, "S_HALT after HLT", 3);
     $display("\033[0;32mHLT instruction test completed successfully.\033[0m");
     $finish;

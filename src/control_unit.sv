@@ -8,11 +8,14 @@ module control_unit (
     output  control_word_t                      control_word
 );
 
+
+    // ==================================================================================================
+    // ======================================== STATE REGISTERS =========================================
     fsm_state_t current_state = S_RESET; // Current microstep in execution
     fsm_state_t next_state = S_RESET; // Next microstep to transition to
 
-    microstep_t current_step; // Current microstep in execution
-    microstep_t next_step; // Next microstep to transition to
+    microstep_t current_microstep; // Current microstep in execution
+    microstep_t next_microstep; // Next microstep to transition to
 
     logic [1:0] current_byte_count;
     logic [1:0] next_byte_count;
@@ -47,11 +50,11 @@ module control_unit (
     always_ff @(posedge clk) begin 
         if (reset) begin 
             current_state <= S_RESET;
-            current_step <= MS0; 
+            current_microstep <= MS0; 
             current_byte_count <= 2'b00; 
         end else begin 
             current_state <= next_state; 
-            current_step <= next_step; 
+            current_microstep <= next_microstep; 
             current_byte_count <= next_byte_count; 
         end
     end
@@ -65,16 +68,21 @@ module control_unit (
     always_comb begin 
 
         next_state = current_state;
-        next_step = current_step; 
+        next_microstep = current_microstep; 
         next_byte_count = current_byte_count;
         control_word = '{default: 0}; 
 
         case (current_state)
             
             S_RESET: begin
-                next_state = S_LATCH_ADDR; 
+                next_state = S_INIT; 
             end
             
+            S_INIT: begin
+                control_word = '{default: 0, load_origin: 1'b1}; // Load PC with initial address
+                next_state = S_LATCH_ADDR; 
+            end
+
             S_LATCH_ADDR: begin
                 control_word.load_mar_pc = 1'b1; // Load MAR with PC
                 next_state = S_READ_BYTE; 
@@ -88,14 +96,23 @@ module control_unit (
             S_LATCH_BYTE: begin
                 control_word = '{default: 0, oe_ram: 1, pc_enable: 1};
 
-                if (current_byte_count == 2'b00) begin // opcode
-                   control_word.load_ir = 1'b1; // Load instruction register
-                end else if ( current_byte_count == 2'b01 ) begin
-                    control_word.load_temp_1 = 1'b1; 
-                end else if ( current_byte_count == 2'b10 ) begin
-                    control_word.load_temp_2 = 1'b1;
-                end
-                
+                case (current_byte_count)
+                    2'b00: begin
+                        control_word.load_ir = 1'b1; // Load instruction register
+                    end
+                    2'b01: begin
+                        control_word.load_temp_1 = 1'b1; // Load first operand into temp_1
+                    end
+                    2'b10: begin
+                        control_word.load_temp_2 = 1'b1; // Load second operand into temp_2
+                    end
+                    default: begin
+                        next_state = S_HALT;
+                        next_byte_count = 2'b00;
+                        $display($time, " Error: Too many bytes read. Expected %0d, got %0d", num_operand_bytes, current_byte_count);
+                    end
+                endcase
+
                 next_state = S_CHK_MORE_BYTES; 
                 next_byte_count = current_byte_count + 1; 
             end
@@ -110,7 +127,7 @@ module control_unit (
             end
             
             S_EXECUTE: begin
-                control_word = microcode_rom[opcode][current_step]; // Fetch control word from microcode ROM
+                control_word = microcode_rom[opcode][current_microstep]; // Fetch control word from microcode ROM
                 
                 check_jump_condition = control_word.check_zero || control_word.check_carry || control_word.check_negative;
                 jump_condition_satisfied = (control_word.check_zero && flags[0]) ||
@@ -119,20 +136,21 @@ module control_unit (
 
                 if (control_word.halt) begin
                     next_state = S_HALT; 
-                    next_step = MS0; 
-                // end else if ( check_jump_condition && !jump_condition_satisfied) begin
+                    next_microstep = MS0; 
+               
+                end else if ( check_jump_condition && !jump_condition_satisfied) begin
                    
-                //    // Don't Jump! Suppress loading PC with new JMP address if conditions aren't met
-                //    control_word.load_pc = 1'b0;
-                //    next_state = S_FETCH_0;
-                //    next_step = MS0; 
+                   // Don't Jump! Suppress loading PC with new JMP address if conditions aren't met
+                   control_word.load_pc = 1'b0;
+                   next_state = S_LATCH_ADDR;
+                   next_microstep = MS0; 
                 
                 end else if (control_word.last_step) begin
                     next_state = S_LATCH_ADDR; 
-                    next_step = MS0; 
+                    next_microstep = MS0; 
                 end else begin
                     next_state = S_EXECUTE;
-                    next_step = current_step + 1; // Increment microstep
+                    next_microstep = current_microstep + 1; // Increment microstep
                 end
             end
             
