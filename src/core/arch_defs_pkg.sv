@@ -4,27 +4,15 @@ package arch_defs_pkg;
     parameter int ADDR_WIDTH = 16;
     parameter int FLAG_COUNT = 3;
 
-    parameter int RAM_DEPTH = (1 << ADDR_WIDTH);
-    parameter int OPCODE_WIDTH = 4;
-    parameter int OPERAND_WIDTH = DATA_WIDTH - OPCODE_WIDTH;
+    parameter int RAM_DEPTH  = (1 << ADDR_WIDTH);
+    parameter int OPCODE_WIDTH = DATA_WIDTH;
+    parameter int OPERAND_WIDTH = DATA_WIDTH;
 
     typedef enum logic [OPCODE_WIDTH-1:0] {
-        NOP =   4'b0000, // tested
-        LDA =   4'b0001, // tested
-        LDB =   4'b0010, // tested
-        ADD =   4'b0011, // tested
-        SUB =   4'b0100, // tested
-        AND =   4'b0101, // tested
-        OR  =   4'b0110, // tested
-        STA =   4'b0111, // tested
-        LDI =   4'b1000, // tested
-        JMP =   4'b1001, // tested
-        JC  =   4'b1010, // tested
-        JZ  =   4'b1011, // tested
-        JN  =   4'b1100, // tested
-        OUTM =  4'b1101, // tested
-        OUTA =  4'b1110, // tested
-        HLT =   4'b1111  // tested
+        NOP =   8'h00, 
+        HLT =   8'h01,
+        LDI_A = 8'h0C,
+        LDA =   8'h0A  
     } opcode_t;
         
     typedef enum logic [1:0] {
@@ -36,10 +24,9 @@ package arch_defs_pkg;
 
     typedef enum logic [2:0] {
         S_RESET,
-        S_FETCH_0,
-        S_FETCH_1,
-        S_DECODE_0,
-        S_DECODE_1,
+        S_FETCH_BYTES_0, 
+        S_FETCH_BYTES_1,
+        S_FETCH_BYTES_2,
         S_EXECUTE,
         S_WAIT,
         S_HALT
@@ -50,11 +37,6 @@ package arch_defs_pkg;
     } microstep_t;
 
     typedef struct packed {
-        opcode_t opcode;
-        logic [OPERAND_WIDTH-1:0] operand;
-    } instruction_t;
-
-    typedef struct packed {
         logic halt;               
         logic last_step;         
         logic pc_enable;           
@@ -62,7 +44,9 @@ package arch_defs_pkg;
         logic oe_pc;              
         logic load_ir;            
         logic oe_ir;              
-        logic load_mar;           
+        logic load_mar_pc;
+        logic load_mar_addr_low;
+        logic load_mar_addr_high;           
         logic load_ram;           
         logic oe_ram;             
         logic [1:0] alu_op;       
@@ -78,8 +62,10 @@ package arch_defs_pkg;
         logic oe_b;               
         logic load_c;
         logic oe_c;
-        logic load_tmp;
-        logic oe_tmp;
+        logic load_temp_1;
+        logic oe_temp_1;
+        logic load_temp_2;
+        logic oe_temp_2;
         logic load_o;             
 
     } control_word_t;

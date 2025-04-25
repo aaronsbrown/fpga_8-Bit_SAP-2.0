@@ -39,7 +39,7 @@ module cpu (
     // ================ CONNECT DEBUG SIGNALS ===============
     // ======================================================
     assign debug_out_B = b_out;
-    assign debug_out_IR = { opcode, operand };
+    assign debug_out_IR = opcode;
     assign debug_out_PC = counter_out;
 
 
@@ -65,10 +65,9 @@ module cpu (
     assign flag_negative_o = flags_out[2];
 
 
-    // =============== MICROCODE STRUCTURAL DEFINITION ==============
+    // =============== OPCODE  ==============
     // ==============================================================
-    logic [OPCODE_WIDTH-1:0] opcode; 
-    logic [OPERAND_WIDTH-1:0] operand; 
+    logic [DATA_WIDTH-1:0] opcode; // TODO remove wire for direct connection
     
     
     // =============== ALU OPERATIONS =====================
@@ -83,19 +82,23 @@ module cpu (
     logic pc_enable;
 
     // Control signals for loading data from the internal_bus into registers
-    logic load_a, load_b, load_c, load_tmp, load_ir, load_pc, load_flags, load_sets_zn, load_mar;
+    logic load_a, load_b, load_c, load_tmp, load_ir, load_pc, load_flags, load_sets_zn, load_temp_1, load_temp_2;
     
     // Control signals for outputting data to the internal_bus
-    logic oe_b, oe_c, oe_tmp, oe_alu;
+    logic oe_b, oe_c, oe_temp_1, oe_temp_2, oe_alu;
 
+    // TODO ?? do i need these distinct wires? or can i just use control word?
     control_word_t control_word = '{default: 0};
     assign load_a = control_word.load_a;
     assign load_b = control_word.load_b;
     assign load_c = control_word.load_c;
-    assign load_tmp = control_word.load_tmp;
+    assign load_temp_1 = control_word.load_temp_1;
+    assign load_temp_2 = control_word.load_temp_2;
     assign load_ir = control_word.load_ir;
     assign load_pc = control_word.load_pc;
-    assign load_mar = control_word.load_mar;
+    assign load_mar_pc = control_word.load_mar_pc;
+    assign load_mar_addr_high = control_word.load_mar_addr_high;
+    assign load_mar_addr_low = control_word.load_mar_addr_low;
     assign oe_ir = control_word.oe_ir;
     assign oe_pc = control_word.oe_pc;
     assign oe_alu = control_word.oe_alu;
@@ -109,7 +112,7 @@ module cpu (
     // ================= BUS INTERFACE and 'internal_bus staging' registers ==================
     // ==============================================================================
     logic [DATA_WIDTH-1:0] internal_bus;
-    logic [DATA_WIDTH-1:0] a_out, b_out, c_out, tmp_out, alu_out, mar_out;
+    logic [DATA_WIDTH-1:0] a_out, b_out, c_out, temp_1_out, temp_2_out, alu_out, mar_out;
     logic [ADDR_WIDTH-1:0] counter_out;
     
     // Tri-state bus logic modeled using a priority multiplexer
@@ -119,7 +122,8 @@ module cpu (
                     (oe_a)   ? a_out :
                     (oe_b)   ? b_out :
                     (oe_c)   ? c_out :
-                    (oe_tmp) ? tmp_out :
+                    (oe_temp_1) ? temp_1_out :
+                    (oe_temp_2) ? temp_2_out :
                     { DATA_WIDTH {1'b0} };
 
 
@@ -132,7 +136,7 @@ module cpu (
         .enable(pc_enable),
         .load_high_byte(load_pc_high_byte),
         .load_low_byte(load_pc_low_byte),
-        .counter_in(internal_bus[ADDR_WIDTH-1:0]),
+        .counter_in(internal_bus),
         .counter_out(counter_out)
     );
 
@@ -161,32 +165,42 @@ module cpu (
         .latched_data(c_out)
     );
     
-    register_nbit #( .N(DATA_WIDTH) ) u_register_TMP (
+    register_nbit #( .N(DATA_WIDTH) ) u_register_TEMP_1 (
         .clk(clk),
         .reset(reset),
-        .load(load_tmp),
+        .load(load_temp_1),
         .data_in(internal_bus),
-        .latched_data(tmp_out)
+        .latched_data(temp_1_out)
     );
     
-    // Memory address register for RAM operations
-    register_nbit #( .N(ADDR_WIDTH) ) u_register_memory_address (
+    register_nbit #( .N(DATA_WIDTH) ) u_register_TEMP_2 (
         .clk(clk),
         .reset(reset),
-        .load(load_mar),
-        .data_in(counter_out),
-        .latched_data(mar_out)
+        .load(load_temp_2),
+        .data_in(internal_bus),
+        .latched_data(temp_2_out)
     );
 
-    // Instruction register to hold the current instruction
-    register_instruction u_register_instr (
+    logic load_mar_addr_high, load_mar_addr_low, load_mar_pc;
+    register_memory_address u_register_memory_address (
+      .clk(clk),
+      .reset(reset),
+      .load_pc(load_mar_pc),
+      .load_addr_high(load_mar_addr_high),
+      .load_addr_low(load_mar_addr_low),
+      .bus_in(internal_bus),
+      .program_counter_in(counter_out),
+      .address_out(mar_out)
+    );   
+
+    register_nbit #( .N(DATA_WIDTH) ) u_register_instr (
         .clk(clk),
         .reset(reset),
         .load(load_ir),
         .data_in(internal_bus),
-        .opcode(opcode),
-        .operand(operand)
+        .latched_data(opcode)
     );
+
 
     // IMPORTANT: Synthesis Optimization Note (Yosys/synth_ice40)
     // Added (* keep *) attribute below because default synthesis optimization
@@ -248,21 +262,21 @@ module cpu (
         if (load_sets_zn) begin
             // We know we executing an operation that sets the flags
             unique case (opcode)
-                LDI: begin
+                LDI_A: begin
                     // LDI sets the flags based on the operand
-                    load_data_is_zero = ( operand == {OPERAND_WIDTH{1'b0}} );
-                    load_data_is_negative = operand[OPERAND_WIDTH - 1];
+                    load_data_is_zero = ( temp_1_out == {DATA_WIDTH{1'b0}} );
+                    load_data_is_negative = temp_1_out[DATA_WIDTH - 1];
                 end
                 LDA: begin
                     // LDA sets the flags based on the internal_bus
                     load_data_is_zero = ( internal_bus == {DATA_WIDTH{1'b0}} );
                     load_data_is_negative = internal_bus[DATA_WIDTH - 1];
                 end
-                LDB: begin
-                    // LDB sets the flags based on the internal_bus
-                    load_data_is_zero = ( internal_bus == {DATA_WIDTH{1'b0}} ) ;
-                    load_data_is_negative = internal_bus[DATA_WIDTH - 1];
-                end
+                // LDB: begin
+                //     // LDB sets the flags based on the internal_bus
+                //     load_data_is_zero = ( internal_bus == {DATA_WIDTH{1'b0}} ) ;
+                //     load_data_is_negative = internal_bus[DATA_WIDTH - 1];
+                // end
                 default: begin
                     load_data_is_zero = 1'b0;
                     load_data_is_negative = 1'b0;

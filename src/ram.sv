@@ -28,11 +28,13 @@ module ram (
       begin
 
         $display("--- RAM Content Dump ---");
-        // TODO figure out how to print ROM not RAM
         // iterate over ROM memory addresses
-        // for (j = 0; j < RAM_DEPTH; j = j + 1) begin
-          // $display("RAM[%0d] = %02h", j, mem[j]);
-        // end
+        for (j = 0; j < RAM_DEPTH; j = j + 1) begin
+          if( mem[j] !== 8'h00 && mem[j] !== 8'hxx) begin
+            // Print only non-zero values
+            $display("RAM[%0d] = %02h", j, mem[j]);
+          end
+        end
         $display("--- End RAM Dump ---");
       end
     endtask

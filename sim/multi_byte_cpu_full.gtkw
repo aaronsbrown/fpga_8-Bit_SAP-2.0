@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Fri Apr 25 02:28:52 2025
+[*] Fri Apr 25 02:34:25 2025
 [*]
 [dumpfile] "/Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/build/waveform.vcd"
 [dumpfile_mtime] "Fri Apr 25 02:24:26 2025"
 [dumpfile_size] 11541
-[savefile] "/Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/sim/8-bit-baseline.gtkw"
+[savefile] "/Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/sim/multi_byte_cpu_full.gtkw"
 [timestart] 0
 [size] 1496 600
 [pos] 40 18
-*-13.758382 15000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+*-13.514116 45000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -38,6 +38,7 @@
 [markername] ZZ
 [treeopen] computer_tb.
 [treeopen] computer_tb.uut.
+[treeopen] computer_tb.uut.u_cpu.
 [sst_width] 255
 [signals_width] 279
 [sst_expanded] 1
@@ -47,9 +48,12 @@ computer_tb.uut.clk
 computer_tb.uut.reset
 @22
 computer_tb.uut.u_cpu.counter_out[15:0]
-@2028
+@2029
 ^1 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/sim/filter_state.txt
 computer_tb.uut.u_cpu.u_control_unit.current_state[2:0]
+@2028
+^1 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/sim/filter_state.txt
+computer_tb.uut.u_cpu.u_control_unit.next_state[2:0]
 ^2 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/sim/filter_timestep.txt
 computer_tb.uut.u_cpu.u_control_unit.current_step[3:0]
 @22
@@ -63,7 +67,18 @@ computer_tb.uut.u_cpu.load_temp_1
 computer_tb.uut.u_cpu.u_register_TEMP_1.latched_data[7:0]
 @28
 computer_tb.uut.u_cpu.load_temp_2
-@23
+@22
 computer_tb.uut.u_cpu.u_register_TEMP_2.latched_data[7:0]
+@28
+computer_tb.uut.u_cpu.load_mar_pc
+@22
+computer_tb.uut.u_cpu.mem_address[15:0]
+@28
+computer_tb.uut.u_cpu.oe_ram
+computer_tb.uut.u_cpu.pc_enable
+computer_tb.uut.u_cpu.u_control_unit.num_operand_bytes[1:0]
+computer_tb.uut.u_cpu.u_control_unit.current_byte_count[1:0]
+computer_tb.uut.u_cpu.u_control_unit.next_byte_count[1:0]
+computer_tb.uut.u_cpu.load_ir
 [pattern_trace] 1
 [pattern_trace] 0

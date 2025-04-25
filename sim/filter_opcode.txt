@@ -1,18 +1,7 @@
 translate opcode {
-    0000 NOP
-    0001 LDA
-    0010 LDB
-    0011 ADD
-    0100 SUB
-    0101 AND
-    0110 OR
-    0111 STA
-    1000 LDI
-    1001 JMP
-    1010 JC
-    1011 JZ
-    1100 JN
-    1101 OUTM
-    1110 OUTA
-    1111 HLT
+    00000000 NOP
+    00000001 HLT
+    00001100 LDA_I
+    00001010 LDA
+   
 }

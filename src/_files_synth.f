@@ -17,7 +17,7 @@ src/core/arch_defs_pkg.sv
 src/alu.sv
 src/program_counter.sv
 src/ram.sv
-src/register_instruction.sv
+src/register_memory_address.sv
 src/register_nbit.sv
 src/control_unit.sv
 src/cpu.sv

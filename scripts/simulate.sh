@@ -202,7 +202,7 @@ popd > /dev/null
 
 # --- Optionally Open Waveform in gtkwave ---
 WAVEFORM="$BUILD_DIR/waveform.vcd"
-SESSION_FILE="sim/8-bit-baseline.gtkw"
+SESSION_FILE="sim/multi_byte_cpu_full.gtkw"
 if [ -f "$WAVEFORM" ]; then
     if [ "$NO_VIZ" = false ]; then
         log_info "Opening waveform in gtkwave..."

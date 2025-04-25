@@ -1,0 +1,53 @@
+@startuml
+
+title CPU State Machine, Single Byte Instruction
+
+[*] --> RESET 
+
+state RESET {
+    RESET: cw = 0
+}
+
+state FETCH_0 {
+    FETCH_0: cw.oe_pc = 1
+}
+
+state FETCH_1 {
+    Action: cw.oe_pc = 1
+    Action: cw.load_mar = 1 
+}
+
+state DECODE_0 {
+   DECODE_0: oe_ram = 1 
+}
+
+state DECODE_1 {
+   DECODE_1: oe_ram = 1\nload_ir = 1\nenable_pc = 1 
+}
+
+state WAIT {
+    WAIT: (nop)
+}
+
+state EXECUTE {
+   EXECUTE: cw = lookup(ir.opcode)(microstep)\n\nif (check_jump_cond && !jump_cond_met) cw.loadpc = 0\n\nmicrostep = microstep + 1\n
+}
+
+state HALT {
+   HALT: cw = 0 
+}
+
+RESET --> RESET : reset 
+RESET --> FETCH_0 : !reset 
+FETCH_0 --> FETCH_1 : 1
+FETCH_1 --> DECODE_0 : 1   
+DECODE_0 --> DECODE_1 : 1
+DECODE_1 --> WAIT : 1
+WAIT --> EXECUTE : 1
+EXECUTE --> EXECUTE : !cw.halt && !cw.last_step && !(check_jump_cond && !jump_cond_met)
+EXECUTE --> FETCH_0 : cw.last_step || (check_jump_cond && !jump_cond_met) 
+EXECUTE --> HALT : cw.halt == 1
+HALT --> HALT : 1
+
+
+@enduml
