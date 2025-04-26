@@ -16,7 +16,6 @@ src/core/arch_defs_pkg.sv
 # logic
 src/alu.sv
 src/program_counter.sv
-src/ram.sv
 src/rom_4k.sv
 src/vram_4k.sv
 src/ram_8k.sv

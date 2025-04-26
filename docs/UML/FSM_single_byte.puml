@@ -5,48 +5,70 @@ title CPU State Machine, Single Byte Instruction
 [*] --> RESET 
 
 state RESET {
-    RESET: cw = 0
+    RESET : cw = 0 
+    ' Control Word inactive
 }
 
 state FETCH_0 {
-    FETCH_0: cw.oe_pc = 1
+    FETCH_0 : cw.oe_pc = 1
 }
 
 state FETCH_1 {
-    Action: cw.oe_pc = 1
-    Action: cw.load_mar = 1 
+   FETCH_1 : cw.oe_pc = 1 
+   FETCH_1 : cw.load_mar = 1 
 }
 
 state DECODE_0 {
-   DECODE_0: oe_ram = 1 
+   DECODE_0 : oe_ram = 1 
 }
 
 state DECODE_1 {
-   DECODE_1: oe_ram = 1\nload_ir = 1\nenable_pc = 1 
+   DECODE_1 : oe_ram = 1
+   DECODE_1 : load_ir = 1
+   DECODE_1 : enable_pc = 1 
 }
 
 state WAIT {
-    WAIT: (nop)
+    WAIT : 
+    ' (No specific action)
 }
 
 state EXECUTE {
-   EXECUTE: cw = lookup(ir.opcode)(microstep)\n\nif (check_jump_cond && !jump_cond_met) cw.loadpc = 0\n\nmicrostep = microstep + 1\n
+  
+   ' Main action: Get control word
+   EXECUTE : cw = lookup(ir.opcode)(microstep) 
+   
+   ' Suppress PC load on failed jump
+   EXECUTE : if (check_jump_cond AND !jump_cond_met) 
+   EXECUTE :   cw.load_pc = 0 
+   EXECUTE : endif 
+ 
+   ' --- Internal Step ---
+   EXECUTE : microstep = microstep + 1 
 }
 
 state HALT {
-   HALT: cw = 0 
+   HALT : cw = 0 
 }
 
+' --- Transitions ---
+' Assuming active high reset shown
 RESET --> RESET : reset 
 RESET --> FETCH_0 : !reset 
-FETCH_0 --> FETCH_1 : 1
+
+' Unconditional
+FETCH_0 --> FETCH_1 : 1 
 FETCH_1 --> DECODE_0 : 1   
 DECODE_0 --> DECODE_1 : 1
 DECODE_1 --> WAIT : 1
 WAIT --> EXECUTE : 1
-EXECUTE --> EXECUTE : !cw.halt && !cw.last_step && !(check_jump_cond && !jump_cond_met)
-EXECUTE --> FETCH_0 : cw.last_step || (check_jump_cond && !jump_cond_met) 
-EXECUTE --> HALT : cw.halt == 1
+
+EXECUTE --> EXECUTE : !cw.halt AND !cw.last_step 
+
+EXECUTE --> FETCH_0 : cw.last_step 
+
+EXECUTE --> HALT : cw.halt 
+
 HALT --> HALT : 1
 
 

@@ -20,12 +20,13 @@ module ram_8k (
     end
     assign data_out = mem[address];
 
-    initial begin
-        // Initialize RAM with zeros
+    task init_sim_ram;
         integer i;
+        $display("--- Task: Initializing Simulation RAM (8KB) to 0x00 ---");
         for (i = 0; i < RAM_8K_DEPTH; i = i + 1) begin
-            mem[i] = 8'h00;
+            mem[i] = {DATA_WIDTH{1'b0}}; // Initialize to zero
         end
-    end
+        $display("--- Task: Simulation RAM Initialized ---");
+    endtask
 
 endmodule

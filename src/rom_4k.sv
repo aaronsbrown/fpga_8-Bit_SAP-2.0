@@ -30,11 +30,20 @@ module rom_4k (
       end
     endtask
 
-`ifndef SIMULATION
+    task init_sim_rom;
+        integer i;
+        $display("--- Task: Initializing Simulation ROM (4KB) to 0x00 ---");
+        for (i = 0; i < ROM_DEPTH; i = i + 1) begin
+            mem[i] = {DATA_WIDTH{1'b0}}; // Initialize to zero
+        end
+        $display("--- Task: Simulation ROM Initialized ---");
+    endtask
+
+  `ifndef SIMULATION
     initial begin
         // Synthesis tool reads this file during compilation
         $readmemh("../fixture/default_program_synth.hex", mem);
     end
-`endif
+  `endif
 
 endmodule

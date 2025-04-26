@@ -4,7 +4,7 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../fixture/HLT.hex";
+  localparam string HEX_FILE = "../fixture/op_HLT.hex";
 
   reg clk;
   reg reset;
@@ -27,6 +27,10 @@ module computer_tb;
     // Setup waveform dumping
     $dumpfile("waveform.vcd");
     $dumpvars(0, computer_tb); // Dump all signals in this module and below
+
+    // Init ram to 00 
+    uut.u_ram.init_sim_ram();
+    uut.u_rom.init_sim_rom();
 
     // load the hex file into RAM
     $display("--- Loading hex file: %s ---", HEX_FILE);

@@ -166,7 +166,7 @@ if [ "$USE_SV2V" = true ]; then
     # Convert all SystemVerilog files together to support packages.
     combined_sv2v_file="$BUILD_DIR/combined.v"
     log_info "Converting ${#SV_FILES[@]} SystemVerilog files to $combined_sv2v_file"
-    sv2v "${SV_FILES[@]}" > "$combined_sv2v_file"
+    sv2v -DSIMULATION "${SV_FILES[@]}" > "$combined_sv2v_file"
     FINAL_VERILOG_FILES+=("$combined_sv2v_file")
 else
     FINAL_VERILOG_FILES=("${ABS_VERILOG_FILES[@]}")
