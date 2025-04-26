@@ -1,0 +1,28 @@
+@startuml
+hide empty description
+
+[*] --> RESET
+
+state "<b>RESET</b>\n<i>Synchronous reset via HIGH signal</i>" as RESET
+state "<b>INIT</b>\n<i>Loads Program Counter with ROM starting address</i>" as INIT
+state "<b>LATCH_ADDR</b>\n<i>Loads MemAddr register with Program Counter</i>" as LATCH_ADDR
+state "<b>READ_BYTE</b>\n<i>Reads byte from memory</i>" as READ_BYTE
+state "<b>LATCH_BYTE</b>\n<i>Latches byte from Memory into IR/Temp1/Temp2. Increments PC.</i>" as LATCH_BYTE
+state "<b>CHK_MORE_BYTES</b>\n<i>Instruction has more bytes?</i>" as CHK_MORE_BYTES
+state "<b>EXECUTE</b>\n<i>Sequences microcode steps</i>" as EXECUTE
+state "<b>HALT</b>\n<i>Halt computer</i>" as HALT
+
+RESET       --> RESET : reset
+RESET       --> INIT : !reset
+INIT        --> LATCH_ADDR : true
+LATCH_ADDR  --> READ_BYTE : true
+READ_BYTE   --> LATCH_BYTE : true
+LATCH_BYTE  --> CHK_MORE_BYTES : true
+CHK_MORE_BYTES --> LATCH_ADDR : byte_count <= num_bytes
+CHK_MORE_BYTES --> EXECUTE : byte_count > num_bytes 
+EXECUTE --> EXECUTE : !last_step AND !halt AND !(is_jump AND !jump)
+EXECUTE --> LATCH_ADDR : last_step OR (is_jump AND !jump)
+EXECUTE --> HALT : halt
+HALT --> HALT : true
+
+@enduml
