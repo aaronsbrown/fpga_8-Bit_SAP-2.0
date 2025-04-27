@@ -11,10 +11,10 @@ package arch_defs_pkg;
     parameter RESET_VECTOR = 16'hF000; // hardcoded reset vector
 
     typedef enum logic [OPCODE_WIDTH-1:0] {
-        NOP =   8'h00, 
-        HLT =   8'h01,
-        LDI_A = 8'h0C,
-        LDA =   8'h0A  
+        NOP =   8'h00,  // TODO test
+        HLT =   8'h01,  // TODO update test to new pattern
+        LDI_A = 8'h0C,  // tested
+        LDA =   8'h0A   // tested
     } opcode_t;
         
     typedef enum logic [1:0] {

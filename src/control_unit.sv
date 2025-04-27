@@ -183,6 +183,17 @@ module control_unit (
         // x01
         microcode_rom[HLT][MS0] = '{default: 0, halt: 1}; 
 
+        // x0A
+        microcode_rom[LDA][MS0] = '{default: 0, oe_temp_1: 1}; 
+        microcode_rom[LDA][MS1] = '{default: 0, oe_temp_1: 1, load_mar_addr_low: 1}; 
+        microcode_rom[LDA][MS2] = '{default: 0, oe_temp_2: 1}; 
+        microcode_rom[LDA][MS3] = '{default: 0, oe_temp_2: 1, load_mar_addr_high: 1};
+        microcode_rom[LDA][MS4] = '{default: 0, oe_ram: 1};  
+        microcode_rom[LDA][MS5] = '{default: 0, oe_ram: 1, load_a: 1, load_flags: 1, last_step: 1, load_sets_zn: 1}; 
+
+
+
+
         // x0C
         microcode_rom[LDI_A][MS0] = '{default: 0, oe_temp_1: 1}; 
         microcode_rom[LDI_A][MS1] = '{default: 0, oe_temp_1: 1, load_a: 1, load_flags: 1, last_step: 1, load_sets_zn: 1}; 

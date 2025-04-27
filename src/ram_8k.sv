@@ -20,6 +20,23 @@ module ram_8k (
     end
     assign data_out = mem[address];
 
+    // Task to dump RAM contents
+    task dump;
+      integer j;
+      begin
+
+        $display("--- RAM Content Dump ---");
+        // iterate over RAM memory addresses
+        for (j = 0; j < RAM_8K_DEPTH; j = j + 1) begin
+          if( mem[j] !== 8'h00 && mem[j] !== 8'hxx) begin
+            // Print only non-zero values
+            $display("RAM[%0d] = %02h", j, mem[j]);
+          end
+        end
+        $display("--- End RAM Dump ---");
+      end
+    endtask
+
     task init_sim_ram;
         integer i;
         $display("--- Task: Initializing Simulation RAM (8KB) to 0x00 ---");

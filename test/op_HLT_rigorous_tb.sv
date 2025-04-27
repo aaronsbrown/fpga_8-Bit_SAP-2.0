@@ -4,7 +4,7 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../fixture/op_HLT.hex";
+  localparam string HEX_FILE = "../fixture/op_HLT_prog.hex";
 
   reg clk;
   reg reset;
