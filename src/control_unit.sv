@@ -79,7 +79,7 @@ module control_unit (
             end
             
             S_INIT: begin
-                control_word = '{default: 0, load_origin: 1'b1}; // Load PC with initial address
+                control_word.load_origin = 1'b1; 
                 next_state = S_LATCH_ADDR; 
             end
 
@@ -89,12 +89,13 @@ module control_unit (
             end 
 
             S_READ_BYTE: begin
-                control_word = '{default: 0, oe_ram: 1};
+                control_word.oe_ram = 1; 
                 next_state = S_LATCH_BYTE; // Read from RAM
             end
 
             S_LATCH_BYTE: begin
-                control_word = '{default: 0, oe_ram: 1, pc_enable: 1};
+                control_word.oe_ram = 1'b1;
+                control_word.pc_enable = 1'b1;
 
                 case (current_byte_count)
                     2'b00: begin
@@ -184,7 +185,7 @@ module control_unit (
 
         // x0C
         microcode_rom[LDI_A][MS0] = '{default: 0, oe_temp_1: 1}; 
-        microcode_rom[LDI_A][MS1] = '{default: 0, oe_temp_1: 1, load_a: 1, load_flags: 1, last_step: 1}; // todo load_flags, load_sets_zn
+        microcode_rom[LDI_A][MS1] = '{default: 0, oe_temp_1: 1, load_a: 1, load_flags: 1, last_step: 1, load_sets_zn: 1}; 
 
     end
 

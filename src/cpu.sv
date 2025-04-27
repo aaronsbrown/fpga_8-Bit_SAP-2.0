@@ -113,7 +113,11 @@ module cpu (
     assign pc_enable = control_word.pc_enable; 
     assign halt = control_word.halt; 
     assign load_flags = control_word.load_flags;
-    assign load_sets_zn = control_word.load_sets_zn; 
+    assign load_sets_zn = control_word.load_sets_zn;
+    assign oe_b = control_word.oe_b; 
+    assign oe_c = control_word.oe_c; 
+    assign oe_temp_1 = control_word.oe_temp_1; 
+    assign oe_temp_2 = control_word.oe_temp_2; 
     
     
     // ================= BUS INTERFACE and 'internal_bus staging' registers ==================
