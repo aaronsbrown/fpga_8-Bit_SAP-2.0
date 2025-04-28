@@ -10,8 +10,13 @@ module rom_4k (
     localparam ROM_DEPTH = 1 << ROM_ADDR_WIDTH; // 4K ROM depth
 
     logic [DATA_WIDTH-1:0] mem [0: ROM_DEPTH - 1];  
+    logic [DATA_WIDTH-1: 0] data_out_i;
     
-    assign data_out = mem[address]; // Combinational eead data from RAM
+    always_ff @( posedge clk ) begin
+        data_out_i <= mem[address];      
+    end
+
+    assign data_out = data_out_i; 
 
     // Task to dump ROM contents
     task dump;

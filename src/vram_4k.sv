@@ -12,13 +12,15 @@ module vram_4k (
     localparam VRAM_4K_DEPTH = 1 << VRAM_4K_ADDR_WIDTH; // 4K ROM depth
 
     logic [DATA_WIDTH-1:0] mem [0: VRAM_4K_DEPTH - 1]; 
-    
+    logic [DATA_WIDTH-1: 0] data_out_i;
+ 
     always_ff @(posedge clk) begin
         if (we) begin
             mem[address] <= data_in;
         end
+        data_out_i <= mem[address];
     end
-    assign data_out = mem[address];
+    assign data_out = data_out_i;
 
     initial begin
         // Initialize RAM with zeros
