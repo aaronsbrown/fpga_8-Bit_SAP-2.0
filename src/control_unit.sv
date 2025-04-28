@@ -33,7 +33,7 @@ module control_unit (
             LDI_A, LDI_B, LDI_C: begin
                 num_operand_bytes = 2'b01; // One operand
             end
-            JMP, LDA: begin
+            JMP, JZ, JNZ, JN, LDA: begin
                 num_operand_bytes = 2'b10; // Two operands
             end
             default: begin
@@ -130,10 +130,13 @@ module control_unit (
             S_EXECUTE: begin
                 control_word = microcode_rom[opcode][current_microstep]; // Fetch control word from microcode ROM
                 
-                check_jump_condition = control_word.check_zero || control_word.check_carry || control_word.check_negative;
-                jump_condition_satisfied = (control_word.check_zero && flags[0]) ||
-                                                (control_word.check_carry && flags[1]) ||
-                                                (control_word.check_negative && flags[2]);
+                check_jump_condition = control_word.check_zero  || control_word.check_not_zero ||
+                                       control_word.check_carry || control_word.check_negative;
+                
+                jump_condition_satisfied = (control_word.check_zero && flags[0])                    ||
+                                           (control_word.check_not_zero && !flags[0])  ||
+                                           (control_word.check_carry && flags[1])                   ||
+                                           (control_word.check_negative && flags[2]);
 
                 if (control_word.halt) begin
                     next_state = S_HALT; 
@@ -186,6 +189,16 @@ module control_unit (
         // BRANCHING
         microcode_rom[JMP][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1}; 
         microcode_rom[JMP][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1};
+
+        microcode_rom[JZ][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1}; 
+        microcode_rom[JZ][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1, check_zero: 1 };
+
+        microcode_rom[JNZ][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1}; 
+        microcode_rom[JNZ][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1, check_not_zero: 1};
+
+        microcode_rom[JN][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1}; 
+        microcode_rom[JN][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1, check_negative: 1};
+
 
         // MEMORY
         microcode_rom[LDA][MS0] = '{default: 0, oe_temp_1: 1}; 

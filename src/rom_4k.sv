@@ -21,7 +21,7 @@ module rom_4k (
         $display("--- ROM Content Dump ---");
         // iterate over ROM memory addresses
         for (j = 0; j < ROM_DEPTH; j = j + 1) begin
-          if( mem[j] !== 8'h00 && mem[j] !== 8'hxx) begin
+          if( mem[j] !== 8'hxx) begin
             // Print only non-zero values
             $display("ROM[%0d] = %02h", j, mem[j]);
           end
@@ -34,7 +34,7 @@ module rom_4k (
         integer i;
         $display("--- Task: Initializing Simulation ROM (4KB) to 0x00 ---");
         for (i = 0; i < ROM_DEPTH; i = i + 1) begin
-            mem[i] = {DATA_WIDTH{1'b0}}; // Initialize to zero
+            mem[i] = {DATA_WIDTH{1'bx}}; // Initialize to zero
         end
         $display("--- Task: Simulation ROM Initialized ---");
     endtask

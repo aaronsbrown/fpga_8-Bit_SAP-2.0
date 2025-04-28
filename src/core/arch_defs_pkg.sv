@@ -14,6 +14,9 @@ package arch_defs_pkg;
         NOP =   8'h00,  // TODO test
         HLT =   8'h01,  // TODO update test to new pattern
         JMP =   8'h10,  // tested
+        JZ  =   8'h11,  // TODO TEST
+        JNZ =   8'h12,  // TODO TEST
+        JN  =   8'h13,  // TODO TEST
         LDA =   8'hA0,  // tested
         LDI_A = 8'hB0,  // tested
         LDI_B = 8'hB1,  // tested
@@ -61,7 +64,8 @@ package arch_defs_pkg;
         logic oe_alu;             
         logic load_flags;   
         logic load_sets_zn; 
-        logic check_zero;         
+        logic check_zero; 
+        logic check_not_zero;        
         logic check_carry;  
         logic check_negative;  
         logic load_a;             
