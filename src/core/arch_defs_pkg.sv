@@ -14,9 +14,9 @@ package arch_defs_pkg;
         NOP =   8'h00,  // TODO test
         HLT =   8'h01,  // TODO update test to new pattern
         JMP =   8'h10,  // tested
-        JZ  =   8'h11,  // TODO TEST
-        JNZ =   8'h12,  // TODO TEST
-        JN  =   8'h13,  // TODO TEST
+        JZ  =   8'h11,  // tested
+        JNZ =   8'h12,  // tested
+        JN  =   8'h13,  // tested
         LDA =   8'hA0,  // tested
         LDI_A = 8'hB0,  // tested
         LDI_B = 8'hB1,  // tested

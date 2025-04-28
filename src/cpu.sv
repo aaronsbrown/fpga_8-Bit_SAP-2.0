@@ -84,6 +84,27 @@ module cpu (
     // =============== CONTROL SIGNALS ===================
     // ===================================================
 
+    // =======================================================================
+    // Intermediate Wires for Control Signals - Icarus Verilog v12 Workaround
+    // =======================================================================
+    // NOTE: Ideally, struct members from 'control_word' would be connected
+    // directly to submodule ports below (e.g., .load(control_word.load_a)).
+    // However, Icarus Verilog v12 (as of testing) has issues resolving
+    // hierarchical references directly into struct members when they are
+    // passed as arguments to tasks (like assertion tasks) in the testbench,
+    // often leading to elaboration errors (e.g., "failed assertion sr.path_tail.empty()").
+    //
+    // To work around this limitation and allow testbenches to directly assert
+    // on individual control signals using simpler hierarchical paths (e.g.,
+    // uut.u_cpu.load_a), we explicitly declare intermediate wires here and
+    // assign the corresponding control_word members to them. This makes the
+    // CPU module more verbose but simplifies testbench assertions and avoids
+    // the iverilog elaboration error. If using a different simulator or a
+    // future iverilog version that resolves this, this section could potentially
+    // be removed, and direct connections could be used.
+    // =======================================================================
+
+
     // Control signal to enable program counter
     logic pc_enable;
 
@@ -94,7 +115,6 @@ module cpu (
     // Control signals for outputting data to the internal_bus
     logic oe_b, oe_c, oe_temp_1, oe_temp_2, oe_alu;
 
-    // TODO ?? do i need these distinct wires? or can i just use control word?
     control_word_t control_word = '{default: 0};
     assign load_a = control_word.load_a;
     assign load_b = control_word.load_b;
