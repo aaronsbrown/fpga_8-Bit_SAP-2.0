@@ -1,7 +1,9 @@
 translate opcode {
     00000000 NOP
     00000001 HLT
-    00001100 LDA_I
-    00001010 LDA
-   
+    00010000 JMP
+    10100000 LDA
+    10110000 LDA_I
+    10110001 LDB_I
+    10110010 LDC_I
 }

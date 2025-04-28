@@ -103,13 +103,8 @@ module computer_tb;
     $display("INSTRUCTION EXECUTION");
 
     // MS0
-    repeat (1) @(posedge clk); #0.1;
-    pretty_print_assert_vec(uut.u_cpu.u_control_unit.current_microstep, MS0, "EXECUTE: MS0"); 
-    pretty_print_assert_vec(uut.u_cpu.oe_temp_1, 1'b1, "MS0: cpu.oe_temp_1");
-    
-    // MS1
     repeat (1) @(posedge clk); #0.1; 
-    pretty_print_assert_vec(uut.u_cpu.u_control_unit.current_microstep, MS1, "EXECUTE: MS1"); 
+    pretty_print_assert_vec(uut.u_cpu.u_control_unit.current_microstep, MS0, "EXECUTE: MS0"); 
     pretty_print_assert_vec(uut.u_cpu.oe_temp_1, 1'b1, "MS1: cpu.oe_temp_1");
     pretty_print_assert_vec(uut.u_cpu.load_a, 1'b1, "MS1: cpu.load_a");  
     pretty_print_assert_vec(uut.u_cpu.load_flags, 1'b1, "MS1: cpu.load_flags");  

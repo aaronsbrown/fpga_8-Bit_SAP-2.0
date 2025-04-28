@@ -88,7 +88,8 @@ module cpu (
     logic pc_enable;
 
     // Control signals for loading data from the internal_bus into registers
-    logic load_a, load_b, load_c, load_tmp, load_ir, load_pc, load_flags, load_sets_zn, load_temp_1, load_temp_2;
+    logic load_a, load_b, load_c, load_tmp, load_ir, load_flags, load_sets_zn, load_temp_1, load_temp_2;
+    logic load_pc_high_byte, load_pc_low_byte, load_origin;
     
     // Control signals for outputting data to the internal_bus
     logic oe_b, oe_c, oe_temp_1, oe_temp_2, oe_alu;
@@ -102,7 +103,8 @@ module cpu (
     assign load_temp_2 = control_word.load_temp_2;
     assign load_ir = control_word.load_ir;
     assign load_origin = control_word.load_origin;
-    assign load_pc = control_word.load_pc;
+    assign load_pc_low_byte = control_word.load_pc_low_byte;
+    assign load_pc_high_byte = control_word.load_pc_high_byte;
     assign load_mar_pc = control_word.load_mar_pc;
     assign load_mar_addr_high = control_word.load_mar_addr_high;
     assign load_mar_addr_low = control_word.load_mar_addr_low;
@@ -140,7 +142,6 @@ module cpu (
 
     // ================ REGISTER DECLARATIONS ===========
     // ==================================================
-    logic load_pc_high_byte, load_pc_low_byte, load_origin;
     program_counter u_program_counter (
         .clk(clk),
         .reset(reset),

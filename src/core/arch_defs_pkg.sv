@@ -13,8 +13,11 @@ package arch_defs_pkg;
     typedef enum logic [OPCODE_WIDTH-1:0] {
         NOP =   8'h00,  // TODO test
         HLT =   8'h01,  // TODO update test to new pattern
-        LDI_A = 8'h0C,  // tested
-        LDA =   8'h0A   // tested
+        JMP =   8'h10,  // tested
+        LDA =   8'hA0,  // tested
+        LDI_A = 8'hB0,  // tested
+        LDI_B = 8'hB1,  // tested
+        LDI_C = 8'hB2   // tested
     } opcode_t;
         
     typedef enum logic [1:0] {
@@ -44,7 +47,8 @@ package arch_defs_pkg;
         logic last_step;         
         logic load_origin;
         logic pc_enable;           
-        logic load_pc;            
+        logic load_pc_low_byte;
+        logic load_pc_high_byte;            
         logic oe_pc;              
         logic load_ir;            
         logic oe_ir;              

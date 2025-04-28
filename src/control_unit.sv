@@ -30,11 +30,11 @@ module control_unit (
             NOP, HLT: begin
                 num_operand_bytes = 2'b00; // No operands
             end
-            LDI_A: begin
+            LDI_A, LDI_B, LDI_C: begin
                 num_operand_bytes = 2'b01; // One operand
             end
-            LDA: begin
-                num_operand_bytes = 2'b10; // One operand
+            JMP, LDA: begin
+                num_operand_bytes = 2'b10; // Two operands
             end
             default: begin
                 num_operand_bytes = 2'bxx; // Unknown opcode
@@ -142,7 +142,8 @@ module control_unit (
                 end else if ( check_jump_condition && !jump_condition_satisfied) begin
                    
                    // Don't Jump! Suppress loading PC with new JMP address if conditions aren't met
-                   control_word.load_pc = 1'b0;
+                   control_word.load_pc_low_byte = 1'b0;
+                   control_word.load_pc_high_byte = 1'b0;
                    next_state = S_LATCH_ADDR;
                    next_microstep = MS0; 
                 
@@ -177,13 +178,16 @@ module control_unit (
             end
         end
         
-        // x00
+        // CONTROL FLOW
         microcode_rom[NOP][MS0] = '{default: 0, last_step: 1}; 
-
-        // x01
+        
         microcode_rom[HLT][MS0] = '{default: 0, halt: 1}; 
 
-        // x0A
+        // BRANCHING
+        microcode_rom[JMP][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1}; 
+        microcode_rom[JMP][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1};
+
+        // MEMORY
         microcode_rom[LDA][MS0] = '{default: 0, oe_temp_1: 1}; 
         microcode_rom[LDA][MS1] = '{default: 0, oe_temp_1: 1, load_mar_addr_low: 1}; 
         microcode_rom[LDA][MS2] = '{default: 0, oe_temp_2: 1}; 
@@ -191,12 +195,10 @@ module control_unit (
         microcode_rom[LDA][MS4] = '{default: 0, oe_ram: 1};  
         microcode_rom[LDA][MS5] = '{default: 0, oe_ram: 1, load_a: 1, load_flags: 1, last_step: 1, load_sets_zn: 1}; 
 
-
-
-
-        // x0C
-        microcode_rom[LDI_A][MS0] = '{default: 0, oe_temp_1: 1}; 
-        microcode_rom[LDI_A][MS1] = '{default: 0, oe_temp_1: 1, load_a: 1, load_flags: 1, last_step: 1, load_sets_zn: 1}; 
+        // IMMEDIATE LOADS
+        microcode_rom[LDI_A][MS0] = '{default: 0, oe_temp_1: 1, load_a: 1, load_flags: 1, last_step: 1, load_sets_zn: 1}; 
+        microcode_rom[LDI_B][MS0] = '{default: 0, oe_temp_1: 1, load_b: 1, load_flags: 1, last_step: 1, load_sets_zn: 1}; 
+        microcode_rom[LDI_C][MS0] = '{default: 0, oe_temp_1: 1, load_c: 1, load_flags: 1, last_step: 1, load_sets_zn: 1}; 
 
     end
 
