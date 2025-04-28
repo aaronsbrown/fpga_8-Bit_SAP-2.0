@@ -27,7 +27,7 @@ module control_unit (
     always_comb begin
         num_operand_bytes = 2'bxx;
         case (opcode)
-            NOP, HLT: begin
+            NOP, HLT, ADD_B, ADD_C, SUB_B, SUB_C, INR_A, DCR_A: begin
                 num_operand_bytes = 2'b00; // No operands
             end
             LDI_A, LDI_B, LDI_C: begin
@@ -70,7 +70,7 @@ module control_unit (
         next_state = current_state;
         next_microstep = current_microstep; 
         next_byte_count = current_byte_count;
-        control_word = '{default: 0}; 
+        control_word = '{default: 0, alu_op: ALU_UNDEFINED}; 
 
         case (current_state)
             
@@ -199,6 +199,19 @@ module control_unit (
         microcode_rom[JN][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1}; 
         microcode_rom[JN][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1, check_negative: 1};
 
+        // REG_A ARITH
+        microcode_rom[ADD_B][MS0] = '{default: 0, alu_op: ALU_ADD, load_flags: 1} ;
+        microcode_rom[ADD_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1, last_step: 1};
+
+       microcode_rom[ADD_C][MS0] = '{default: 0};
+        
+        microcode_rom[SUB_B][MS0] = '{default: 0};
+
+        microcode_rom[SUB_C][MS0] = '{default: 0};
+        
+        microcode_rom[INR_A][MS0] = '{default: 0};
+        
+        microcode_rom[DCR_A][MS0] = '{default: 0};
 
         // MEMORY
         microcode_rom[LDA][MS0] = '{default: 0, oe_temp_1: 1}; 

@@ -296,7 +296,7 @@ module cpu (
         if (load_sets_zn) begin
             // We know we executing an operation that sets the flags
             unique case (opcode)
-                LDI_A: begin
+                LDI_A, LDI_B, LDI_C: begin
                     // LDI sets the flags based on the operand
                     load_data_is_zero = ( temp_1_out == {DATA_WIDTH{1'b0}} );
                     load_data_is_negative = temp_1_out[DATA_WIDTH - 1];
