@@ -115,6 +115,9 @@ module cpu (
     // Control signals for outputting data to the internal_bus
     logic oe_b, oe_c, oe_temp_1, oe_temp_2, oe_alu;
 
+    // Control signals for ALU src multiplexer
+    logic alu_src_c;
+
     control_word_t control_word = '{default: 0};
     assign load_a = control_word.load_a;
     assign load_b = control_word.load_b;
@@ -139,7 +142,8 @@ module cpu (
     assign oe_b = control_word.oe_b; 
     assign oe_c = control_word.oe_c; 
     assign oe_temp_1 = control_word.oe_temp_1; 
-    assign oe_temp_2 = control_word.oe_temp_2; 
+    assign oe_temp_2 = control_word.oe_temp_2;
+    assign alu_src_c = control_word.alu_src_c; 
     
     
     // ================= BUS INTERFACE and 'internal_bus staging' registers ==================
@@ -267,12 +271,14 @@ module cpu (
         .flags(flags_out),
         .control_word(control_word)
     );
-    
+
+    logic [DATA_WIDTH-1:0] b_in_src; 
+    assign b_in_src = (alu_src_c) ? c_out : b_out;
     alu u_alu (
         .clk(clk),
         .reset(reset),
         .a_in(a_out),
-        .b_in(b_out),
+        .b_in(b_in_src),
         .alu_op(alu_op),
         .latched_result(alu_out),
         .zero_flag(flag_alu_zero),
@@ -306,11 +312,6 @@ module cpu (
                     load_data_is_zero = ( internal_bus == {DATA_WIDTH{1'b0}} );
                     load_data_is_negative = internal_bus[DATA_WIDTH - 1];
                 end
-                // LDB: begin
-                //     // LDB sets the flags based on the internal_bus
-                //     load_data_is_zero = ( internal_bus == {DATA_WIDTH{1'b0}} ) ;
-                //     load_data_is_negative = internal_bus[DATA_WIDTH - 1];
-                // end
                 default: begin
                     load_data_is_zero = 1'b0;
                     load_data_is_negative = 1'b0;
