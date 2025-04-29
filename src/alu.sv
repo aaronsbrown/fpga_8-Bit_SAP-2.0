@@ -3,8 +3,8 @@ import arch_defs_pkg::*;
 module alu (
     input logic clk,
     input logic reset,
-    input logic [DATA_WIDTH-1:0] a_in,
-    input logic [DATA_WIDTH-1:0] b_in,
+    input logic [DATA_WIDTH-1:0] in_one,
+    input logic [DATA_WIDTH-1:0] in_two,
     input logic [1:0] alu_op,
     output logic [DATA_WIDTH-1:0] latched_result,
     output logic zero_flag,
@@ -28,10 +28,10 @@ module alu (
         
         // TODO add XOR
         case (alu_op)
-            ALU_ADD: comb_arith_result_i = {1'b0, a_in} + {1'b0, b_in};
-            ALU_SUB: comb_arith_result_i = {1'b0, a_in} + {1'b0, ~b_in} + {{DATA_WIDTH{1'b0}}, 1'b1};
-            ALU_AND: comp_logic_result_i = a_in & b_in;
-            ALU_OR:  comp_logic_result_i = a_in | b_in;
+            ALU_ADD: comb_arith_result_i = {1'b0, in_one} + {1'b0, in_two};
+            ALU_SUB: comb_arith_result_i = {1'b0, in_one} + {1'b0, ~in_two} + {{DATA_WIDTH{1'b0}}, 1'b1};
+            ALU_AND: comp_logic_result_i = in_one & in_two;
+            ALU_OR:  comp_logic_result_i = in_one | in_two;
             default: ;
         endcase
         

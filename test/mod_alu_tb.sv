@@ -23,8 +23,8 @@ module alu_tb;
     alu uut (
         .clk(clk),
         .reset(reset),
-        .a_in(tb_a_in),
-        .b_in(tb_b_in),
+        .in_one(tb_a_in),
+        .in_two(tb_b_in),
         .alu_op(tb_alu_op),
         .latched_result(dut_latched_result),
         .zero_flag(dut_zero_flag),

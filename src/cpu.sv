@@ -277,8 +277,8 @@ module cpu (
     alu u_alu (
         .clk(clk),
         .reset(reset),
-        .a_in(a_out),
-        .b_in(b_in_src),
+        .in_one(a_out),
+        .in_two(b_in_src),
         .alu_op(alu_op),
         .latched_result(alu_out),
         .zero_flag(flag_alu_zero),
