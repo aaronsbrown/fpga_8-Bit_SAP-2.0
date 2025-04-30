@@ -36,7 +36,9 @@ package arch_defs_pkg;
         ALU_AND = 3'b010,
         ALU_OR  = 3'b011,
         ALU_INR = 3'b100,
-        ALU_DCR = 3'b101
+        ALU_DCR = 3'b101,
+        ALU_ADC = 3'b110,
+        ALU_SBC = 3'b111
     } alu_op_t;
 
     typedef enum logic [2:0] {
