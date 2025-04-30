@@ -27,7 +27,9 @@ module control_unit (
     always_comb begin
         num_operand_bytes = 2'bxx;
         case (opcode)
-            NOP, HLT, ADD_B, ADD_C, SUB_B, SUB_C, INR_A, DCR_A: begin
+            NOP, HLT, ADD_B, ADD_C, SUB_B, SUB_C, INR_A, DCR_A,
+            ADC_B, ADC_C, SBC_B, SBC_C
+            : begin
                 num_operand_bytes = 2'b00; // No operands
             end
             LDI_A, LDI_B, LDI_C: begin
@@ -200,7 +202,7 @@ module control_unit (
         microcode_rom[JN][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1, check_negative: 1};
 
         // REG_A ARITH
-        microcode_rom[ADD_B][MS0] = '{default: 0, alu_op: ALU_ADD, load_flags: 1} ;
+        microcode_rom[ADD_B][MS0] = '{default: 0, alu_op: ALU_ADD, alu_src_c: 0, load_flags: 1} ;
         microcode_rom[ADD_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1, last_step: 1};
 
         microcode_rom[ADD_C][MS0] = '{default: 0, alu_op: ALU_ADD, alu_src_c: 1, load_flags: 1} ;

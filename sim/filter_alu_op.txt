@@ -1,0 +1,10 @@
+translate alu_op {
+    000 ADD
+    001 SUB 
+    010 AND
+    011 OR
+    100 INR
+    101 DCR
+    110 ADC
+    111 SBC
+}

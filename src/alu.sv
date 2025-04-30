@@ -14,10 +14,10 @@ module alu (
 );
     
     // Local variables for intermediate calculation within this block
-    logic [DATA_WIDTH:0] comb_arith_result_i; // 9 bits to accommodate carry
-    logic [DATA_WIDTH-1:0] comp_logic_result_i;
-    logic       comb_carry_out_i;
-    logic [DATA_WIDTH-1:0] comb_result_final_i;
+    logic [DATA_WIDTH:0]    comb_arith_result_i; // 9 bits to accommodate carry
+    logic [DATA_WIDTH-1:0]  comp_logic_result_i;
+    logic                   comb_carry_out_i;
+    logic [DATA_WIDTH-1:0]  comb_result_final_i;
 
     always_comb begin
         
@@ -27,7 +27,6 @@ module alu (
         comb_carry_out_i = 1'b0;
         comb_result_final_i = { DATA_WIDTH {1'b0} };
         
-        // TODO add XOR
         case (alu_op)
             
             ALU_ADD: comb_arith_result_i = {1'b0, in_one} + {1'b0, in_two};
@@ -47,7 +46,7 @@ module alu (
         endcase
         
         case (alu_op)
-            ALU_ADD, ALU_SUB, ALU_INR, ALU_DCR, ALU_ADC,
+            ALU_ADD, ALU_SUB, ALU_INR, ALU_DCR,
             ALU_ADC, ALU_SBC: 
             begin
                 comb_carry_out_i = comb_arith_result_i[DATA_WIDTH]; // Check for carry out
