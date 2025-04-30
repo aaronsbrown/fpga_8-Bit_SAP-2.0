@@ -212,9 +212,12 @@ module control_unit (
         microcode_rom[SUB_C][MS0] = '{default: 0, alu_op: ALU_SUB, alu_src_c: 1, load_flags: 1} ;
         microcode_rom[SUB_C][MS1] = '{default: 0, oe_alu: 1, load_a: 1, last_step: 1};
         
-        microcode_rom[INR_A][MS0] = '{default: 0};
+        microcode_rom[INR_A][MS0] = '{default: 0, alu_op: ALU_INR, load_flags: 1};
+        microcode_rom[INR_A][MS1] = '{default: 0, oe_alu: 1, load_a: 1, last_step: 1};
         
-        microcode_rom[DCR_A][MS0] = '{default: 0};
+        microcode_rom[DCR_A][MS0] = '{default: 0, alu_op: ALU_DCR, load_flags: 1};
+        microcode_rom[DCR_A][MS1] = '{default: 0, oe_alu: 1, load_a: 1, last_step: 1};
+        
 
         // MEMORY
         microcode_rom[LDA][MS0] = '{default: 0, oe_temp_1: 1}; 

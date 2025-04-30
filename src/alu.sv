@@ -5,7 +5,7 @@ module alu (
     input logic reset,
     input logic [DATA_WIDTH-1:0] in_one,
     input logic [DATA_WIDTH-1:0] in_two,
-    input logic [1:0] alu_op,
+    input logic [2:0] alu_op,
     output logic [DATA_WIDTH-1:0] latched_result,
     output logic zero_flag,
     output logic carry_flag,
@@ -28,14 +28,20 @@ module alu (
         
         // TODO add XOR
         case (alu_op)
+            
             ALU_ADD: comb_arith_result_i = {1'b0, in_one} + {1'b0, in_two};
             ALU_SUB: comb_arith_result_i = {1'b0, in_one} + {1'b0, ~in_two} + {{DATA_WIDTH{1'b0}}, 1'b1};
+            ALU_INR: comb_arith_result_i = in_one + 1;
+            ALU_DCR: comb_arith_result_i = in_one - 1;
+
             ALU_AND: comp_logic_result_i = in_one & in_two;
             ALU_OR:  comp_logic_result_i = in_one | in_two;
-            default: ;
+            
+            default: comp_logic_result_i = 1'bx; 
+        
         endcase
         
-        if (alu_op == ALU_ADD || alu_op == ALU_SUB) begin
+        if (alu_op == ALU_ADD || alu_op == ALU_SUB || alu_op == ALU_INR || alu_op == ALU_DCR) begin
             comb_carry_out_i = comb_arith_result_i[DATA_WIDTH]; // Check for carry out
             comb_result_final_i = comb_arith_result_i[DATA_WIDTH-1:0]; 
         end else begin
