@@ -137,11 +137,12 @@ module alu_tb;
         apply_and_check(8'hF0, 8'hxx, 1'b0, ALU_INR,  "INR",  8'hF1, 1'b0, 1'b0, 1'b1, "INR: F0"); 
         apply_and_check(8'hFF, 8'hxx, 1'b0, ALU_INR,  "INR",  8'h00, 1'b1, 1'b1, 1'b0, "INR: FF"); 
 
-         // 6. Test INR operations
-        apply_and_check(8'h00, 8'hxx, 1'b0, ALU_DCR,  "DCR",  8'hFF, 1'b1, 1'b0, 1'b1, "DCR: 00"); 
-        apply_and_check(8'h0F, 8'hxx, 1'b0, ALU_DCR,  "DCR",  8'h0E, 1'b0, 1'b0, 1'b0, "DCR: 0F"); 
-        apply_and_check(8'hF0, 8'hxx, 1'b0, ALU_DCR,  "DCR",  8'hEF, 1'b0, 1'b0, 1'b1, "DCR: F0"); 
-        apply_and_check(8'hFF, 8'hxx, 1'b0, ALU_DCR,  "DCR",  8'hFE, 1'b0, 1'b0, 1'b1, "DCR: FF"); 
+         // 6. Test DCR operations
+         // Subtraction implies *opposite* Carry flag expected output; i.e. C = 1 implies no borrow, C = 0 implies borrow
+        apply_and_check(8'h00, 8'hxx, 1'b0, ALU_DCR,  "DCR",  8'hFF, 1'b0, 1'b0, 1'b1, "DCR: 00"); 
+        apply_and_check(8'h0F, 8'hxx, 1'b0, ALU_DCR,  "DCR",  8'h0E, 1'b1, 1'b0, 1'b0, "DCR: 0F"); 
+        apply_and_check(8'hF0, 8'hxx, 1'b0, ALU_DCR,  "DCR",  8'hEF, 1'b1, 1'b0, 1'b1, "DCR: F0"); 
+        apply_and_check(8'hFF, 8'hxx, 1'b0, ALU_DCR,  "DCR",  8'hFE, 1'b1, 1'b0, 1'b1, "DCR: FF"); 
 
         // 7. Test ADC operations
         apply_and_check(8'h01, 8'h01, 1'b1, ALU_ADC,  "ADC",  8'h03, 1'b0, 1'b0, 1'b0, "ADC: 01 / 01 / 01");
