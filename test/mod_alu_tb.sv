@@ -151,6 +151,33 @@ module alu_tb;
         apply_and_check(8'hFF, 8'h01, 1'b1, ALU_ADC,  "ADC",  8'h01, 1'b1, 1'b0, 1'b0, "ADC: FF / 01 / 01"); 
         apply_and_check(8'h0F, 8'h0F, 1'b1, ALU_ADC,  "ADC",  8'h1F, 1'b0, 1'b0, 1'b0, "ADC: 0F / 0F / 1");  
 
+        // 8. Test SBC operations
+
+        // No borrow from previous operation, C = 1
+        // A - B => 1 - 1 => 0
+        // A >= B, NO BORROW now! so C = 1
+        apply_and_check(8'h01, 8'h01, 1'b1, ALU_SBC,  "SBC",  8'h00, 1'b1, 1'b1, 1'b0, "SBC: 01 / 01 / 01");
+        
+        // Borrow from previous operation, C = 0
+        // A - B => (A - 1) - B => ( 1 - 1 ) - 1 = -1 ; we borrowed from the A term in previous operation, so one less!
+        // A < B, BORROW now! C = 0
+        apply_and_check(8'h01, 8'h01, 1'b0, ALU_SBC,  "SBC",  8'hFF, 1'b0, 1'b0, 1'b1, "SBC: 01 / 01 / 00");
+        
+        // No borrow from previous operation, C = 1
+        // A - B => 0 - 0 => 0
+        // A >= B, NO BORROW now! C = 1
+        apply_and_check(8'h00, 8'h00, 1'b1, ALU_SBC,  "SBC",  8'h00, 1'b1, 1'b1, 1'b0, "SBC: 00 / 00 / 01"); 
+        
+        // No borrow from previous operation, C = 1
+        // A - B => FF - 01 => FE
+        // A >= B, NO BORROW now! C = 1
+        apply_and_check(8'hFF, 8'h01, 1'b1, ALU_SBC,  "SBC",  8'hFE, 1'b1, 1'b0, 1'b1, "SBC: FF / 01 / 01"); 
+        
+        // Borrow from previous operation, C = 0
+        // A - B => (A - 1) - B => (0F - 1) - 0F => 0E - 0F => FF
+        // A < B => BORROW now! C = 0
+        apply_and_check(8'h0F, 8'h0F, 1'b0, ALU_SBC,  "SBC",  8'hFF, 1'b0, 1'b0, 1'b1, "SBC: 0F / 0F / 0");  
+
 
         // FLAGS: C / Z / N
 

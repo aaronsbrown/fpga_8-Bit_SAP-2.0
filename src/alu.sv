@@ -31,8 +31,11 @@ module alu (
         case (alu_op)
             
             ALU_ADD: comb_arith_result_i = {1'b0, in_one} + {1'b0, in_two};
-            ALU_ADC: comb_arith_result_i = {1'b0, in_one} + {1'b0, in_two} + {1'b0, in_carry}; 
+            ALU_ADC: comb_arith_result_i = {1'b0, in_one} + {1'b0, in_two} + {{DATA_WIDTH{1'b0}}, in_carry}; 
+            
             ALU_SUB: comb_arith_result_i = {1'b0, in_one} + {1'b0, ~in_two} + {{DATA_WIDTH{1'b0}}, 1'b1};
+            ALU_SBC: comb_arith_result_i = {1'b0, in_one} + {1'b0, ~in_two} + in_carry; 
+            
             ALU_INR: comb_arith_result_i = {1'b0, in_one} + {1'b0, 8'd1};
             ALU_DCR: comb_arith_result_i = {1'b0, in_one} + {1'b0, ~8'd1} + {{DATA_WIDTH{1'b0}}, 1'b1};
 
@@ -44,7 +47,9 @@ module alu (
         endcase
         
         case (alu_op)
-            ALU_ADD, ALU_SUB, ALU_INR, ALU_DCR, ALU_ADC: begin
+            ALU_ADD, ALU_SUB, ALU_INR, ALU_DCR, ALU_ADC,
+            ALU_ADC, ALU_SBC: 
+            begin
                 comb_carry_out_i = comb_arith_result_i[DATA_WIDTH]; // Check for carry out
                 comb_result_final_i = comb_arith_result_i[DATA_WIDTH-1:0];  
             end
