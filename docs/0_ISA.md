@@ -1,71 +1,84 @@
 # Instruction Set Architecture (ISA)
 
-This table defines the initial instruction set for the custom 8-bit CPU.
+This table defines the initial instruction set for the custom 8-bit CPU, organized by opcode groups. Flags column indicates effect on Zero, Negative, Carry (ZNC). (Instructions marked 'X' are implemented and tested).
 
-| OPCODE (Hex) | Instruction Mnemonic | Operand Type | Addressing Mode | # Bytes | Notes                                                      |
-| :----------- | :------------------- | :----------- | :-------------- | :------ | :--------------------------------------------------------- |
-| `$00`        | `NOP`                |              | Implied         | 1       | No operation                                               |
-| `$01`        | `HLT`                |              | Implied         | 1       | Halt processor                                             |
-| `$02`        | `JMP`                | address      | Immediate       | 3       | Jump to 16-bit address                                     |
-| `$03`        | `JZ`                 | address      | Immediate       | 3       | Jump if Zero flag is set                                   |
-| `$04`        | `JNZ`                | address      | Immediate       | 3       | Jump if Zero flag is not set                               |
-| `$05`        | `JN`                 | address      | Immediate       | 3       | Jump if Negative flag is set                               |
-| `$06`        | `CALL`               | address      | Immediate       | 3       | Call subroutine at 16-bit address                          |
-| `$07`        | `RET`                |              | Implied         | 1       | Return from subroutine                                     |
-| `$08`        | `IN`                 | port         | Direct Port     | 2       | **REMOVE** (Not used with MMIO architecture)               |
-| `$09`        | `OUT`                | port         | Direct Port     | 2       | **REMOVE** (Not used with MMIO architecture)               |
-| `$0A`        | `LDA`                | address      | Absolute        | 3       | Load Accumulator A from 16-bit address, sets Z/N flags   |
-| `$0B`        | `STA`                | address      | Absolute        | 3       | Store Accumulator A to 16-bit address                    |
-| `$0C`        | `LDI A`              | byte         | Immediate       | 2       | Load Accumulator A with immediate byte, sets Z/N flags   |
-| `$0D`        | `LDI B`              | byte         | Immediate       | 2       | Load Register B with immediate byte, sets Z/N flags      |
-| `$0E`        | `LDI C`              | byte         | Immediate       | 2       | Load Register C with immediate byte, sets Z/N flags      |
-| `$0F`        | `ADD B`              |              | Register        | 1       | A = A + B, sets Z/N/C flags                              |
-| `$10`        | `ADD C`              |              | Register        | 1       | A = A + C, sets Z/N/C flags                              |
-| `$11`        | `SUB B`              |              | Register        | 1       | A = A - B, sets Z/N/C flags (Carry=Borrow)               |
-| `$12`        | `SUB C`              |              | Register        | 1       | A = A - C, sets Z/N/C flags (Carry=Borrow)               |
-| `$13`        | `INR A`              |              | Register        | 1       | Increment Accumulator A (A = A + 1), sets Z/N flags        |
-| `$14`        | `INR B`              |              | Register        | 1       | Increment Register B (B = B + 1), sets Z/N flags        |
-| `$15`        | `INR C`              |              | Register        | 1       | Increment Register C (C = C + 1), sets Z/N flags        |
-| `$16`        | `DCR A`              |              | Register        | 1       | Decrement Accumulator A (A = A - 1), sets Z/N flags        |
-| `$17`        | `DCR B`              |              | Register        | 1       | Decrement Register B (B = B - 1), sets Z/N flags        |
-| `$18`        | `DCR C`              |              | Register        | 1       | Decrement Register C (C = C - 1), sets Z/N flags        |
-| `$19`        | `RAL`                |              | Implied         | 1       | Rotate Accumulator Left through Carry, sets C flag         |
-| `$1A`        | `RAR`                |              | Implied         | 1       | Rotate Accumulator Right through Carry, sets C flag        |
-| `$1B`        | `CMA`                |              | Implied         | 1       | Complement Accumulator A (A = ~A) (Logical NOT)          |
-| `$1C`        | `ANA B`              |              | Register        | 1       | A = A & B (Logical AND), sets Z/N flags, clears C        |
-| `$1D`        | `ANA C`              |              | Register        | 1       | A = A & C, sets Z/N flags, clears C                      |
-| `$1E`        | `ANI`                | byte         | Immediate       | 2       | A = A & immediate byte, sets Z/N flags, clears C         |
-| `$1F`        | `ORA B`              |              | Register        | 1       | A = A \| B (Logical OR), sets Z/N flags, clears C        |
-| `$20`        | `ORA C`              |              | Register        | 1       | A = A \| C, sets Z/N flags, clears C                     |
-| `$21`        | `ORI`                | byte         | Immediate       | 2       | A = A \| immediate byte, sets Z/N flags, clears C        |
-| `$22`        | `XRA B`              |              | Register        | 1       | A = A ^ B (Logical XOR), sets Z/N flags, clears C        |
-| `$23`        | `XRA C`              |              | Register        | 1       | A = A ^ C, sets Z/N flags, clears C                      |
-| `$24`        | `XRI`                | byte         | Immediate       | 2       | A = A ^ immediate byte, sets Z/N flags, clears C         |
-| `$25`        | `CMP B`              |              | Register        | 1       | Compare A with B (A - B), sets Z/N/C flags, discards result |
-| `$26`        | `CMP C`              |              | Register        | 1       | Compare A with C (A - C), sets Z/N/C flags, discards result |
-| `$27`        | `MOV A,B`            |              | Register        | 1       | Move B to A (A = B)                                        |
-| `$28`        | `MOV A,C`            |              | Register        | 1       | Move C to A (A = C)                                        |
-| `$29`        | `MOV B,A`            |              | Register        | 1       | Move A to B (B = A)                                        |
-| `$2A`        | `MOV B,C`            |              | Register        | 1       | Move C to B (B = C)                                        |
-| `$2B`        | `MOV C,A`            |              | Register        | 1       | Move A to C (C = A)                                        |
-| `$2C`        | `MOV C,B`            |              | Register        | 1       | Move B to C (C = B)                                        |
+| OPCODE (Hex) | Mnemonic | Operand Type | Addr Mode | Bytes | Zero (Z) | Negative (N) | Carry (C)  | Notes / Status                             |
+| :----------- | :------- | :----------- | :-------- | :---- | :------- | :----------- | :--------- | :----------------------------------------- |
+| **Control / Basic Flow** |          |              |           |       |          |              |            |                                            |
+| `$00`        | `NOP`    |              | Implied   | 1     | `-`      | `-`          | `-`        | No operation (Implemented)                 |
+| `$01`        | `HLT`    |              | Implied   | 1     | `-`      | `-`          | `-`        | Halt processor (X - Implemented)           |
+| _($02-$0F)_  |          |              |           |       |          |              |            | _Reserved_                                 |
+| **Branching** |          |              |           |       |          |              |            |                                            |
+| `$10`        | `JMP`    | address      | Immediate | 3     | `-`      | `-`          | `-`        | Jump to 16-bit address (X - Implemented)   |
+| `$11`        | `JZ`     | address      | Immediate | 3     | `-`      | `-`          | `-`        | Jump if Z=1 (X - Implemented)              |
+| `$12`        | `JNZ`    | address      | Immediate | 3     | `-`      | `-`          | `-`        | Jump if Z=0 (X - Implemented)              |
+| `$13`        | `JN`     | address      | Immediate | 3     | `-`      | `-`          | `-`        | Jump if N=1 (X - Implemented)              |
+| _($14-$17)_  |          |              |           |       |          |              |            | _Reserved for JC, JNC, etc._             |
+| **Subroutines** |        |              |           |       |          |              |            |                                            |
+| `$18`        | `CALL`   | address      | Immediate | 3     | `-`      | `-`          | `-`        | Call subroutine (Requires Stack)           |
+| `$19`        | `RET`    |              | Implied   | 1     | `-`      | `-`          | `-`        | Return from subroutine (Requires Stack)      |
+| _($1A-$1F)_  |          |              |           |       |          |              |            | _Reserved for Stack Ops (PHA/PLA etc.)_    |
+| **Register A Arithmetic** | |            |           |       |          |              |            |                                            |
+| `$20`        | `ADD B`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A + B (X - Implemented)                |
+| `$21`        | `ADD C`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A + C (X - Implemented)                |
+| `$22`        | `ADC B`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A + B + Carry (X - Implemented)        |
+| `$23`        | `ADC C`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A + C + Carry (X - Implemented)        |
+| `$24`        | `SUB B`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A - B (C=NOT Borrow) (X - Implemented) |
+| `$25`        | `SUB C`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A - C (C=NOT Borrow) (X - Implemented) |
+| `$26`        | `SBC B`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A - B - Borrow (X - Implemented)       |
+| `$27`        | `SBC C`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A - C - Borrow (X - Implemented)       |
+| `$28`        | `INR A`  |              | Register  | 1     | `+/-`    | `+/-`        | `-`        | A = A + 1, C Unaffected (X - Implemented)  |
+| `$29`        | `DCR A`  |              | Register  | 1     | `+/-`    | `+/-`        | `-`        | A = A - 1, C Unaffected (X - Implemented)  |
+| _($2A-$2F)_  |          |              |           |       |          |              |            | _Reserved for Imm/Mem Arith_               |
+| **Register A Logic** |   |              |           |       |          |              |            |                                            |
+| `$30`        | `ANA B`  |              | Register  | 1     | `+/-`    | `+/-`        | `0`        | A = A & B, Clear C                         |
+| `$31`        | `ANA C`  |              | Register  | 1     | `+/-`    | `+/-`        | `0`        | A = A & C, Clear C                         |
+| `$32`        | `ANI`    | byte         | Immediate | 2     | `+/-`    | `+/-`        | `0`        | A = A & immediate, Clear C                 |
+| _($33)_      |          |              |           |       |          |              |            | _Reserved_                                 |
+| `$34`        | `ORA B`  |              | Register  | 1     | `+/-`    | `+/-`        | `0`        | A = A \| B, Clear C                        |
+| `$35`        | `ORA C`  |              | Register  | 1     | `+/-`    | `+/-`        | `0`        | A = A \| C, Clear C                        |
+| `$36`        | `ORI`    | byte         | Immediate | 2     | `+/-`    | `+/-`        | `0`        | A = A \| immediate, Clear C                |
+| _($37)_      |          |              |           |       |          |              |            | _Reserved_                                 |
+| `$38`        | `XRA B`  |              | Register  | 1     | `+/-`    | `+/-`        | `0`        | A = A ^ B, Clear C                         |
+| `$39`        | `XRA C`  |              | Register  | 1     | `+/-`    | `+/-`        | `0`        | A = A ^ C, Clear C                         |
+| `$3A`        | `XRI`    | byte         | Immediate | 2     | `+/-`    | `+/-`        | `0`        | A = A ^ immediate, Clear C                 |
+| _($3B)_      |          |              |           |       |          |              |            | _Reserved_                                 |
+| `$3C`        | `CMP B`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | Compare A with B (A-B), sets flags         |
+| `$3D`        | `CMP C`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | Compare A with C (A-C), sets flags         |
+| _($3E-$3F)_  |          |              |           |       |          |              |            | _Reserved for CPI/CMP Abs_                 |
+| **Register A Misc / Rotate** | |        |           |       |          |              |            |                                            |
+| `$40`        | `RAL`    |              | Implied   | 1     | `+/-`    | `+/-`        | `=`        | Rotate A Left through Carry                |
+| `$41`        | `RAR`    |              | Implied   | 1     | `+/-`    | `+/-`        | `=`        | Rotate A Right through Carry               |
+| `$42`        | `CMA`    |              | Implied   | 1     | `-`      | `-`          | `-`        | Complement A (A=~A), Flags Unaffected    |
+| _($43-$4F)_  |          |              |           |       |          |              |            | _Reserved_                                 |
+| **Register B/C Operations** | |        |           |       |          |              |            |                                            |
+| `$50`        | `INR B`  |              | Register  | 1     | `+/-`    | `+/-`        | `-`        | B = B + 1, C Unaffected                    |
+| `$51`        | `DCR B`  |              | Register  | 1     | `+/-`    | `+/-`        | `-`        | B = B - 1, C Unaffected                    |
+| _($52-$53)_  |          |              |           |       |          |              |            | _Reserved_                                 |
+| `$54`        | `INR C`  |              | Register  | 1     | `+/-`    | `+/-`        | `-`        | C = C + 1, C Unaffected                    |
+| `$55`        | `DCR C`  |              | Register  | 1     | `+/-`    | `+/-`        | `-`        | C = C - 1, C Unaffected                    |
+| _($56-$5F)_  |          |              |           |       |          |              |            | _Reserved_                                 |
+| **Register Moves** |     |              |           |       |          |              |            |                                            |
+| `$60`        | `MOV A,B`|              | Register  | 1     | `-`      | `-`          | `-`        | Move B to A (A = B)                        |
+| `$61`        | `MOV A,C`|              | Register  | 1     | `-`      | `-`          | `-`        | Move C to A (A = C)                        |
+| `$62`        | `MOV B,A`|              | Register  | 1     | `-`      | `-`          | `-`        | Move A to B (B = A)                        |
+| `$63`        | `MOV B,C`|              | Register  | 1     | `-`      | `-`          | `-`        | Move C to B (B = C)                        |
+| `$64`        | `MOV C,A`|              | Register  | 1     | `-`      | `-`          | `-`        | Move A to C (C = A)                        |
+| `$65`        | `MOV C,B`|              | Register  | 1     | `-`      | `-`          | `-`        | Move B to C (C = B)                        |
+| _($66-$9F)_  |          |              |           |       |          |              |            | _Reserved for Stack, Index Regs, etc._     |
+| **Memory Load/Store (Absolute)** | |    |           |       |          |              |            |                                            |
+| `$A0`        | `LDA`    | address      | Absolute  | 3     | `+/-`    | `+/-`        | `0`        | Load A from Memory, Clear C (X - Impl.)    |
+| `$A1`        | `STA`    | address      | Absolute  | 3     | `-`      | `-`          | `-`        | Store A to Memory                          |
+| _($A2-$AF)_  |          |              |           |       |          |              |            | _Reserved for ZP, Indexed Load/Store_      |
+| **Immediate Loads** |    |              |           |       |          |              |            |                                            |
+| `$B0`        | `LDI A`  | byte         | Immediate | 2     | `+/-`    | `+/-`        | `0`        | Load A with Immediate, Clear C (X - Impl.) |
+| `$B1`        | `LDI B`  | byte         | Immediate | 2     | `+/-`    | `+/-`        | `0`        | Load B with Immediate, Clear C (X - Impl.) |
+| `$B2`        | `LDI C`  | byte         | Immediate | 2     | `+/-`    | `+/-`        | `0`        | Load C with Immediate, Clear C (X - Impl.) |
+| _($B3-$FF)_  |          |              |           |       |          |              |            | _Reserved_                                 |
 
-**Legend/Notes:**
+**Legend (Flags Columns):**
 
-* **OPCODE:** The 8-bit hexadecimal value identifying the instruction.
-* **Operand Type:** Describes the type of data expected after the opcode byte(s).
-  * `address`: A 16-bit memory address (fetched as two subsequent bytes: low byte, then high byte).
-  * `byte`: An 8-bit immediate data value (fetched as one subsequent byte).
-  * `port`: _(Marked for removal)_ An 8-bit I/O port address.
-* **Addressing Mode:** How the CPU accesses data/operands.
-  * `Implied`: Operands are implicit in the instruction (e.g., HLT, RET, operations on Accumulator).
-  * `Immediate`: The operand is the byte(s) immediately following the opcode in memory.
-  * `Absolute`: The operand bytes form a direct 16-bit memory address.
-  * `Register`: Operands are CPU internal registers (A, B, C).
-  * `Direct Port`: _(Marked for removal)_ Operand byte specifies an 8-bit address in a dedicated I/O port space.
-* **\# Bytes:** Total number of bytes the instruction occupies in memory (Opcode + Operand Bytes).
-* **Flags:** Many instructions affect the Zero (Z), Negative (N), and Carry (C) flags.
-  * `LDx`, `LDIx`, `INR`, `DCR`, Logic ops (`ANA`/`ANI`, `ORA`/`ORI`, `XRA`/`XRI`) set Z/N based on the result.
-  * Arithmetic (`ADD`, `SUB`, `CMP`) and Rotate (`RAL`, `RAR`) ops set Z/N/C flags.
-  * Logic ops typically clear the Carry flag (C=0).
-  * `MOV`, `STA`, `JMP`, `CALL`, `RET`, `NOP`, `HLT` do not affect flags.
+* `+/-`: Flag is set (1) or cleared (0) based on the operation's result value.
+* `0` / `1`: Flag is explicitly cleared to 0 or set to 1.
+* `=`: Flag is set based on the ALU's natural carry/borrow output for that operation.
+* `-`: Flag value is not affected by the instruction.
