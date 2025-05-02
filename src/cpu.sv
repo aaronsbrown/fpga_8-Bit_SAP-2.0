@@ -60,9 +60,9 @@ module cpu (
 
     // =============== CONNECT FLAGS  ======================
     // =====================================================
-    assign flag_zero_o = flags_out[0];
-    assign flag_carry_o = flags_out[1];
-    assign flag_negative_o = flags_out[2];
+    assign flag_zero_o = flags_reg_out[0];
+    assign flag_carry_o = flags_reg_out[1];
+    assign flag_negative_o = flags_reg_out[2];
 
 
     // =============== OPCODE  ==============
@@ -248,7 +248,7 @@ module cpu (
     // across different program complexities. The root cause appears to be
     // an optimization that misinterprets the usage scope of the flags when
     // conditional jumps aren't the final instructions using them.
-    (* keep *) logic [FLAG_COUNT-1:0] flags_out;
+    (* keep *) logic [FLAG_COUNT-1:0] flags_reg_out;
     
     // Flags register to hold the status flags
     // Z: Zero flag, C: Carry flag, N: Negative flag
@@ -256,8 +256,8 @@ module cpu (
         .clk(clk),
         .reset(reset),
         .load(load_flags),
-        .data_in( {N_in, C_in, Z_in} ),
-        .latched_data(flags_out)
+        .data_in( {N_in_w, C_in_w, Z_in_w} ),
+        .latched_data(flags_reg_out)
     );
 
     
@@ -268,7 +268,7 @@ module cpu (
         .clk(clk),
         .reset(reset),
         .opcode(opcode),
-        .flags(flags_out),
+        .flags(flags_reg_out),
         .control_word(control_word)
     );
 
@@ -279,43 +279,43 @@ module cpu (
         .reset(reset),
         .in_one(a_out),
         .in_two(b_in_src),
-        .in_carry(flag_carry_o),
+        .in_carry(flags_reg_out[1]),
         .alu_op(alu_op),
         .latched_result(alu_out),
-        .zero_flag(flag_alu_zero),
-        .carry_flag(flag_alu_carry),
-        .negative_flag(flag_alu_negative)
+        .zero_flag(alu_zero_out_w),
+        .carry_flag(alu_carry_out_w),
+        .negative_flag(alu_negative_out_w)
     );
 
 
     // ================================ FLAG LOGIC ===============================
     // ===========================================================================
-    logic flag_alu_zero;
-    logic flag_alu_carry;
-    logic flag_alu_negative;
+    logic alu_zero_out_w;
+    logic alu_carry_out_w;
+    logic alu_negative_out_w;
 
     // Determine if the LOAD operation resulted in zero or negative
-    logic load_data_is_zero, load_data_is_negative;
+    logic load_data_is_zero_w, load_data_is_negative_w;
     always_comb begin
-        load_data_is_zero = 1'b0;
-        load_data_is_negative = 1'b0;
+        load_data_is_zero_w = 1'b0;
+        load_data_is_negative_w = 1'b0;
 
         if (load_sets_zn) begin
             // We know we executing an operation that sets the flags
             unique case (opcode)
                 LDI_A, LDI_B, LDI_C: begin
                     // LDI sets the flags based on the operand
-                    load_data_is_zero = ( temp_1_out == {DATA_WIDTH{1'b0}} );
-                    load_data_is_negative = temp_1_out[DATA_WIDTH - 1];
+                    load_data_is_zero_w = ( temp_1_out == {DATA_WIDTH{1'b0}} );
+                    load_data_is_negative_w = temp_1_out[DATA_WIDTH - 1];
                 end
                 LDA: begin
                     // LDA sets the flags based on the internal_bus
-                    load_data_is_zero = ( internal_bus == {DATA_WIDTH{1'b0}} );
-                    load_data_is_negative = internal_bus[DATA_WIDTH - 1];
+                    load_data_is_zero_w = ( internal_bus == {DATA_WIDTH{1'b0}} );
+                    load_data_is_negative_w = internal_bus[DATA_WIDTH - 1];
                 end
                 default: begin
-                    load_data_is_zero = 1'b0;
-                    load_data_is_negative = 1'b0;
+                    load_data_is_zero_w = 1'b0;
+                    load_data_is_negative_w = 1'b0;
                 end
             endcase
         end
@@ -323,15 +323,15 @@ module cpu (
 
 
     // Determine if flags should be set based on ALU op or LDI/LDA/LDB
-    logic Z_in, N_in, C_in;
+    logic Z_in_w, N_in_w, C_in_w;
     always_comb begin
-        Z_in = flag_alu_zero;
-        N_in = flag_alu_negative;
-        C_in = flag_alu_carry;
+        Z_in_w = alu_zero_out_w;
+        N_in_w = alu_negative_out_w;
+        C_in_w = alu_carry_out_w;
         if (load_sets_zn) begin
-            Z_in = load_data_is_zero;
-            N_in = load_data_is_negative;
-            C_in = 1'b0; // Carry flag is not set for LOAD operations
+            Z_in_w = load_data_is_zero_w;
+            N_in_w = load_data_is_negative_w;
+            C_in_w = 1'b0; // Carry flag is not set for LOAD operations
         end
     end
 endmodule
