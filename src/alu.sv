@@ -15,18 +15,19 @@ module alu (
     
     // Local variables for intermediate calculation within this block
     logic [DATA_WIDTH:0]    comb_arith_result_i; // 9 bits to accommodate carry
-    logic [DATA_WIDTH-1:0]  comp_logic_result_i;
+    logic [DATA_WIDTH-1:0]  comb_logic_result_i;
     logic                   comb_carry_out_i;
     logic [DATA_WIDTH-1:0]  comb_result_final_i;
+    logic [2:0]             flags_i;
 
     always_comb begin
         
         // default all values to prevent latch inference
         comb_arith_result_i = { (DATA_WIDTH + 1) {1'b0} };
-        comp_logic_result_i =  { DATA_WIDTH {1'b0} };
+        comb_logic_result_i =  { DATA_WIDTH {1'b0} };
         
-        comb_carry_out_i = 1'b0;
         comb_result_final_i = { DATA_WIDTH {1'b0} };
+        comb_carry_out_i = 1'b0;
         
         case (alu_op)
             
@@ -39,11 +40,11 @@ module alu (
             ALU_INR: comb_arith_result_i = {1'b0, in_one} + {1'b0, 8'd1};
             ALU_DCR: comb_arith_result_i = {1'b0, in_one} + {1'b0, ~8'd1} + {{DATA_WIDTH{1'b0}}, 1'b1};
 
-            ALU_AND: comp_logic_result_i = in_one & in_two;
-            ALU_OR:  comp_logic_result_i = in_one | in_two;
-            ALU_XOR: comp_logic_result_i = in_one ^ in_two; 
+            ALU_AND: comb_logic_result_i = in_one & in_two;
+            ALU_OR:  comb_logic_result_i = in_one | in_two;
+            ALU_XOR: comb_logic_result_i = in_one ^ in_two; 
             
-            default: comp_logic_result_i = 1'bx; 
+            default: comb_logic_result_i = 1'bx; 
         
         endcase
         
@@ -56,7 +57,7 @@ module alu (
             end
             default: begin
                 comb_carry_out_i = 1'b0;
-                comb_result_final_i = comp_logic_result_i; 
+                comb_result_final_i = comb_logic_result_i; 
             end
         endcase
 
@@ -64,15 +65,21 @@ module alu (
     
     // Carry Flag = 1 means No Borrow occurred (unsigned A >= B).
     // Carry Flag = 0 means a Borrow occurred (unsigned A < B).
-    assign carry_flag = comb_carry_out_i;
-    assign zero_flag = (comb_result_final_i == { DATA_WIDTH{1'b0} });
-    assign negative_flag = comb_result_final_i[DATA_WIDTH-1];
+    assign carry_flag = flags_i[0];
+    assign zero_flag = flags_i[1];
+    assign negative_flag = flags_i[2];
     
     always_ff @(posedge clk) begin
         if (reset) begin
+            flags_i[0] <= 1'b0; // no carry, but previous borrow
+            flags_i[1] <= 1'b1; // zero == true
+            flags_i[2] <= 1'b0; // not negative
             latched_result <= { DATA_WIDTH{1'b0} };
         end else begin
             latched_result <= comb_result_final_i;
+            flags_i[0] <= comb_carry_out_i;
+            flags_i[1] <= (comb_result_final_i == { DATA_WIDTH{1'b0} }); // result == 0
+            flags_i[2] <= comb_result_final_i[DATA_WIDTH-1]; // MSBit (0 = non-negative, 1 = negative)
         end
     end
 
