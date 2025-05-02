@@ -95,7 +95,7 @@ module computer_tb;
 
     $display("BYTE 1");
     repeat (4 - 1) @(posedge clk);  #0.1; // subtract previous latch cycle
-    pretty_print_assert_vec(uut.u_cpu.opcode, DCR_A, "CHK_MORE_BYTES: cpu.opcode == DCR_A"); 
+    pretty_print_assert_vec(uut.u_cpu.opcode, SUB_B, "CHK_MORE_BYTES: cpu.opcode == SUB_B"); 
     
     $display("POST_EXECUTION");
     repeat (2+1) @(posedge clk);  #0.1; // microsteps + latch cycle

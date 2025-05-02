@@ -325,13 +325,18 @@ module cpu (
     // Determine if flags should be set based on ALU op or LDI/LDA/LDB
     logic Z_in_w, N_in_w, C_in_w;
     always_comb begin
+        
+        // Default to current ALU_OP outputs
         Z_in_w = alu_zero_out_w;
         N_in_w = alu_negative_out_w;
         C_in_w = alu_carry_out_w;
+        
         if (load_sets_zn) begin
             Z_in_w = load_data_is_zero_w;
             N_in_w = load_data_is_negative_w;
             C_in_w = 1'b0; // Carry flag is not set for LOAD operations
+        end else if ( alu_op == ALU_INR || alu_op == ALU_DCR ) begin
+            C_in_w = flags_reg_out[1];
         end
     end
 endmodule

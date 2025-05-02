@@ -2,7 +2,7 @@
 // LDI:    A == 1
 // LDI_B:  B = 1
 // LDI_C:  C = FE
-// DCR_A:  A = A - 1 = 0
+// SUB_B:  A = A - 1 = 0
 // SBC_B:  A = A - 1 => ( A - 1 ) - 1 => FE,  carry_in = 1, carry_out = 0
 // SBC_C:  A = A - FE => FE - FE => 0, carry_in = 0, carry_out = 1
 B0 // LDI_A 01
@@ -11,7 +11,7 @@ B1 // LDI_B 01
 01
 B2 // LDI_C FE
 FE
-29 // DCR_A
+24 // SUB_B
 26 // SBC_B
 27 // SBC_C
 01 // HLT
