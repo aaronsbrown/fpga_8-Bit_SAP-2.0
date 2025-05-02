@@ -4,7 +4,7 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../fixture/op_ADC_B_AND_C_prog.hex";
+  localparam string HEX_FILE = "../fixture/op_SBC_B_AND_C_prog.hex";
 
   reg clk;
   reg reset;
@@ -48,13 +48,13 @@ module computer_tb;
 
     $display("BYTE 2");
     repeat (4) @(posedge clk);  #0.1;
-    pretty_print_assert_vec(uut.u_cpu.temp_1_out, 8'hFF, "EXECUTE: cpu.temp_1_out = xFF"); 
+    pretty_print_assert_vec(uut.u_cpu.temp_1_out, 8'h01, "EXECUTE: cpu.temp_1_out = x00"); 
 
     $display("POST_EXECUTE"); // microsteps + latch cycle
     repeat (1 + 1) @(posedge clk);  #0.1;
-    inspect_register(uut.u_cpu.a_out, 8'hFF, "Register A", DATA_WIDTH);
+    inspect_register(uut.u_cpu.a_out, 8'h01, "Register A", DATA_WIDTH);
     pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b1, "cpu.flag_negative_o == 1"); 
+    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0"); 
 
     // LDI_B 01 ============================================
     $display("\nLDI_B ============");
@@ -82,20 +82,48 @@ module computer_tb;
 
     $display("BYTE 2");
     repeat (4) @(posedge clk);  #0.1;
-    pretty_print_assert_vec(uut.u_cpu.temp_1_out, 8'h05, "EXECUTE: cpu.temp_1_out = x05"); 
+    pretty_print_assert_vec(uut.u_cpu.temp_1_out, 8'hFE, "EXECUTE: cpu.temp_1_out = xFE"); 
 
     $display("POST_EXECUTE"); // microsteps + latch cycle 
     repeat (1 + 1) @(posedge clk);  #0.1;
-    inspect_register(uut.u_cpu.c_out, 8'h05, "Register C", DATA_WIDTH);
+    inspect_register(uut.u_cpu.c_out, 8'hFE, "Register C", DATA_WIDTH);
     pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0"); 
+    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b1, "cpu.flag_negative_o == 1"); 
 
-    // ADC_B ============================================
-    $display("\nADC_B ============");
+    // DCR_A ============================================
+    $display("\nDCR_A ============");
 
     $display("BYTE 1");
     repeat (4 - 1) @(posedge clk);  #0.1; // subtract previous latch cycle
-    pretty_print_assert_vec(uut.u_cpu.opcode, ADC_B, "CHK_MORE_BYTES: cpu.opcode == ADC_B"); 
+    pretty_print_assert_vec(uut.u_cpu.opcode, DCR_A, "CHK_MORE_BYTES: cpu.opcode == DCR_A"); 
+    
+    $display("POST_EXECUTION");
+    repeat (2+1) @(posedge clk);  #0.1; // microsteps + latch cycle
+    inspect_register(uut.u_cpu.a_out, 8'h00, "Register A", DATA_WIDTH);
+    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b1, "cpu.flag_zero_o == 1"); 
+    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0");  
+
+    // SBC_B ============================================
+    $display("\nSBC_B ============");
+
+    $display("BYTE 1");
+    repeat (4 - 1) @(posedge clk);  #0.1; // subtract previous latch cycle
+    pretty_print_assert_vec(uut.u_cpu.opcode, SBC_B, "CHK_MORE_BYTES: cpu.opcode == SBC_B"); 
+    
+    $display("POST_EXECUTION");
+    repeat (3+1) @(posedge clk);  #0.1; // microsteps + latch cycle
+    inspect_register(uut.u_cpu.a_out, 8'hFF, "Register A", DATA_WIDTH);
+    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_carry_o == 0"); 
+    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
+    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b1, "cpu.flag_negative_o == 1");  
+  
+
+    // SBC_C ============================================
+    $display("\nSBC_C ============");
+
+    $display("BYTE 1");
+    repeat (4 - 1) @(posedge clk);  #0.1; // subtract previous latch cycle
+    pretty_print_assert_vec(uut.u_cpu.opcode, SBC_C, "CHK_MORE_BYTES: cpu.opcode == SBC_C"); 
     
     $display("POST_EXECUTION");
     repeat (3+1) @(posedge clk);  #0.1; // microsteps + latch cycle
@@ -103,25 +131,10 @@ module computer_tb;
     pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b1, "cpu.flag_carry_o == 1"); 
     pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b1, "cpu.flag_zero_o == 1"); 
     pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0");  
-  
-
-    // ADC_C ============================================
-    $display("\nADC_C ============");
-
-    $display("BYTE 1");
-    repeat (4 - 1) @(posedge clk);  #0.1; // subtract previous latch cycle
-    pretty_print_assert_vec(uut.u_cpu.opcode, ADC_C, "CHK_MORE_BYTES: cpu.opcode == ADC_C"); 
-    
-    $display("POST_EXECUTION");
-    repeat (3+1) @(posedge clk);  #0.1; // microsteps + latch cycle
-    inspect_register(uut.u_cpu.a_out, 8'h06, "Register A", DATA_WIDTH);
-    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_carry_o == 0"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0");  
 
     repeat (3) @(posedge clk); #0.1; 
     pretty_print_assert_vec(uut.u_cpu.u_control_unit.opcode, HLT, "HALT: cpu.opcode == HLT"); 
-    pretty_print_assert_vec(uut.u_cpu.counter_out, 16'hF009, "HALT: cpu.counter_out == xF009"); 
+    pretty_print_assert_vec(uut.u_cpu.counter_out, 16'hF00a, "HALT: cpu.counter_out == xF00a"); 
 
     $display("ADD_C instruction finished.\n\n");
     $finish;

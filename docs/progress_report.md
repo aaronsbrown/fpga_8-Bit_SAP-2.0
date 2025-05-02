@@ -4,8 +4,7 @@
 
 **Based On:** Code analysis after implementing and testing LDA Absolute.
 
-**Overall Summary:** The project has successfully implemented the core architectural changes defined in Phase 3. This includes the transition to a 16-bit address space, 8-bit opcodes, a multi-byte instruction fetch FSM within the control unit, dedicated temporary operand registers, and memory-mapped address decoding logic. The reset vector mechanism is functional. Key instructions including `NOP`, `HLT`, `LDI A`, and `LDA Absolute` are now implemented in microcode and have been tested successfully with the new architecture, validating both 1-byte, 2-byte, and 3-byte instruction fetch/execute sequences. Key areas for immediate focus are implementing microcode for the remaining target instructions (especially STA and JMP), comprehensively updating the rest of the test suite, completing the PC loading mechanism for jumps, and adding the first MMIO peripheral.
-
+**Overall Summary:** The project has successfully implemented the core architectural changes defined in Phase 3. This includes the transition to a 16-bit address space, 8-bit opcodes, a multi-byte instruction fetch FSM within the control unit, dedicated temporary operand registers, memory-mapped address decoding logic, and **functional PC loading for jumps**. The reset vector mechanism is functional. Key instructions including `NOP`, `HLT`, Loads (`LDI A/B/C`, `LDA`), Branches (`JMP`, `JZ`, `JNZ`, `JN`), and core Arithmetic (`ADD B/C`, `ADC B/C`, `SUB B/C`, `SBC B/C`, `INR A`, `DCR A`) are now implemented in microcode and have been tested successfully. Key areas for immediate focus are implementing microcode for the remaining target instructions (especially STA for MMIO), comprehensively testing remaining instructions, and adding the first MMIO peripheral
 ---
 
 ## Prerequisites
@@ -33,26 +32,26 @@
 
 ## Phase 3: Architecture Overhaul - 64KB Address Space & Expanded ISA Foundation
 
-*(Goal: Transition to a 16-bit address space and lay the foundation for a richer instruction set by adopting 8-bit opcodes and implementing multi-byte instruction fetching)*
+*(Goal: Transition to 16-bit address space, 8-bit opcodes, multi-byte fetching)*
 
-- [x] **1. Redefine Core Architecture Parameters (in `arch_defs_pkg.sv`):** Done. `ADDR_WIDTH=16`, `OPCODE_WIDTH=8`. `RESET_VECTOR=16'hF000`. New `fsm_state_t` and expanded `control_word_t` defined. New 8-bit `opcode_t` enum includes LDA.
-- [x] **2. Resize Core Hardware Components:** Done. PC=16b, MAR=16b, ports updated, specific memory blocks instantiated.
-- [x] **3. Re-architect MAR Loading (in `cpu.sv`):** Done. Uses `register_memory_address` module which accepts control signals for loading from PC or byte-wise from bus (tested via LDA).
-- [x] **4. Adapt Instruction Register (in `cpu.sv`):** Done. `u_register_instr` is an 8-bit `register_nbit` instance.
-- [x] **5. Overhaul Control Unit (`control_unit.sv`) for Multi-Byte Fetching:** Done. New FSM implemented and validated for 1, 2, and 3-byte instruction fetches. `num_operand_bytes` logic updated for LDA. Temp registers loaded correctly. Reset vector logic functional. Microcode ROM resized.
-- [/] **6. Define & Implement Initial 8-bit ISA:** **Partially Done.**
-  - 8-bit opcodes defined for `NOP` (0x00), `HLT` (0x01), `LDA` (0x0A), `LDI_A` (0x0C) in `arch_defs_pkg.sv`.
-  - Microcode implemented and tested for `NOP`, `HLT`, `LDI_A`, `LDA`.
-  - *Microcode for other target instructions ($02-$09(Removed), $0B, $0D-$2C) is missing.*
-- [x] **7. Update Address Decoder (Phase 2 Logic):** Done. Integrated into the 16-bit decoding in `computer.sv`.
-- [/] **8. Update Testbenches & Fixtures:** **Partially Done.**
-  - Testbenches for `HLT`, `LDI_A`, `LDA`, and `program_counter` are updated and passing for the new architecture.
-  - Most other testbenches (`op_STA_tb.sv`, jumps, arithmetic, logic, etc.) are **outdated**.
-  - `.hex` fixtures created for tested instructions. More needed for remaining instructions.
-  - `rom_4k.sv` still loads an old fixture file by default for synthesis builds.
-  - Test utilities (`run_until_halt`, `clear_ram`) may need minor path/logic updates (e.g., halt signal path).
+- [x] **1. Redefine Core Architecture Parameters:** Done.
+- [x] **2. Resize Core Hardware Components:** Done.
+- [x] **3. Re-architect MAR Loading:** Done & Tested (via LDA).
+- [x] **4. Adapt Instruction Register:** Done.
+- [x] **5. Overhaul Control Unit:** Done & Tested (FSM handles 1, 2, 3 bytes; `num_operand_bytes` covers implemented ops; **PC load signals implemented and tested via Jumps**).
+- [x] **6. Define & Implement Initial 8-bit ISA:** **Mostly Done.**
+  - Opcodes defined for target base set.
+  - Microcode implemented & tested for: `NOP`, `HLT`, `LDI A/B/C`, `LDA`, `ADD B/C`, `ADC B/C`, `SUB B/C`, `SBC B/C`, `INR A`, `DCR A`, `JMP`, `JZ`, `JNZ`, `JN`.
+  - *Microcode missing/untested for:* `STA`, Logic (`ANA`/`ANI`, `ORA`/`ORI`, `XRA`/`XRI`, `CMA`), Rotates (`RAL`/`RAR`), Compares (`CMP B/C`), Moves (`MOV`), `CALL`/`RET` (needs stack).
+- [x] **7. Update Address Decoder:** Done.
+- [x] **8. Update Testbenches & Fixtures:** **Mostly Done.**
+  - Testbenches created/updated for most implemented instructions including Jumps/Branches.
+  - ALU testbench updated.
+  - *Testbenches needed for:* STA, Logic, Rotates, Compares, Moves, CALL/RET.
+  - Default ROM fixture for synthesis needs update.
+  - Test utilities (`run_until_halt` path) may need check/fix.
 
-> **Phase 3 Status:** **Mostly Complete.** Core architecture validated with 1, 2, and 3-byte instructions. Major remaining work is implementing microcode for the rest of the target instruction set (STA, JMP, arithmetic, etc.) and updating/creating corresponding testbenches. PC Load logic for Jumps is needed.
+> **Phase 3 Status:** **Very Close to Complete.** Core architecture and a large portion of the base ISA are implemented and tested, including multi-byte fetch, memory access, ALU ops, and branching. Key remaining items are STA, remaining ALU/MOV ops, stack support (for CALL/RET), and associated tests.
 
 ---
 
@@ -77,11 +76,16 @@
 
 ## Critical Next Steps
 
-1. **Implement Microcode:** Add microcode sequences for `STA` (critical for MMIO), `JMP` (requires PC load logic), and then arithmetic/logic operations.
-2. **Implement PC Load for Jumps:** Add control signals to `control_word_t` and drive `load_pc_high_byte`/`load_pc_low_byte` in `program_counter.sv` from `cpu.sv` during JMP execution steps. Create `op_JMP_tb.sv`.
-3. **Update/Create Testbenches:** Create/update testbenches for STA, JMP, and other implemented instructions.
-4. **Implement Basic MMIO Peripheral:** Add a simple MMIO register (e.g., LED output at $E000) in `computer.sv` and test with the now-implemented LDA and newly implemented STA instructions.
-5. **Update Fixtures:** Create new `.hex` files for new tests. Update the default hex loaded by `rom_4k.sv` for synthesis.
-6. **Fix Test Utilities:** Verify/correct the path in `run_until_halt` (e.g., `uut.u_cpu.halt` or `uut.cpu_halt_wire`) and update `clear_ram` if needed.
-7. **Expand Opcode Definitions:** Ensure `num_operand_bytes` logic in `control_unit.sv` covers all newly implemented opcodes.
-8. **Cleanup:** Remove `control_unit_2.sv`.
+1. **Implement `STA` Microcode:** Implement the store accumulator instruction (essential for MMIO and general use). Create `op_STA_tb.sv`.
+2. **Implement Basic MMIO Peripheral & Test:** Add the `$E000` LED register and test MMIO writes using `LDI A` / `STA $E000`. Test MMIO reads using `LDA $E000`.
+3. **Implement Remaining Microcode:** Add microcode for Logic ops (`ANA`/`ANI`, etc.), Rotates (`RAL`/`RAR`), CMP, and MOV instructions.
+4. **Update/Create Testbenches:** Create/update tests for STA, Logic, Rotates, CMP, MOV.
+5. **Stack Implementation (Phase 6 Prep):**
+    - Add 16-bit SP register (`stack_pointer.sv` with inc/dec logic).
+    - Implement `LDI SPH/SPL` or similar instructions to load SP.
+    - Implement `PHA`/`PLA`.
+    - Implement `CALL`/`RET`.
+    - Create testbenches for stack operations.
+6. **Finalize Definitions:** Ensure `num_operand_bytes` and ALU `case` statements cover all instructions.
+7. **Cleanup:** Remove old files, update synthesis ROM fixture path.
+8. **Review Phase 4 (Assembler):** Begin planning the assembler.

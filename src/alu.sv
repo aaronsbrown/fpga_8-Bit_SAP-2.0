@@ -21,9 +21,10 @@ module alu (
 
     always_comb begin
         
-        // default all values to rpevent latch inference
+        // default all values to prevent latch inference
         comb_arith_result_i = { (DATA_WIDTH + 1) {1'b0} };
         comp_logic_result_i =  { DATA_WIDTH {1'b0} };
+        
         comb_carry_out_i = 1'b0;
         comb_result_final_i = { DATA_WIDTH {1'b0} };
         
