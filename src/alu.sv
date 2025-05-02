@@ -6,7 +6,7 @@ module alu (
     input logic [DATA_WIDTH-1:0] in_one,
     input logic [DATA_WIDTH-1:0] in_two,
     input logic in_carry,
-    input logic [2:0] alu_op,
+    input logic [3:0] alu_op,
     output logic [DATA_WIDTH-1:0] latched_result,
     output logic zero_flag,
     output logic carry_flag,
@@ -41,6 +41,7 @@ module alu (
 
             ALU_AND: comp_logic_result_i = in_one & in_two;
             ALU_OR:  comp_logic_result_i = in_one | in_two;
+            ALU_XOR: comp_logic_result_i = in_one ^ in_two; 
             
             default: comp_logic_result_i = 1'bx; 
         

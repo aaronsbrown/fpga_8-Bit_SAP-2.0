@@ -33,16 +33,17 @@ package arch_defs_pkg;
         LDI_C = 8'hB2   // tested
     } opcode_t;
         
-    typedef enum logic [2:0] {
+    typedef enum logic [3:0] {
         ALU_UNDEFINED = 3'bxx,
-        ALU_ADD = 3'b000,
-        ALU_SUB = 3'b001,
-        ALU_AND = 3'b010,
-        ALU_OR  = 3'b011,
-        ALU_INR = 3'b100,
-        ALU_DCR = 3'b101,
-        ALU_ADC = 3'b110,
-        ALU_SBC = 3'b111
+        ALU_ADD = 4'b0000,
+        ALU_SUB = 4'b0001,
+        ALU_AND = 4'b0010,
+        ALU_OR  = 4'b0011,
+        ALU_INR = 4'b0100,
+        ALU_DCR = 4'b0101,
+        ALU_ADC = 4'b0110,
+        ALU_SBC = 4'b0111,
+        ALU_XOR = 4'b1000
     } alu_op_t;
 
     typedef enum logic [2:0] {
@@ -75,7 +76,7 @@ package arch_defs_pkg;
         logic load_mar_addr_high;           
         logic load_ram;           
         logic oe_ram;             
-        logic [2:0] alu_op;
+        logic [3:0] alu_op;
         logic alu_src_c;       
         logic oe_alu;             
         logic load_flags;   
