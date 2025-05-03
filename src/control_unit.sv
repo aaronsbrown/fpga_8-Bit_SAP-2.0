@@ -239,6 +239,8 @@ module control_unit (
         microcode_rom[ANA_C][MS0] = '{default: 0, alu_op: ALU_AND, alu_src_c: 1};
         microcode_rom[ANA_C][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
+        microcode_rom[ANI][MS0] = '{default: 0, oe_temp_1: 1, alu_op: ALU_AND, alu_src_temp1: 1};
+        microcode_rom[ANI][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
         // MEMORY
         microcode_rom[LDA][MS0] = '{default: 0, oe_temp_1: 1}; 
