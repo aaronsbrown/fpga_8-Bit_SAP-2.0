@@ -27,7 +27,10 @@ package arch_defs_pkg;
         SBC_C = 8'h27,
         INR_A = 8'h28,  // tested
         DCR_A = 8'h29,  // tested
-        LDA =   8'hA0,  // tested
+        ANA_B = 8'h30,
+        ANA_C = 8'h31,
+        ANI   = 8'h32,
+        LDA   = 8'hA0,  // tested
         LDI_A = 8'hB0,  // tested
         LDI_B = 8'hB1,  // tested
         LDI_C = 8'hB2   // tested

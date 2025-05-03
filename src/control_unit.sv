@@ -28,11 +28,11 @@ module control_unit (
         num_operand_bytes = 2'bxx;
         case (opcode)
             NOP, HLT, ADD_B, ADD_C, SUB_B, SUB_C, INR_A, DCR_A,
-            ADC_B, ADC_C, SBC_B, SBC_C
+            ADC_B, ADC_C, SBC_B, SBC_C, ANA_B, ANA_C
             : begin
                 num_operand_bytes = 2'b00; // No operands
             end
-            LDI_A, LDI_B, LDI_C: begin
+            LDI_A, LDI_B, LDI_C, ANI: begin
                 num_operand_bytes = 2'b01; // One operand
             end
             JMP, JZ, JNZ, JN, LDA: begin
@@ -231,7 +231,10 @@ module control_unit (
         
         microcode_rom[DCR_A][MS0] = '{default: 0, alu_op: ALU_DCR};
         microcode_rom[DCR_A][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
-        
+
+        // LOGICAL 
+        microcode_rom[ANA_B][MS0] = '{default: 0, alu_op: ALU_AND};
+        microcode_rom[ANA_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
         // MEMORY
         microcode_rom[LDA][MS0] = '{default: 0, oe_temp_1: 1}; 
