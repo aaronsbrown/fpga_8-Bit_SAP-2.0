@@ -116,7 +116,7 @@ module cpu (
     logic oe_b, oe_c, oe_temp_1, oe_temp_2, oe_alu;
 
     // Control signals for ALU src multiplexer
-    logic alu_src_c, alu_src_temp1;
+    logic alu_src2_c, alu_src2_temp1;
 
     control_word_t control_word = '{default: 0};
     assign load_a = control_word.load_a;
@@ -143,8 +143,10 @@ module cpu (
     assign oe_c = control_word.oe_c; 
     assign oe_temp_1 = control_word.oe_temp_1; 
     assign oe_temp_2 = control_word.oe_temp_2;
-    assign alu_src_c = control_word.alu_src_c;
-    assign alu_src_temp1 = control_word.alu_src_temp1; 
+    assign alu_src2_c = control_word.alu_src2_c;
+    assign alu_src2_temp1 = control_word.alu_src2_temp1; 
+    assign alu_src1_b = control_word.alu_src1_b;
+    assign alu_src1_c = control_word.alu_src1_c;
     
     
     // ================= BUS INTERFACE and 'internal_bus staging' registers ==================
@@ -273,17 +275,21 @@ module cpu (
         .control_word(control_word)
     );
 
-    logic [DATA_WIDTH-1:0] b_in_src; 
+    logic [DATA_WIDTH-1:0] in_one_src, in_two_src; 
     
-    assign b_in_src = (alu_src_c) ? c_out : 
-                      (alu_src_temp1) ? temp_1_out :
-                      b_out;
+    assign in_one_src = (alu_src1_b) ? b_out :
+                        (alu_src1_c) ? c_out :
+                        a_out;
+
+    assign in_two_src = (alu_src2_c) ? c_out : 
+                        (alu_src2_temp1) ? temp_1_out :
+                        b_out;
     
     alu u_alu (
         .clk(clk),
         .reset(reset),
         .in_one(a_out),
-        .in_two(b_in_src),
+        .in_two(in_two_src),
         .in_carry(flags_reg_out[1]),
         .alu_op(alu_op),
         .latched_result(alu_out),

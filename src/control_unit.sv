@@ -204,28 +204,28 @@ module control_unit (
         microcode_rom[JN][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1, check_negative: 1};
 
         // REG_A ARITH
-        microcode_rom[ADD_B][MS0] = '{default: 0, alu_op: ALU_ADD, alu_src_c: 0} ;
+        microcode_rom[ADD_B][MS0] = '{default: 0, alu_op: ALU_ADD, alu_src2_c: 0} ;
         microcode_rom[ADD_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
-        microcode_rom[ADD_C][MS0] = '{default: 0, alu_op: ALU_ADD, alu_src_c: 1} ;
+        microcode_rom[ADD_C][MS0] = '{default: 0, alu_op: ALU_ADD, alu_src2_c: 1} ;
         microcode_rom[ADD_C][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
-        microcode_rom[ADC_B][MS0] = '{default: 0, alu_op: ALU_ADC, alu_src_c: 0} ;
+        microcode_rom[ADC_B][MS0] = '{default: 0, alu_op: ALU_ADC, alu_src2_c: 0} ;
         microcode_rom[ADC_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
-        microcode_rom[ADC_C][MS0] = '{default: 0, alu_op: ALU_ADC, alu_src_c: 1} ;
+        microcode_rom[ADC_C][MS0] = '{default: 0, alu_op: ALU_ADC, alu_src2_c: 1} ;
         microcode_rom[ADC_C][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};  
 
-        microcode_rom[SUB_B][MS0] = '{default: 0, alu_op: ALU_SUB, alu_src_c: 0} ;
+        microcode_rom[SUB_B][MS0] = '{default: 0, alu_op: ALU_SUB, alu_src2_c: 0} ;
         microcode_rom[SUB_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
-        microcode_rom[SUB_C][MS0] = '{default: 0, alu_op: ALU_SUB, alu_src_c: 1} ;
+        microcode_rom[SUB_C][MS0] = '{default: 0, alu_op: ALU_SUB, alu_src2_c: 1} ;
         microcode_rom[SUB_C][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
-        microcode_rom[SBC_B][MS0] = '{default: 0, alu_op: ALU_SBC, alu_src_c: 0} ;
+        microcode_rom[SBC_B][MS0] = '{default: 0, alu_op: ALU_SBC, alu_src2_c: 0} ;
         microcode_rom[SBC_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
-        microcode_rom[SBC_C][MS0] = '{default: 0, alu_op: ALU_SBC, alu_src_c: 1} ;
+        microcode_rom[SBC_C][MS0] = '{default: 0, alu_op: ALU_SBC, alu_src2_c: 1} ;
         microcode_rom[SBC_C][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
         microcode_rom[INR_A][MS0] = '{default: 0, alu_op: ALU_INR};
@@ -238,34 +238,34 @@ module control_unit (
         microcode_rom[ANA_B][MS0] = '{default: 0, alu_op: ALU_AND};
         microcode_rom[ANA_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
-        microcode_rom[ANA_C][MS0] = '{default: 0, alu_op: ALU_AND, alu_src_c: 1};
+        microcode_rom[ANA_C][MS0] = '{default: 0, alu_op: ALU_AND, alu_src2_c: 1};
         microcode_rom[ANA_C][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
-        microcode_rom[ANI][MS0] = '{default: 0, oe_temp_1: 1, alu_op: ALU_AND, alu_src_temp1: 1};
+        microcode_rom[ANI][MS0] = '{default: 0, oe_temp_1: 1, alu_op: ALU_AND, alu_src2_temp1: 1};
         microcode_rom[ANI][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
         microcode_rom[ORA_B][MS0] = '{default: 0, alu_op: ALU_OR};
         microcode_rom[ORA_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
-        microcode_rom[ORA_C][MS0] = '{default: 0, alu_op: ALU_OR, alu_src_c: 1};
+        microcode_rom[ORA_C][MS0] = '{default: 0, alu_op: ALU_OR, alu_src2_c: 1};
         microcode_rom[ORA_C][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
-        microcode_rom[ORI][MS0] = '{default: 0, oe_temp_1: 1, alu_op: ALU_OR, alu_src_temp1: 1};
+        microcode_rom[ORI][MS0] = '{default: 0, oe_temp_1: 1, alu_op: ALU_OR, alu_src2_temp1: 1};
         microcode_rom[ORI][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
         microcode_rom[XRA_B][MS0] = '{default: 0, alu_op: ALU_XOR};
         microcode_rom[XRA_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
-        microcode_rom[XRA_C][MS0] = '{default: 0, alu_op: ALU_XOR, alu_src_c: 1};
+        microcode_rom[XRA_C][MS0] = '{default: 0, alu_op: ALU_XOR, alu_src2_c: 1};
         microcode_rom[XRA_C][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
 
-        microcode_rom[XRI][MS0] = '{default: 0, oe_temp_1: 1, alu_op: ALU_XOR, alu_src_temp1: 1};
+        microcode_rom[XRI][MS0] = '{default: 0, oe_temp_1: 1, alu_op: ALU_XOR, alu_src2_temp1: 1};
         microcode_rom[XRI][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
  
-        microcode_rom[CMP_B][MS0] = '{default: 0, alu_op: ALU_SUB, alu_src_c: 0} ;
+        microcode_rom[CMP_B][MS0] = '{default: 0, alu_op: ALU_SUB, alu_src2_c: 0} ;
         microcode_rom[CMP_B][MS1] = '{default: 0, load_flags: 1, last_step: 1};
 
-        microcode_rom[CMP_C][MS0] = '{default: 0, alu_op: ALU_SUB, alu_src_c: 1} ;
+        microcode_rom[CMP_C][MS0] = '{default: 0, alu_op: ALU_SUB, alu_src2_c: 1} ;
         microcode_rom[CMP_C][MS1] = '{default: 0, load_flags: 1, last_step: 1};
 
         // REG_A MISC / ROT
