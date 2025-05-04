@@ -38,6 +38,12 @@ package arch_defs_pkg;
         XRI   = 8'h3A,
         CMP_B = 8'h3C,
         CMP_C = 8'h3D,
+        MOV_AB = 8'h60,
+        MOV_AC = 8'h61,
+        MOV_BA = 8'h62,
+        MOV_BC = 8'h63,
+        MOV_CA = 8'h64,
+        MOV_CB = 8'h65,
         LDA   = 8'hA0,  // tested
         LDI_A = 8'hB0,  // tested
         LDI_B = 8'hB1,  // tested

@@ -29,7 +29,8 @@ module control_unit (
         case (opcode)
             NOP, HLT, ADD_B, ADD_C, SUB_B, SUB_C, INR_A, DCR_A,
             ADC_B, ADC_C, SBC_B, SBC_C, ANA_B, ANA_C, ORA_B, ORA_C,
-            XRA_B, XRA_C, CMP_B, CMP_C
+            XRA_B, XRA_C, CMP_B, CMP_C, MOV_AB, MOV_AC, MOV_BA, MOV_BC, 
+            MOV_CA, MOV_CB
             : begin
                 num_operand_bytes = 2'b00; // No operands
             end
@@ -266,6 +267,14 @@ module control_unit (
 
         microcode_rom[CMP_C][MS0] = '{default: 0, alu_op: ALU_SUB, alu_src_c: 1} ;
         microcode_rom[CMP_C][MS1] = '{default: 0, load_flags: 1, last_step: 1};
+
+        // REGISTER MOVES
+        microcode_rom[MOV_AB][MS0] = '{default: 0, oe_a: 1, load_b: 1, last_step: 1} ; 
+        microcode_rom[MOV_AC][MS0] = '{default: 0, oe_a: 1, load_c: 1, last_step: 1} ; 
+        microcode_rom[MOV_BA][MS0] = '{default: 0, oe_b: 1, load_a: 1, last_step: 1} ; 
+        microcode_rom[MOV_BC][MS0] = '{default: 0, oe_b: 1, load_c: 1, last_step: 1} ; 
+        microcode_rom[MOV_CA][MS0] = '{default: 0, oe_c: 1, load_a: 1, last_step: 1} ; 
+        microcode_rom[MOV_CB][MS0] = '{default: 0, oe_c: 1, load_b: 1, last_step: 1} ; 
 
         // MEMORY
         microcode_rom[LDA][MS0] = '{default: 0, oe_temp_1: 1}; 
