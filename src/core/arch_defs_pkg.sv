@@ -38,6 +38,7 @@ package arch_defs_pkg;
         XRI   = 8'h3A,
         CMP_B = 8'h3C,
         CMP_C = 8'h3D,
+        CMA   = 8'h42,
         MOV_AB = 8'h60,
         MOV_AC = 8'h61,
         MOV_BA = 8'h62,
@@ -60,7 +61,8 @@ package arch_defs_pkg;
         ALU_DCR = 4'b0101,
         ALU_ADC = 4'b0110,
         ALU_SBC = 4'b0111,
-        ALU_XOR = 4'b1000
+        ALU_XOR = 4'b1000,
+        ALU_INV = 4'b1001
     } alu_op_t;
 
     typedef enum logic [2:0] {

@@ -44,7 +44,10 @@ module alu (
             // LOGIC
             ALU_AND: comb_logic_result_i = in_one & in_two;
             ALU_OR:  comb_logic_result_i = in_one | in_two;
-            ALU_XOR: comb_logic_result_i = in_one ^ in_two; 
+            ALU_XOR: comb_logic_result_i = in_one ^ in_two;
+
+            // MISC
+            ALU_INV: comb_logic_result_i = ~in_one; 
             
             default: comb_logic_result_i = 1'bx; 
         
