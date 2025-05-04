@@ -28,11 +28,12 @@ module control_unit (
         num_operand_bytes = 2'bxx;
         case (opcode)
             NOP, HLT, ADD_B, ADD_C, SUB_B, SUB_C, INR_A, DCR_A,
-            ADC_B, ADC_C, SBC_B, SBC_C, ANA_B, ANA_C
+            ADC_B, ADC_C, SBC_B, SBC_C, ANA_B, ANA_C, ORA_B, ORA_C,
+            XRA_B, XRA_C, CMP_B, CMP_C
             : begin
                 num_operand_bytes = 2'b00; // No operands
             end
-            LDI_A, LDI_B, LDI_C, ANI: begin
+            LDI_A, LDI_B, LDI_C, ANI, ORI, XRI: begin
                 num_operand_bytes = 2'b01; // One operand
             end
             JMP, JZ, JNZ, JN, LDA: begin
@@ -241,6 +242,30 @@ module control_unit (
 
         microcode_rom[ANI][MS0] = '{default: 0, oe_temp_1: 1, alu_op: ALU_AND, alu_src_temp1: 1};
         microcode_rom[ANI][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
+
+        microcode_rom[ORA_B][MS0] = '{default: 0, alu_op: ALU_OR};
+        microcode_rom[ORA_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
+
+        microcode_rom[ORA_C][MS0] = '{default: 0, alu_op: ALU_OR, alu_src_c: 1};
+        microcode_rom[ORA_C][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
+
+        microcode_rom[ORI][MS0] = '{default: 0, oe_temp_1: 1, alu_op: ALU_OR, alu_src_temp1: 1};
+        microcode_rom[ORI][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
+
+        microcode_rom[XRA_B][MS0] = '{default: 0, alu_op: ALU_XOR};
+        microcode_rom[XRA_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
+
+        microcode_rom[XRA_C][MS0] = '{default: 0, alu_op: ALU_XOR, alu_src_c: 1};
+        microcode_rom[XRA_C][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
+
+        microcode_rom[XRI][MS0] = '{default: 0, oe_temp_1: 1, alu_op: ALU_XOR, alu_src_temp1: 1};
+        microcode_rom[XRI][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_flags: 1, last_step: 1};
+ 
+        microcode_rom[CMP_B][MS0] = '{default: 0, alu_op: ALU_SUB, alu_src_c: 0} ;
+        microcode_rom[CMP_B][MS1] = '{default: 0, load_flags: 1, last_step: 1};
+
+        microcode_rom[CMP_C][MS0] = '{default: 0, alu_op: ALU_SUB, alu_src_c: 1} ;
+        microcode_rom[CMP_C][MS1] = '{default: 0, load_flags: 1, last_step: 1};
 
         // MEMORY
         microcode_rom[LDA][MS0] = '{default: 0, oe_temp_1: 1}; 

@@ -30,6 +30,14 @@ package arch_defs_pkg;
         ANA_B = 8'h30,
         ANA_C = 8'h31,
         ANI   = 8'h32,
+        ORA_B = 8'h34,
+        ORA_C = 8'h35,
+        ORI   = 8'h36, 
+        XRA_B = 8'h38,
+        XRA_C = 8'h39,
+        XRI   = 8'h3A,
+        CMP_B = 8'h3C,
+        CMP_C = 8'h3D,
         LDA   = 8'hA0,  // tested
         LDI_A = 8'hB0,  // tested
         LDI_B = 8'hB1,  // tested

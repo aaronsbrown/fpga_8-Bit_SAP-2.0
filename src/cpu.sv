@@ -341,7 +341,7 @@ module cpu (
             N_in_w = load_data_is_negative_w;
             C_in_w = 1'b0; // Carry flag is not set for LOAD operations
         end else if ( alu_op == ALU_INR || alu_op == ALU_DCR ) begin
-            C_in_w = flags_reg_out[1];
+            C_in_w = flags_reg_out[1]; // INR/DCR maintain previous carry flag
         end
     end
 endmodule
