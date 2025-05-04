@@ -1,0 +1,9 @@
+B0 // LDI_A 01
+01
+B2 // LDI_C 03
+03
+3D // CMP_C => N = 1, Z=0, Carry = 0
+B2 // LDI_C 00
+00
+3D // CMP_C => N = 0, Z = 0, Carry = 1
+01
