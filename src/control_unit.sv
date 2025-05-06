@@ -37,7 +37,7 @@ module control_unit (
             LDI_A, LDI_B, LDI_C, ANI, ORI, XRI: begin
                 num_operand_bytes = 2'b01; // One operand
             end
-            JMP, JZ, JNZ, JN, LDA: begin
+            JMP, JZ, JNZ, JN, LDA, STA: begin
                 num_operand_bytes = 2'b10; // Two operands
             end
             default: begin
@@ -289,6 +289,13 @@ module control_unit (
         microcode_rom[LDA][MS4] = '{default: 0, oe_ram: 1};  
         microcode_rom[LDA][MS5] = '{default: 0, oe_ram: 1, load_a: 1, load_flags: 1, last_step: 1, load_sets_zn: 1}; 
 
+        microcode_rom[STA][MS0] = '{default: 0, oe_temp_1: 1};
+        microcode_rom[STA][MS1] = '{default: 0, oe_temp_1: 1, load_mar_addr_low: 1}; 
+        microcode_rom[STA][MS2] = '{default: 0, oe_temp_2: 1}; 
+        microcode_rom[STA][MS3] = '{default: 0, oe_temp_2: 1, load_mar_addr_high: 1};
+        microcode_rom[STA][MS4] = '{default: 0, oe_a: 1};
+        microcode_rom[STA][MS5] = '{default: 0, oe_a: 1, load_ram: 1, last_step: 1};
+        
         // IMMEDIATE LOADS
         microcode_rom[LDI_A][MS0] = '{default: 0, oe_temp_1: 1, load_a: 1, load_flags: 1, last_step: 1, load_sets_zn: 1}; 
         microcode_rom[LDI_B][MS0] = '{default: 0, oe_temp_1: 1, load_b: 1, load_flags: 1, last_step: 1, load_sets_zn: 1}; 

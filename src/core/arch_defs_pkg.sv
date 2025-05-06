@@ -46,6 +46,7 @@ package arch_defs_pkg;
         MOV_CA = 8'h64,
         MOV_CB = 8'h65,
         LDA   = 8'hA0,  // tested
+        STA   = 8'hA1,
         LDI_A = 8'hB0,  // tested
         LDI_B = 8'hB1,  // tested
         LDI_C = 8'hB2   // tested

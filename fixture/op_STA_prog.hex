@@ -1,0 +1,12 @@
+A0 // LDA + 2 byte address
+FF
+1F
+B0 // LDI_A 55
+55
+A1 // STA + 2 bytes
+FF
+1F
+A0 // LDA + 2 bytes
+FF
+1F
+01
