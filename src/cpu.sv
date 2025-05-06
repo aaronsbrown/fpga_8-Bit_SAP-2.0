@@ -14,12 +14,6 @@ module cpu (
     input  wire [DATA_WIDTH-1:0] mem_data_in,   // data driven *to* cpu 
     output wire [DATA_WIDTH-1:0] mem_data_out,  // data driven *from* cpu
     
-    // ================= EXTERNAL OUTPUT REGISTER ========
-    output wire load_o,
-    output logic oe_ram,                        // OUTM: source is ram
-    output logic oe_a,                          // OUTA: source is A register
-    output wire [DATA_WIDTH-1:0] a_out_bus,     // output bus from A register
-
     // ================= HALT SIGNAL ================
     output wire halt,
 
@@ -50,14 +44,6 @@ module cpu (
     assign mem_address = mar_out;
     assign mem_data_out = a_out; 
     
-
-    // =============== CONNECT OUTPUT REG  =================
-    // =====================================================
-    assign load_o = control_word.load_o;
-    assign oe_a = control_word.oe_a;
-    assign oe_ram = control_word.oe_ram;
-    assign a_out_bus = a_out;
-
     // =============== CONNECT FLAGS  ======================
     // =====================================================
     assign flag_zero_o = flags_reg_out[0];
@@ -113,7 +99,7 @@ module cpu (
     logic load_pc_high_byte, load_pc_low_byte, load_origin;
     
     // Control signals for outputting data to the internal_bus
-    logic oe_b, oe_c, oe_temp_1, oe_temp_2, oe_alu;
+    logic oe_a, oe_b, oe_c, oe_temp_1, oe_temp_2, oe_ram, oe_alu;
 
     // Control signals for ALU src multiplexer
     logic alu_src2_c, alu_src2_temp1;
@@ -139,10 +125,12 @@ module cpu (
     assign halt = control_word.halt; 
     assign load_flags = control_word.load_flags;
     assign load_sets_zn = control_word.load_sets_zn;
+    assign oe_a = control_word.oe_a;
     assign oe_b = control_word.oe_b; 
     assign oe_c = control_word.oe_c; 
     assign oe_temp_1 = control_word.oe_temp_1; 
     assign oe_temp_2 = control_word.oe_temp_2;
+    assign oe_ram = control_word.oe_ram;
     assign alu_src2_c = control_word.alu_src2_c;
     assign alu_src2_temp1 = control_word.alu_src2_temp1; 
     assign alu_src1_b = control_word.alu_src1_b;

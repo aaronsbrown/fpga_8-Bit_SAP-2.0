@@ -126,8 +126,6 @@ package arch_defs_pkg;
         logic oe_temp_1;
         logic load_temp_2;
         logic oe_temp_2;
-        logic load_o;             
-
     } control_word_t;
 
 endpackage : arch_defs_pkg

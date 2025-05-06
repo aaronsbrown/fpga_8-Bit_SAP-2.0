@@ -1,0 +1,6 @@
+B0 // LDI_A 
+FF
+A1 // STA + 2 bytes
+00
+E0
+01 // HLT

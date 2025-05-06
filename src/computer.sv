@@ -4,7 +4,7 @@ module computer (
 
     input wire clk,
     input wire reset,
-    output wire [DATA_WIDTH-1:0] register_OUT,
+    output wire [DATA_WIDTH-1:0] output_port_1,
     output wire cpu_flag_zero_o,
     output wire cpu_flag_carry_o,
     output wire cpu_flag_negative_o,
@@ -22,10 +22,6 @@ module computer (
     logic [DATA_WIDTH-1:0]  rom_data_out;
     logic                   cpu_mem_write;
     logic                   cpu_mem_read;
-    logic                   cpu_load_o;
-    logic                   cpu_oe_ram;
-    logic                   cpu_oe_a;
-    logic [DATA_WIDTH-1:0]  cpu_a_out_bus;
     logic                   cpu_halt;
 
     cpu u_cpu (
@@ -40,11 +36,6 @@ module computer (
         .mem_data_out(cpu_mem_data_out),
         
         // OUTPUT INTERFACE 
-        .load_o(cpu_load_o),
-        .oe_ram(cpu_oe_ram),
-        .oe_a(cpu_oe_a),
-        .a_out_bus(cpu_a_out_bus),
-
         .halt(cpu_halt),
 
         // DEBUG SIGNALS
@@ -56,13 +47,16 @@ module computer (
         .debug_out_PC(cpu_debug_out_PC)
     );
 
-    // TODO map u_reg_OUT in E000-EFFF
     wire ce_ram_8k, ce_rom_4k, ce_vram_4k, ce_mmio;
     assign ce_ram_8k = cpu_mem_address[15:13] == 3'b000; // 0000–1FFF
     assign ce_vram_4k = cpu_mem_address[15:12] == 4'b1101; // D000–DFFF
     assign ce_mmio = cpu_mem_address[15:12] == 4'b1110; // E000–EFFF
     assign ce_rom_4k = cpu_mem_address[15:12] == 4'b1111; // F000–FFFF
     
+    // MMIO
+    wire ce_led_reg;
+    assign ce_led_reg = ce_mmio && cpu_mem_address[11:0] == 12'h000;
+
     // Mux to decide which memory to read from
     assign cpu_mem_data_in = 
         (ce_ram_8k && cpu_mem_read)  ? ram_data_out : 
@@ -96,23 +90,12 @@ module computer (
         .data_out(rom_data_out)
     );
 
-    // TODO this will be MMIO, and use a STA instruction
-    // Should be an 8 bit register, can make it a "LED Driver" to simulate a peripheral 'chip'
-    // Memory Map: E000–EFFF
-    logic [DATA_WIDTH-1:0] register_OUT_data_source;
-
-    assign register_OUT_data_source = 
-        (cpu_oe_a) ? cpu_a_out_bus : 
-        (cpu_oe_ram) ? ram_data_out : 
-        { DATA_WIDTH{1'b0} };
-
-
-    register_nbit #( .N(DATA_WIDTH) ) u_register_OUT (
+    register_nbit #( .N(DATA_WIDTH) ) u_output_port_1 (
         .clk(clk),
         .reset(reset),
-        .load(cpu_load_o),
-        .data_in(register_OUT_data_source),
-        .latched_data(register_OUT)
+        .load(cpu_mem_write && ce_led_reg),
+        .data_in(cpu_mem_data_out),
+        .latched_data(output_port_1)
     );
 
 endmodule

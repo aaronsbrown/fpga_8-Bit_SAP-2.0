@@ -47,7 +47,7 @@ module rom_4k (
   `ifndef SIMULATION
     initial begin
         // Synthesis tool reads this file during compilation
-        $readmemh("../fixture/default_program_synth.hex", mem);
+        $readmemh("../fixture/op_STA_MMIO_prog.hex", mem);
     end
   `endif
 
