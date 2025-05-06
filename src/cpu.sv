@@ -288,7 +288,7 @@ module cpu (
     alu u_alu (
         .clk(clk),
         .reset(reset),
-        .in_one(a_out),
+        .in_one(in_one_src),
         .in_two(in_two_src),
         .in_carry(flags_reg_out[1]),
         .alu_op(alu_op),
