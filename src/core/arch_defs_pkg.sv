@@ -12,21 +12,21 @@ package arch_defs_pkg;
 
     typedef enum logic [OPCODE_WIDTH-1:0] {
         NOP =   8'h00,  
-        HLT =   8'h01,  // TODO update test to new pattern
-        JMP =   8'h10,  // tested
-        JZ  =   8'h11,  // tested
-        JNZ =   8'h12,  // tested
-        JN  =   8'h13,  // tested
-        ADD_B = 8'h20,  // tested
-        ADD_C = 8'h21,  // tested
-        ADC_B = 8'h22,   // tested
-        ADC_C = 8'h23,    // tested
-        SUB_B = 8'h24,  // tested
-        SUB_C = 8'h25,  // tested
+        HLT =   8'h01,  
+        JMP =   8'h10,  
+        JZ  =   8'h11,  
+        JNZ =   8'h12,  
+        JN  =   8'h13,  
+        ADD_B = 8'h20,  
+        ADD_C = 8'h21,  
+        ADC_B = 8'h22,  
+        ADC_C = 8'h23,  
+        SUB_B = 8'h24,  
+        SUB_C = 8'h25,  
         SBC_B = 8'h26,
         SBC_C = 8'h27,
-        INR_A = 8'h28,  // tested
-        DCR_A = 8'h29,  // tested
+        INR_A = 8'h28,
+        DCR_A = 8'h29,
         ANA_B = 8'h30,
         ANA_C = 8'h31,
         ANI   = 8'h32,
@@ -38,6 +38,8 @@ package arch_defs_pkg;
         XRI   = 8'h3A,
         CMP_B = 8'h3C,
         CMP_C = 8'h3D,
+        RAL   = 8'h40,
+        RAR   = 8'h41,
         CMA   = 8'h42,
         INR_B = 8'h50,
         DCR_B = 8'h51,
@@ -49,15 +51,15 @@ package arch_defs_pkg;
         MOV_BC = 8'h63,
         MOV_CA = 8'h64,
         MOV_CB = 8'h65,
-        LDA   = 8'hA0,  // tested
+        LDA   = 8'hA0,  
         STA   = 8'hA1,
-        LDI_A = 8'hB0,  // tested
-        LDI_B = 8'hB1,  // tested
-        LDI_C = 8'hB2   // tested
+        LDI_A = 8'hB0, 
+        LDI_B = 8'hB1, 
+        LDI_C = 8'hB2  
     } opcode_t;
         
     typedef enum logic [3:0] {
-        ALU_UNDEFINED = 3'bxx,
+        ALU_UNDEFINED = 4'bxxxx,
         ALU_ADD = 4'b0000,
         ALU_SUB = 4'b0001,
         ALU_AND = 4'b0010,
@@ -67,7 +69,9 @@ package arch_defs_pkg;
         ALU_ADC = 4'b0110,
         ALU_SBC = 4'b0111,
         ALU_XOR = 4'b1000,
-        ALU_INV = 4'b1001
+        ALU_INV = 4'b1001,
+        ALU_ROL = 4'b1010,
+        ALU_ROR = 4'b1011
     } alu_op_t;
 
     typedef enum logic [2:0] {

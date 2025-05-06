@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Simple Memory Range Calculator</title>
+    <style>
+        body {
+            font-family: sans-serif;
+            padding: 1rem;
+            max-width: 800px;
+            margin: auto;
+        }
+
+        .section {
+            margin-bottom: 1.5rem;
+        }
+
+        .label {
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+        }
+
+        .controls {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .controls input.hex-input {
+            padding: 0.25rem;
+            font-family: monospace;
+            width: 6rem;
+        }
+
+        .controls input.bin-input {
+            padding: 0.25rem;
+            font-family: monospace;
+            width: 14rem;
+        }
+
+        button {
+            padding: 0.25rem 0.5rem;
+        }
+
+        .bits {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.25rem;
+            margin: 0.5rem 0;
+        }
+
+        .bit {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.75rem;
+        }
+
+        .bit input {
+            width: 1.5rem;
+            height: 1.5rem;
+            cursor: pointer;
+        }
+
+        .bits .bit:nth-child(4n) {
+            margin-right: 1rem;
+        }
+
+        .result {
+            font-size: 1.1rem;
+            margin-top: 1rem;
+        }
+    </style>
+</head>
+
+<body>
+    <h1>Memory Range Calculator</h1>
+
+    <div class="section">
+        <div class="label">Start Address (16 bits)</div>
+        <div class="controls">
+            Hex: <input id="startHexInput" class="hex-input" placeholder="0x0000">
+            Dec: <input id="startDecInput" class="hex-input" placeholder="0" style="width:5rem;">
+            Binary: <input id="startBinInput" class="bin-input" placeholder="0000 0000 0000 0000">
+            <button id="startSelectAll">Select All</button>
+            <button id="startDeselectAll">Deselect All</button>
+        </div>
+        <div id="startBits" class="bits"></div>
+        <div>Hex: <span id="startHex">0x0000</span>, Dec: <span id="startDec">0</span></div>
+    </div>
+
+    <div class="section">
+        <div class="label">End Address (16 bits)</div>
+        <div class="controls">
+            Hex: <input id="endHexInput" class="hex-input" placeholder="0x0000">
+            Dec: <input id="endDecInput" class="hex-input" placeholder="0" style="width:5rem;">
+            Binary: <input id="endBinInput" class="bin-input" placeholder="0000 0000 0000 0000">
+            <button id="endSelectAll">Select All</button>
+            <button id="endDeselectAll">Deselect All</button>
+        </div>
+        <div id="endBits" class="bits"></div>
+        <div>Hex: <span id="endHex">0x0000</span>, Dec: <span id="endDec">0</span></div>
+    </div>
+
+    <div class="result">
+        Addresses in range: <span id="rangeCount">0</span><br>
+        Kilobytes in range: <span id="kbCount">0.00</span> KB
+    </div>
+
+    <script>
+        const startBits = document.getElementById('startBits');
+        const endBits = document.getElementById('endBits');
+        const startHex = document.getElementById('startHex');
+        const endHex = document.getElementById('endHex');
+        const startDec = document.getElementById('startDec');
+        const endDec = document.getElementById('endDec');
+        const rangeCount = document.getElementById('rangeCount');
+        const kbCount = document.getElementById('kbCount');
+
+        const startHexInput = document.getElementById('startHexInput');
+        const endHexInput = document.getElementById('endHexInput');
+        const startDecInput = document.getElementById('startDecInput');
+        const endDecInput = document.getElementById('endDecInput');
+        const startBinInput = document.getElementById('startBinInput');
+        const endBinInput = document.getElementById('endBinInput');
+
+        function buildRow(container, prefix) {
+            for (let i = 15; i >= 0; i--) {
+                const bitDiv = document.createElement('div'); bitDiv.className = 'bit';
+                const chk = document.createElement('input'); chk.type = 'checkbox'; chk.id = `${prefix}${i}`;
+                chk.dataset.bit = i;
+                chk.addEventListener('change', updateFromBits);
+                const lbl = document.createElement('label'); lbl.htmlFor = chk.id; lbl.textContent = i;
+                bitDiv.append(chk, lbl);
+                container.append(bitDiv);
+            }
+        }
+
+        function readValue(container) {
+            let val = 0;
+            container.querySelectorAll('input').forEach(chk => {
+                if (chk.checked) val |= (1 << chk.dataset.bit);
+            });
+            return val;
+        }
+
+        function writeBits(container, value) {
+            container.querySelectorAll('input').forEach(chk => {
+                chk.checked = Boolean(value & (1 << chk.dataset.bit));
+            });
+        }
+
+        function toBinaryString(val) {
+            return val.toString(2).padStart(16, '0').replace(/(.{4})/g, '$1 ').trim();
+        }
+
+        function updateFromBits() {
+            const sVal = readValue(startBits);
+            startHex.textContent = '0x' + sVal.toString(16).toUpperCase().padStart(4, '0');
+            startDec.textContent = sVal;
+            startHexInput.value = startHex.textContent;
+            startDecInput.value = sVal;
+            startBinInput.value = toBinaryString(sVal);
+
+            const eVal = readValue(endBits);
+            endHex.textContent = '0x' + eVal.toString(16).toUpperCase().padStart(4, '0');
+            endDec.textContent = eVal;
+            endHexInput.value = endHex.textContent;
+            endDecInput.value = eVal;
+            endBinInput.value = toBinaryString(eVal);
+
+            const count = eVal >= sVal ? (eVal - sVal + 1) : 0;
+            rangeCount.textContent = count;
+            kbCount.textContent = (count / 1024).toFixed(2);
+        }
+
+        function parseHexInput(input) {
+            let v = input.value.trim().replace(/^0x/i, '');
+            if (!/^[0-9A-Fa-f]+$/.test(v)) return null;
+            return parseInt(v, 16) & 0xFFFF;
+        }
+
+        function parseDecInput(input) {
+            let v = parseInt(input.value.trim(), 10);
+            return Number.isNaN(v) ? null : (v & 0xFFFF);
+        }
+
+        function parseBinInput(input) {
+            let v = input.value.replace(/\s+/g, '');
+            if (!/^[01]{1,16}$/.test(v)) return null;
+            return parseInt(v, 2);
+        }
+
+        // Input event handlers
+        startHexInput.addEventListener('change', () => {
+            const v = parseHexInput(startHexInput);
+            if (v !== null) writeBits(startBits, v);
+            updateFromBits();
+        });
+        startDecInput.addEventListener('change', () => {
+            const v = parseDecInput(startDecInput);
+            if (v !== null) writeBits(startBits, v);
+            updateFromBits();
+        });
+        startBinInput.addEventListener('change', () => {
+            const v = parseBinInput(startBinInput);
+            if (v !== null) writeBits(startBits, v);
+            updateFromBits();
+        });
+
+        endHexInput.addEventListener('change', () => {
+            const v = parseHexInput(endHexInput);
+            if (v !== null) writeBits(endBits, v);
+            updateFromBits();
+        });
+        endDecInput.addEventListener('change', () => {
+            const v = parseDecInput(endDecInput);
+            if (v !== null) writeBits(endBits, v);
+            updateFromBits();
+        });
+        endBinInput.addEventListener('change', () => {
+            const v = parseBinInput(endBinInput);
+            if (v !== null) writeBits(endBits, v);
+            updateFromBits();
+        });
+
+        // Buttons
+        document.getElementById('startSelectAll').addEventListener('click', () => {
+            startBits.querySelectorAll('input').forEach(chk => chk.checked = true);
+            updateFromBits();
+        });
+        document.getElementById('startDeselectAll').addEventListener('click', () => {
+            startBits.querySelectorAll('input').forEach(chk => chk.checked = false);
+            updateFromBits();
+        });
+        document.getElementById('endSelectAll').addEventListener('click', () => {
+            endBits.querySelectorAll('input').forEach(chk => chk.checked = true);
+            updateFromBits();
+        });
+        document.getElementById('endDeselectAll').addEventListener('click', () => {
+            endBits.querySelectorAll('input').forEach(chk => chk.checked = false);
+            updateFromBits();
+        });
+
+        buildRow(startBits, 's');
+        buildRow(endBits, 'e');
+        updateFromBits();
+    </script>
+</body>
+
+</html>

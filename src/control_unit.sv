@@ -30,7 +30,7 @@ module control_unit (
             NOP, HLT, ADD_B, ADD_C, SUB_B, SUB_C, INR_A, DCR_A,
             ADC_B, ADC_C, SBC_B, SBC_C, ANA_B, ANA_C, ORA_B, ORA_C,
             XRA_B, XRA_C, CMP_B, CMP_C, MOV_AB, MOV_AC, MOV_BA, MOV_BC, 
-            MOV_CA, MOV_CB, CMA, INR_B, DCR_B, INR_C, DCR_C
+            MOV_CA, MOV_CB, CMA, INR_B, DCR_B, INR_C, DCR_C, RAR, RAL
             : begin
                 num_operand_bytes = 2'b00; // No operands
             end
@@ -269,6 +269,11 @@ module control_unit (
         microcode_rom[CMP_C][MS1] = '{default: 0, load_flags: 1, last_step: 1};
 
         // REG_A MISC / ROT
+        microcode_rom[RAR][MS0] = '{default: 0, alu_op: ALU_ROR};
+        microcode_rom[RAR][MS1] = '{default: 0, oe_alu: 1, load_a: 1, last_step: 1}; 
+        
+        microcode_rom[RAL][MS0] = '{default: 0, alu_op: ALU_ROL};
+        microcode_rom[RAL][MS1] = '{default: 0, oe_alu: 1, load_a: 1, last_step: 1};
 
         microcode_rom[CMA][MS0] = '{default: 0, alu_op: ALU_INV};
         microcode_rom[CMA][MS1] = '{default: 0, oe_alu: 1, load_a: 1, last_step: 1}; 

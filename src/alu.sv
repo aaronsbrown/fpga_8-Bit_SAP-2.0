@@ -13,78 +13,99 @@ module alu (
     output logic negative_flag
 );
     
-    // Local variables for intermediate calculation within this block
-    logic [DATA_WIDTH:0]    comb_arith_result_i; // 9 bits to accommodate carry
-    logic [DATA_WIDTH-1:0]  comb_logic_result_i;
-    logic                   comb_carry_out_i;
-    logic [DATA_WIDTH-1:0]  comb_result_final_i;
-    logic [2:0]             flags_i;
+    
+    logic [DATA_WIDTH-1:0] comb_result;
+    logic [DATA_WIDTH-1:0] comb_carry;
 
     always_comb begin
-        
-        // default all values to prevent latch inference
-        comb_arith_result_i = { (DATA_WIDTH + 1) {1'b0} };
-        comb_logic_result_i =  { DATA_WIDTH {1'b0} };
-        
-        comb_result_final_i = { DATA_WIDTH {1'b0} };
-        comb_carry_out_i = 1'b0;
-        
+        comb_result = 'x;
+        comb_carry  = 1'bx;
+
         case (alu_op)
-
-            // ARITHMETIC 
-            ALU_ADD: comb_arith_result_i = {1'b0, in_one} + {1'b0, in_two};
-            ALU_ADC: comb_arith_result_i = {1'b0, in_one} + {1'b0, in_two} + {{DATA_WIDTH{1'b0}}, in_carry}; 
-            
-            ALU_SUB: comb_arith_result_i = {1'b0, in_one} + {1'b0, ~in_two} + {{DATA_WIDTH{1'b0}}, 1'b1};
-            ALU_SBC: comb_arith_result_i = {1'b0, in_one} + {1'b0, ~in_two} + in_carry; 
-            
-            ALU_INR: comb_arith_result_i = {1'b0, in_one} + {1'b0, 8'd1};
-            ALU_DCR: comb_arith_result_i = {1'b0, in_one} + {1'b0, ~8'd1} + {{DATA_WIDTH{1'b0}}, 1'b1};
-
-            // LOGIC
-            ALU_AND: comb_logic_result_i = in_one & in_two;
-            ALU_OR:  comb_logic_result_i = in_one | in_two;
-            ALU_XOR: comb_logic_result_i = in_one ^ in_two;
-
-            // MISC
-            ALU_INV: comb_logic_result_i = ~in_one; 
-            
-            default: comb_logic_result_i = 1'bx; 
         
-        endcase
-        
-        case (alu_op)
-            ALU_ADD, ALU_SUB, ALU_INR, ALU_DCR,
-            ALU_ADC, ALU_SBC: 
-            begin
-                comb_carry_out_i = comb_arith_result_i[DATA_WIDTH]; // Check for carry out
-                comb_result_final_i = comb_arith_result_i[DATA_WIDTH-1:0];  
+            //ARITHMETIC
+            ALU_ADD: begin
+                logic [DATA_WIDTH:0] sum = {1'b0, in_one} + {1'b0, in_two};
+                comb_result = sum[DATA_WIDTH-1:0];
+                comb_carry  = sum[DATA_WIDTH];
             end
+            ALU_ADC: begin
+                logic [DATA_WIDTH:0] sum = {1'b0, in_one} + {1'b0, in_two} + in_carry;
+                comb_result = sum[DATA_WIDTH-1:0];
+                comb_carry  = sum[DATA_WIDTH];
+            end
+            ALU_SUB: begin
+                logic [DATA_WIDTH:0] sum = {1'b0, in_one} + {1'b0, ~in_two} + 1'b1;
+                comb_result = sum[DATA_WIDTH-1:0];
+                comb_carry  = sum[DATA_WIDTH]; // Carry=1 means No Borrow
+            end
+            ALU_SBC: begin
+                logic [DATA_WIDTH:0] sum = {1'b0, in_one} + {1'b0, ~in_two} + in_carry;
+                comb_result = sum[DATA_WIDTH-1:0];
+                comb_carry  = sum[DATA_WIDTH]; // Carry=1 means No Borrow
+            end
+            ALU_INR: begin
+                logic [DATA_WIDTH:0] sum = {1'b0, in_one} + 1'b1;
+                comb_result = sum[DATA_WIDTH-1:0];
+                comb_carry  = sum[DATA_WIDTH]; // Natural carry out
+            end
+            ALU_DCR: begin
+                 
+                logic [DATA_WIDTH:0] sum = {1'b0, in_one} + 8'hFE + 1'b1;
+                comb_result = sum[DATA_WIDTH-1:0];
+                comb_carry  = sum[DATA_WIDTH];
+            end
+            
+            // LOGIC (force carry = 0)
+            ALU_AND: begin
+                comb_result = in_one & in_two;
+                comb_carry  = 1'b0;
+            end
+            ALU_OR: begin
+                comb_result = in_one | in_two;
+                comb_carry  = 1'b0;
+            end
+            ALU_XOR: begin
+                comb_result = in_one ^ in_two;
+                comb_carry  = 1'b0;
+            end
+            ALU_INV: begin
+                comb_result = ~in_one;
+                comb_carry  = 1'b0;
+            end
+
+            // ROTATES
+            ALU_ROL: begin
+                comb_result = {in_one[DATA_WIDTH-2:0], in_carry};
+                comb_carry  = in_one[DATA_WIDTH-1];
+            end
+            ALU_ROR: begin
+                comb_result = {in_carry, in_one[DATA_WIDTH-1:1]};
+                comb_carry  = in_one[0];
+            end
+
             default: begin
-                comb_carry_out_i = 1'b0;
-                comb_result_final_i = comb_logic_result_i; 
+                comb_result = 'x;
+                comb_carry = 1'bx;
             end
         endcase
+    end
 
-    end 
-    
+
+
     // Carry Flag = 1 means No Borrow occurred (unsigned A >= B).
     // Carry Flag = 0 means a Borrow occurred (unsigned A < B).
-    assign carry_flag = flags_i[0];
-    assign zero_flag = flags_i[1];
-    assign negative_flag = flags_i[2];
-    
     always_ff @(posedge clk) begin
         if (reset) begin
-            flags_i[0] <= 1'b0; // no carry, but previous borrow
-            flags_i[1] <= 1'b1; // zero == true
-            flags_i[2] <= 1'b0; // not negative
+            carry_flag <= 1'b0; // no carry, but previous borrow
+            zero_flag <= 1'b1; // zero == true
+            negative_flag <= 1'b0; // not negative
             latched_result <= { DATA_WIDTH{1'b0} };
         end else begin
-            latched_result <= comb_result_final_i;
-            flags_i[0] <= comb_carry_out_i;
-            flags_i[1] <= (comb_result_final_i == { DATA_WIDTH{1'b0} }); // result == 0
-            flags_i[2] <= comb_result_final_i[DATA_WIDTH-1]; // MSBit (0 = non-negative, 1 = negative)
+            latched_result <= comb_result;
+            carry_flag <= comb_carry;
+            zero_flag <= (comb_result == { DATA_WIDTH{1'b0} }); // result == 0
+            negative_flag <= comb_result[DATA_WIDTH-1]; // MSBit (0 = non-negative, 1 = negative)
         end
     end
 
