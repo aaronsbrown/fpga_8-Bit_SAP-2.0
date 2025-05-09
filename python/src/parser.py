@@ -175,7 +175,11 @@ class Parser:
             # No changes needed to full_mnem or op within this block.
             pass 
         elif base == 'MOV' and op_text: # Ensure using op_text for condition consistency
-            dst, src = [p.strip() for p in op_text.split(',',1)]
+            
+            parts = [p.strip() for p in op_text.split(',',1)] 
+            if len(parts) != 2:
+                raise ParserError(f"[line {line_no}] Malformed operand for MOV: {op_text!r}") 
+            dst, src = parts 
             full_mnem = f"MOV_{dst.upper()}{src.upper()}"
             op = None
         elif base in ('INR','DCR','ADD','SUB','ADC','SBC','ANA','ORA','XRA','CMP') and op_text: # op_text for condition
