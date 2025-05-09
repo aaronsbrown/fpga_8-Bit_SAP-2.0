@@ -2,6 +2,8 @@
 build/
 *.log
 merged_constraints.*
+*.hex
+*.pyc
 
 # Simulation output
 *.vcd

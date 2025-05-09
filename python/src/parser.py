@@ -9,15 +9,17 @@ logger = logging.getLogger(__name__)
 
 # Matches optional label, optional (mnemonic + operand), allows comma or space delimiter
 LINE_PATTERN = re.compile(
-    r'^\s*'                    # leading whitespace
-    r'(?:(\w+):)?'             # optional label
-    r'\s*'
-    r'(?:'                     # begin optional mnemonic+operand group
-      r'(\w+)'                 # mnemonic
-      r'(?:\s*,\s*|\s+)'       # delimiter: comma or whitespace
-      r'(.*?)'                 # operand (lazy)
-    r')?'                      # end optional mnemonic+operand
-    r'\s*(?:;.*)?$'            # optional trailing comment
+    r'^\s*'                             # leading whitespace
+    r'(?:(\w+):)?'                      # group 1: optional label
+    r'\s*'                              # separator
+    r'(?:'                              # start main optional instruction part (this whole part is optional for label-only lines)
+        r'([A-Z_a-z]\w*)'               # group 2: mnemonic (e.g., HLT, LDI, MOV)
+        r'(?:'                          # start OPTIONAL "delimiter and operand" subgroup
+            r'(?:\s*,\s*|\s+)'          #   REQUIRED delimiter (one or more spaces/comma) IF THIS SUBGROUP IS PRESENT
+            r'(.*?)'                    #   group 3: operand (lazy)
+        r')?'                           # end OPTIONAL "delimiter and operand" subgroup
+    r')?'                               # end main optional instruction part
+    r'\s*(?:;.*)?$'                     # optional trailing comment (this needs to be robust too)
 )
 
 @dataclass(frozen=True)
@@ -64,9 +66,22 @@ class Parser:
             self.tokens.append(tok)
             logger.debug(f"Parsed → {tok}")
 
-            # 1) ORG sets the current origin
+              # 1) ORG sets the current origin
             if tok.mnemonic == 'ORG':
-                address = self._parse_address(tok.operand, tok.line_no)
+                if not tok.operand: # Should ideally be caught by line parser if ORG requires operand
+                    raise ParserError(f"[line {tok.line_no}] ORG directive missing operand.")
+                
+                # Try to resolve ORG operand as a symbol first
+                if tok.operand in self.symbol_table:
+                    address = self.symbol_table[tok.operand]
+                else:
+                    # If not a symbol, parse as a numeric literal
+                    try:
+                        address = self._parse_numeric_literal(tok.operand, tok.line_no, "ORG directive")
+                    except ParserError as e: # Catch specific error to re-raise with context if needed or just let it propagate
+                        # Potentially add more context here if operand could be something else
+                        raise ParserError(f"[line {tok.line_no}] ORG operand {tok.operand!r} is not a defined symbol and not a valid address literal. {e}")
+
                 logger.debug(f"Set origin to 0x{address:04X}")
 
             # 2) Record any label (or EQU symbol) at this address/value
@@ -89,6 +104,32 @@ class Parser:
         logger.info("Final symbol table:")
         for sym, addr in self.symbol_table.items():
             logger.info(f"  {sym!r} → 0x{addr:04X}")
+
+    def _parse_numeric_literal(self, value_str: Optional[str], line_no: int, context_description: str) -> int:
+        """
+        Parses a string that should represent a number (for ORG literals, EQU values).
+        Supports decimal, $hex (e.g., $FF), %binary (e.g., %1010).
+        Raises ParserError on failure.
+        """
+        if not value_str:
+            raise ParserError(f"[line {line_no}] {context_description} is missing its value.")
+        
+        s = value_str.strip()
+        if s.startswith('$'):
+            try:
+                return int(s[1:], 16)
+            except ValueError:
+                raise ParserError(f"[line {line_no}] Bad hexadecimal value for {context_description}: {s!r}")
+        elif s.startswith('%'):
+            try:
+                return int(s[1:], 2)
+            except ValueError:
+                raise ParserError(f"[line {line_no}] Bad binary value for {context_description}: {s!r}")
+        else:
+            try:
+                return int(s, 10) # Assume decimal
+            except ValueError:
+                raise ParserError(f"[line {line_no}] Invalid numeric value for {context_description} (must be decimal, $hex, or %binary): {s!r}")
 
     def _parse_line(self, line_no: int, raw: str) -> Optional[Token]:
         text = raw.strip()
@@ -121,28 +162,27 @@ class Parser:
         full_mnem = base
         op = op_text
 
-        # build internal keys for register ops
-        if base in ('LDI','ANI','ORI','XRI') and op:
-            reg, imm = [p.strip() for p in op.split(',',1)]
+        if base == 'LDI' and op_text:
+            parts = [p.strip() for p in op_text.split(',',1)]
+            if len(parts) != 2:
+                raise ParserError(f"[line {line_no}] Malformed operand for LDI: {op_text!r}")
+            reg, imm_val = parts # Use a different name for immediate part to avoid confusion with 'op'
             full_mnem = f"{base}_{reg.upper()}"
-            op = imm
-        elif base == 'MOV' and op:
-            dst, src = [p.strip() for p in op.split(',',1)]
+            op = imm_val  # <<<< CRITICAL: Assign the immediate part to 'op'
+        elif base in ('ANI', 'ORI', 'XRI') and op_text:
+            # For these, full_mnem is already 'base'
+            # And 'op' is already 'op_text' (the immediate value), which is correct.
+            # No changes needed to full_mnem or op within this block.
+            pass 
+        elif base == 'MOV' and op_text: # Ensure using op_text for condition consistency
+            dst, src = [p.strip() for p in op_text.split(',',1)]
             full_mnem = f"MOV_{dst.upper()}{src.upper()}"
             op = None
-        elif base in ('INR','DCR','ADD','SUB','ADC','SBC','ANA','ORA','XRA','CMP') and op:
-            full_mnem = f"{base}_{op.upper()}"
+        elif base in ('INR','DCR','ADD','SUB','ADC','SBC','ANA','ORA','XRA','CMP') and op_text: # op_text for condition
+            full_mnem = f"{base}_{op_text.upper()}"
             op = None
 
         return Token(line_no, label, full_mnem, op)
-
-    def _parse_address(self, operand: Optional[str], line_no: int) -> int:
-        if not operand:
-            raise ParserError(f"[line {line_no}] ORG missing operand")
-        try:
-            return int(operand.lstrip('$'), 16)
-        except ValueError:
-            raise ParserError(f"[line {line_no}] Bad hex in ORG: {operand!r}")
 
     def _add_symbol(
         self,
@@ -157,13 +197,30 @@ class Parser:
 
         if mnemonic == 'EQU':
             if not operand:
-                raise ParserError(f"[line {line_no}] EQU missing value")
-            try:
-                val = int(operand.lstrip('$'), 16)
-            except ValueError:
-                raise ParserError(f"[line {line_no}] Bad hex in EQU: {operand!r}")
+                raise ParserError(f"[line {line_no}] EQU for '{label}' missing value.")
+            
+            val: int
+            # --- START MODIFICATION ---
+            # Try to resolve operand as an existing symbol first
+            if operand in self.symbol_table:
+                val = self.symbol_table[operand]
+                logger.debug(f"EQU '{label}' resolved using existing symbol '{operand}' to 0x{val:04X}")
+            else:
+                # If not an existing symbol, try parsing as a numeric literal
+                try:
+                    # self._parse_numeric_literal should already be defined in your Parser class
+                    val = self._parse_numeric_literal(operand, line_no, f"EQU directive for '{label}'")
+                except ParserError as e:
+                    # If it's neither a known symbol nor a valid numeric literal, raise an error
+                    raise ParserError(
+                        f"[line {line_no}] EQU operand '{operand}' for '{label}' is not a defined symbol "
+                        f"and not a valid numeric literal. Original error: {e.message if hasattr(e, 'message') else e}" # Access underlying message
+                    )
+            # --- END MODIFICATION ---
+            
             self.symbol_table[label] = val
             logger.debug(f"Constant added: {label!r} = 0x{val:04X}")
         else:
+            # This is for regular labels (not EQU)
             self.symbol_table[label] = address
             logger.debug(f"Label added:    {label!r} at 0x{address:04X}")
