@@ -9,8 +9,10 @@ INIT_A_VAL  EQU $C0       ; Initial hex value
 ; --- Data Section ---
             ORG $0200     ; Start data in RAM
 counter:    DB $00        ; A byte variable to be modified
-addr_table: DW loop1, loop2 ; A word table holding addresses of labels
+addr_table_loop1: DW loop1  ; Or just addr_table: DW loop1
+addr_table_loop2: DW loop2  ; Needs a distinct label or just be a subsequent DW
 message:    DB $00        ; Placeholder for a single byte message later (DB "str" not supported yet)
+add_val:    DB $07 ; Or whatever value you intend
 
 ; --- Code Section ---
             ORG $F000     ; Code starts in ROM
@@ -59,7 +61,7 @@ loop2:                      ; Another label (address stored in addr_table[1])
                             ;       (Using value from previous example)
 
             ; Let's make A zero for JZ test
-            XRA A           ; A = A ^ A = $00. Sets Z=1, N=0, C=0
+            LDI A, #0
 
             JZ halt_label   ; Jump if Zero. Should jump as Z=1.
 

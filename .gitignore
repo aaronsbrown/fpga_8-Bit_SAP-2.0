@@ -3,7 +3,13 @@ build/
 *.log
 merged_constraints.*
 *.hex
+
+
+# python
+__pycache__/
 *.pyc
+*.pyo
+*.pyd
 
 # Simulation output
 *.vcd
