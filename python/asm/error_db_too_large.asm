@@ -1,0 +1,1 @@
+DB $123    ; Too large for 8-bit DB

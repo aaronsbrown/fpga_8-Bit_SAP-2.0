@@ -1,0 +1,1 @@
+LDI A, #$FF0 ; Immediate too large for 8-bit LDI operand

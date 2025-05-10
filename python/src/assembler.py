@@ -17,6 +17,7 @@ class AssemblerError(Exception):
         return f"AssemblerError: {self.message}"
 
 class Assembler:
+    
     def __init__(self, input_file: str, output_file: str) -> None:
         self.input_file  = input_file
         self.output_file = output_file
@@ -73,6 +74,13 @@ class Assembler:
                 # Use the new helper to resolve ORG operand (which could be a symbol or literal)
                 # The tok.operand is already the string like "DATA_START" or "$F000"
                 resolved_address = self._parse_value_or_symbol(tok.operand, "ORG address")
+                
+                # Add 16-bit range check for the resolved ORG address
+                if not (0x0000 <= resolved_address <= 0xFFFF):
+                    raise AssemblerError(
+                        f"ORG address 0x{resolved_address:X} ('{tok.operand}') is out of 16-bit range (0x0000-0xFFFF)."
+                    )
+                
                 current_addr = resolved_address
                 self._emit_address_directive(current_addr)
                 continue
@@ -93,7 +101,7 @@ class Assembler:
 
             # 6) Emit operand/data bytes
             # Pass only necessary info; self.symbols is used by _encode_operand
-            for b in self._encode_operand(tok.operand, info):
+            for b in self._encode_operand(tok.operand, info, tok.mnemonic):
                 self._emit_byte(b)
 
             # 7) Advance the address counter (for assembler's internal tracking, mostly for output verification)
@@ -123,33 +131,53 @@ class Assembler:
         """Append a single byte as two‑digit hex."""
         self.output_lines.append(f"{b & 0xFF:02X}")
 
-    def _encode_operand(
-        self,
-        op_str:  Optional[str], # Renamed from 'op' to 'op_str' for clarity
-        info:    InstrInfo,    # Use the imported InstrInfo type hint
-        # symbols: dict[str, int] -> REMOVED, uses self.symbols now
-    ) -> List[int]:
-        """
-        Emit the correct number of little‑endian bytes:
-         - For instructions (info.opcode not None), count = info.size - 1
-         - For data directives (opcode is None), count = info.size
-        Uses self.symbols for symbol resolution.
-        """
-        if not op_str: # If operand string is None or empty
+    def _encode_operand(self, op_str: Optional[str], info:InstrInfo, mnemonic: str) -> List[int]:
+        
+        if not op_str:
             return []
 
-        # Use the helper to resolve the operand string (e.g., "VALUE_ONE", "#$10", "data_val1")
-        # The context_msg helps in error reporting.
-        val = self._parse_value_or_symbol(op_str, f"operand for {info}")
+        val = self._parse_value_or_symbol(op_str, f"operand for '{mnemonic}' instruction/directive") # Assuming info now has mnemonic for context
+
+        # Determine how many bytes to emit for this specific operand
+        # For instructions with an opcode, operand takes (info.size - 1) bytes.
+        # For data directives (DB, DW), operand takes info.size bytes.
+        operand_byte_count = info.size - 1 if info.opcode is not None else info.size
+
+        if operand_byte_count < 0: # Should not happen
+            raise AssemblerError(f"Internal error: Negative operand byte count for {mnemonic}")
+        if operand_byte_count == 0 and op_str: # e.g. HLT with an operand specified
+             logger.warning(f"Operand '{op_str}' provided for instruction/directive '{mnemonic}' which takes no operand. Operand ignored.")
+             return []
+        if operand_byte_count == 0 and not op_str: # Correct case for no-operand instructions
+            return []
 
 
-        # determine how many bytes to emit
-        count = info.size - 1 if info.opcode is not None else info.size
-        if count < 0: # Should not happen with valid InstrInfo
-            raise AssemblerError(f"Invalid size calculation for operand encoding (count={count}) for {info}")
+        # --- ADD RANGE CHECKS HERE ---
+        if operand_byte_count == 1: # Expecting an 8-bit value
+            if not (0x00 <= val <= 0xFF):
+                # Allow negative numbers if they fit in signed 8-bit and then take their 2's complement for unsigned byte
+                # For simplicity, let's assume unsigned 8-bit for now.
+                # If you want to support DB -1 (becoming $FF), that's a further refinement.
+                raise AssemblerError(
+                    f"Value 0x{val:X} ('{op_str}') for {mnemonic} is out of 8-bit range (0x00-0xFF)."
+                )
+            # Ensure val is treated as unsigned for encoding
+            val = val & 0xFF 
+        elif operand_byte_count == 2: # Expecting a 16-bit value
+            if not (0x0000 <= val <= 0xFFFF):
+                raise AssemblerError(
+                    f"Value 0x{val:X} ('{op_str}') for {mnemonic} is out of 16-bit range (0x0000-0xFFFF)."
+                )
+            # Ensure val is treated as unsigned for encoding
+            val = val & 0xFFFF
+        elif operand_byte_count > 2:
+            # Your ISA doesn't seem to have operands larger than 2 bytes yet.
+            # This would be an error in INSTRUCTION_SET definition or logic.
+            raise AssemblerError(f"Unsupported operand size ({operand_byte_count} bytes) for {mnemonic}.")
+        # --- END RANGE CHECKS ---
 
-        # split into little‑endian bytes
-        return [(val >> (8 * i)) & 0xFF for i in range(count)]
+        # Split into little-endian bytes
+        return [(val >> (8 * i)) & 0xFF for i in range(operand_byte_count)]
 
 
 def main(input_filepath, output_filepath) -> None:

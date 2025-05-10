@@ -106,30 +106,35 @@ class Parser:
             logger.info(f"  {sym!r} → 0x{addr:04X}")
 
     def _parse_numeric_literal(self, value_str: Optional[str], line_no: int, context_description: str) -> int:
-        """
-        Parses a string that should represent a number (for ORG literals, EQU values).
-        Supports decimal, $hex (e.g., $FF), %binary (e.g., %1010).
-        Raises ParserError on failure.
-        """
         if not value_str:
             raise ParserError(f"[line {line_no}] {context_description} is missing its value.")
         
         s = value_str.strip()
+        val: int
         if s.startswith('$'):
             try:
-                return int(s[1:], 16)
+                val = int(s[1:], 16)
             except ValueError:
                 raise ParserError(f"[line {line_no}] Bad hexadecimal value for {context_description}: {s!r}")
         elif s.startswith('%'):
             try:
-                return int(s[1:], 2)
+                val = int(s[1:], 2)
             except ValueError:
                 raise ParserError(f"[line {line_no}] Bad binary value for {context_description}: {s!r}")
         else:
             try:
-                return int(s, 10) # Assume decimal
+                val = int(s, 10) # Assume decimal
             except ValueError:
                 raise ParserError(f"[line {line_no}] Invalid numeric value for {context_description} (must be decimal, $hex, or %binary): {s!r}")
+
+        # Add range check specifically for ORG addresses here
+        if "ORG directive" in context_description: # A bit fragile, maybe pass a type/enum
+            if not (0x0000 <= val <= 0xFFFF):
+                raise ParserError(
+                    f"[line {line_no}] Address value 0x{val:X} for {context_description} is out of 16-bit range (0x0000-0xFFFF)."
+                )
+        # For EQU, we don't strictly check 8-bit/16-bit here, as its usage determines the check.
+        return val
 
     def _parse_line(self, line_no: int, raw: str) -> Optional[Token]:
         text = raw.strip()
