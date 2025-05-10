@@ -72,26 +72,49 @@ This document outlines the planned evolution of a custom 8-bit CPU implemented o
 > **Prerequisite:** Phase 2 complete.
 > **Goal:** CPU core capable of fetching multi-byte instructions, addressing 64KB of memory, and executing a functional base set of instructions using 8-bit opcodes.
 
-## Phase 4: Assembler for New Architecture
+This is a good, concise README section for Phase 4. Based on what we've accomplished with the assembler, here are a few suggestions for updates to make it accurately reflect the current state and capabilities:
 
-*(Goal: Create a tool to simplify writing programs for the new 16-bit address, 8-bit opcode, multi-byte ISA)*
+---
 
-1. **Design Assembler Features:**
-    - Support for labels (address resolution).
-    - Mnemonics for the instructions defined in Phase 3.
-    - Parsing of 8-bit immediate values and 16-bit absolute addresses.
-    - Generation of correct 1, 2, or 3-byte machine code sequences.
-    - Output `.hex` format suitable for `$readmemh`.
+## Phase 4: Assembler for CPU Architecture
 
-2. **Develop Assembler (e.g., Python):**
-    - Implement tokenization, parsing, symbol table management (two-pass approach recommended for labels).
-    - Map mnemonics and operands to binary machine code based on your ISA definition.
+*(Goal: Create a robust tool to write, assemble, and generate memory images for the custom 8-bit CPU with a 16-bit address space.)*
 
-3. **Toolchain Integration:**
-    - Integrate assembler into build scripts (e.g., `build.sh` could optionally run `assemble.py` first).
+1. **Assembler Features Implemented:**
+    - **Labels & Symbols:** Full support for labels for address resolution and `EQU` for defining named constants.
+    - **Mnemonics:** Comprehensive support for the instruction set architecture (ISA) mnemonics.
+    - **Operand Parsing:**
+        - Parses 8-bit immediate values (hex `$`, binary `%`, decimal, symbolic via `EQU`).
+        - Parses 16-bit absolute addresses (hex `$`, binary `%`, decimal, symbolic via `EQU` or labels).
+    - **Machine Code Generation:**
+        - Generates correct 1, 2, or 3-byte machine code sequences based on the ISA.
+        - Ensures little-endian encoding for multi-byte operands (addresses, `DW`).
+    - **Directives:** Supports `ORG`, `EQU`, `DB` (Define Byte), `DW` (Define Word).
+    - **Output Format:**
+        - Generates `.hex` files suitable for Verilog's `$readmemh`.
+        - Supports outputting to a **single combined hex file** (default behavior).
+        - Supports outputting to **multiple, region-specific hex files** (e.g., `ROM.hex`, `RAM.hex`) based on user-defined memory regions (`--region NAME START_ADDR END_ADDR`), with addresses relative to the start of each region in the respective files.
+    - **Error Handling:** Includes robust error detection and reporting for common syntax issues, undefined symbols, duplicate labels, out-of-range values, and malformed directives/instructions.
+    - **Range Checking:** Validates that immediate values and addresses conform to the CPU's 8-bit data width and 16-bit address width.
+    - **Comments & Formatting:** Handles various comment styles, blank lines, and label formatting.
 
-> **Prerequisite:** Phase 3 complete.
-> **Goal:** Ability to write and assemble programs using symbolic labels and mnemonics, targeting the new CPU architecture.
+2. **Assembler Development (Python):**
+    - Implemented using a **two-pass approach** for effective label and symbol resolution.
+    - Features distinct tokenization/parsing (Pass 1) and code generation (Pass 2) stages.
+    - Includes a detailed symbol table and instruction set definition (`INSTRUCTION_SET`).
+
+3. **Toolchain Integration & Usage:**
+    - The assembler is a command-line Python script (`python/src/assembler.py`).
+    - Assembly source files (`.asm`) are processed to generate `.hex` memory image files.
+    - **Workflow:**
+        1. Write assembly programs (`.asm` files, typically stored in `asm_source/`).
+        2. Manually invoke the assembler to generate `.hex` files for specific memory regions (e.g., `ROM.hex`, `RAM.hex`) into a fixture directory (e.g., `test/generated_fixtures/<test_name>/`).
+        3. Verilog testbenches load these generated `.hex` files using `$readmemh` for simulation.
+    - Build scripts (`scripts/simulate.sh`) currently focus on Verilog compilation and simulation, using pre-generated hex files as fixtures. *(Future: `simulate.sh` could be enhanced to optionally call the assembler).*
+
+> **Prerequisite:** Phase 3 (ISA Definition) complete.
+> **Current Status:** Core assembler functionality is complete and robustly tested. The tool successfully generates memory images for the defined CPU architecture, supporting complex programs and various assembly language constructs.
+> **Next Steps (Tooling):** Further integration into automated build/simulation flows if desired; documentation of the specific assembly language syntax supported.
 
 ---
 

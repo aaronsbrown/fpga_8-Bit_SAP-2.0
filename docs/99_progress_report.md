@@ -46,9 +46,29 @@
 
 ## Phase 4: Assembler for New Architecture
 
-- [ ] **Goal:** Create a tool to simplify writing programs.
+- [x] **Goal:** Create a tool to simplify writing programs for the new 16-bit address, 8-bit opcode, multi-byte ISA.
+- [x] **1. Design Assembler Features:**
+  - [x] Support for labels (address resolution) and `EQU` constants.
+  - [x] Mnemonics for all currently implemented ISA instructions.
+  - [x] Parsing of 8-bit immediate values and 16-bit absolute addresses (various bases).
+  - [x] Generation of correct 1, 2, or 3-byte machine code sequences (little-endian for multi-byte).
+  - [x] Support for directives: `ORG`, `EQU`, `DB`, `DW`.
+  - [x] Output `.hex` format suitable for `$readmemh`, supporting single or multi-region (RAM/ROM) files with relative addressing.
+  - [x] Error detection and reporting for common syntax and semantic errors.
+  - [x] Range checking for addresses and data values.
+- [x] **2. Develop Assembler (Python):**
+  - [x] Implemented using a two-pass approach (tokenization/parsing and code generation).
+  - [x] Manages symbol table and instruction set definitions.
+  - [x] Successfully tested against a comprehensive suite of assembly programs, including complex instruction sequences, various data definitions, control flow, and error conditions.
+- [ ] **3. Toolchain Integration & Workflow Refinement:**
+  - [x] Current Workflow: Assembler manually invoked to generate `.hex` fixture files (e.g., `RAM.hex`, `ROM.hex`) for specific test cases. Verilog testbenches load these fixtures.
+  - [ ] Future: Consider options for more automated integration into `simulate.sh` or `build.sh` if desired.
+  - [x] Project directory structure updated to separate assembly source (`asm_source/`) from assembler tool code (`python/`) and generated fixtures (`test/generated_fixtures/`).
+- [ ] **4. Documentation:**
+  - [ ] Document the specific assembly language syntax supported by the assembler.
+  - [ ] Update project README with assembler capabilities. *(Partially done via our discussion)*
 
-> **Status:** **Not Started.**
+> **Phase 4 Status:** **Largely Complete.** Core assembler is functional, robust, and meets initial design goals. Remaining tasks involve refining toolchain integration if automation is desired and completing documentation.
 
 ---
 
