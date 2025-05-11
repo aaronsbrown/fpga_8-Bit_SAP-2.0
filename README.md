@@ -72,8 +72,6 @@ This document outlines the planned evolution of a custom 8-bit CPU implemented o
 > **Prerequisite:** Phase 2 complete.
 > **Goal:** CPU core capable of fetching multi-byte instructions, addressing 64KB of memory, and executing a functional base set of instructions using 8-bit opcodes.
 
-This is a good, concise README section for Phase 4. Based on what we've accomplished with the assembler, here are a few suggestions for updates to make it accurately reflect the current state and capabilities:
-
 ---
 
 ## Phase 4: Assembler for CPU Architecture
