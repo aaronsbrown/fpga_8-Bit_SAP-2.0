@@ -6,29 +6,29 @@ This table defines the initial instruction set for the custom 8-bit CPU, organiz
 | :----------- | :------- | :----------- | :-------- | :---- | :------- | :----------- | :--------- | :----------------------------------------- |
 | **Control / Basic Flow** |          |              |           |       |          |              |            |                                            |
 | `$00`        | `NOP`    |              | Implied   | 1     | `-`      | `-`          | `-`        | No operation (Implemented)                 |
-| `$01`        | `HLT`    |              | Implied   | 1     | `-`      | `-`          | `-`        | Halt processor (X - Implemented)           |
+| `$01`        | `HLT`    |              | Implied   | 1     | `-`      | `-`          | `-`        | Halt processor            |
 | _($02-$0F)_  |          |              |           |       |          |              |            | _Reserved_                                 |
 | **Branching** |          |              |           |       |          |              |            |                                            |
-| `$10`        | `JMP`    | address      | Immediate | 3     | `-`      | `-`          | `-`        | Jump to 16-bit address (X - Implemented)   |
-| `$11`        | `JZ`     | address      | Immediate | 3     | `-`      | `-`          | `-`        | Jump if Z=1 (X - Implemented)              |
-| `$12`        | `JNZ`    | address      | Immediate | 3     | `-`      | `-`          | `-`        | Jump if Z=0 (X - Implemented)              |
-| `$13`        | `JN`     | address      | Immediate | 3     | `-`      | `-`          | `-`        | Jump if N=1 (X - Implemented)              |
+| `$10`        | `JMP`    | address      | Immediate | 3     | `-`      | `-`          | `-`        | Jump to 16-bit address    |
+| `$11`        | `JZ`     | address      | Immediate | 3     | `-`      | `-`          | `-`        | Jump if Z=1               |
+| `$12`        | `JNZ`    | address      | Immediate | 3     | `-`      | `-`          | `-`        | Jump if Z=0               |
+| `$13`        | `JN`     | address      | Immediate | 3     | `-`      | `-`          | `-`        | Jump if N=1               |
 | _($14-$17)_  |          |              |           |       |          |              |            | _Reserved for JC, JNC, etc._             |
 | **Subroutines** |        |              |           |       |          |              |            |                                            |
 | `$18`        | `CALL`   | address      | Immediate | 3     | `-`      | `-`          | `-`        | Call subroutine (Requires Stack)           |
 | `$19`        | `RET`    |              | Implied   | 1     | `-`      | `-`          | `-`        | Return from subroutine (Requires Stack)      |
 | _($1A-$1F)_  |          |              |           |       |          |              |            | _Reserved for Stack Ops (PHA/PLA etc.)_    |
 | **Register A Arithmetic** | |            |           |       |          |              |            |                                            |
-| `$20`        | `ADD B`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A + B (X - Implemented)                |
-| `$21`        | `ADD C`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A + C (X - Implemented)                |
-| `$22`        | `ADC B`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A + B + Carry (X - Implemented)        |
-| `$23`        | `ADC C`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A + C + Carry (X - Implemented)        |
-| `$24`        | `SUB B`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A - B (C=NOT Borrow) (X - Implemented) |
-| `$25`        | `SUB C`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A - C (C=NOT Borrow) (X - Implemented) |
-| `$26`        | `SBC B`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A - B - Borrow (X - Implemented)       |
-| `$27`        | `SBC C`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A - C - Borrow (X - Implemented)       |
-| `$28`        | `INR A`  |              | Register  | 1     | `+/-`    | `+/-`        | `-`        | A = A + 1, C Unaffected (X - Implemented)  |
-| `$29`        | `DCR A`  |              | Register  | 1     | `+/-`    | `+/-`        | `-`        | A = A - 1, C Unaffected (X - Implemented)  |
+| `$20`        | `ADD B`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A + B                 |
+| `$21`        | `ADD C`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A + C                 |
+| `$22`        | `ADC B`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A + B + Carry         |
+| `$23`        | `ADC C`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A + C + Carry         |
+| `$24`        | `SUB B`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A - B (C=NOT Borrow)  |
+| `$25`        | `SUB C`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A - C (C=NOT Borrow)  |
+| `$26`        | `SBC B`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A - B - Borrow        |
+| `$27`        | `SBC C`  |              | Register  | 1     | `+/-`    | `+/-`        | `=`        | A = A - C - Borrow        |
+| `$28`        | `INR A`  |              | Register  | 1     | `+/-`    | `+/-`        | `-`        | A = A + 1, C Unaffected   |
+| `$29`        | `DCR A`  |              | Register  | 1     | `+/-`    | `+/-`        | `-`        | A = A - 1, C Unaffected   |
 | _($2A-$2F)_  |          |              |           |       |          |              |            | _Reserved for Imm/Mem Arith_               |
 | **Register A Logic** |   |              |           |       |          |              |            |                                            |
 | `$30`        | `ANA B`  |              | Register  | 1     | `+/-`    | `+/-`        | `0`        | A = A & B, Clear C                         |
