@@ -75,21 +75,31 @@ while [[ $# -gt 0 ]]; do
     esac
 done
 
-# --- Determine Project Directory ---
+# --- Determine Project and Sub-Directories ---
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
-PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)"
-[ "$VERBOSE" = true ] && log_debug "Project directory determined as: $PROJECT_DIR"
+PROJECT_DIR="$(cd "$SCRIPT_DIR/.." && pwd)" # This remains the true project root
+
+# NEW: Define roots for sub-sections of the project
+HARDWARE_DIR="$PROJECT_DIR/hardware"
+SOFTWARE_DIR="$PROJECT_DIR/software" # Define even if not used by this script yet, for consistency
+BUILD_OUT_DIR="$PROJECT_DIR/build"   # If you want to make build dir explicit too
+
+[ "$VERBOSE" = true ] && log_debug "Project directory: $PROJECT_DIR"
+[ "$VERBOSE" = true ] && log_debug "Hardware directory: $HARDWARE_DIR"
+[ "$VERBOSE" = true ] && log_debug "Software directory: $SOFTWARE_DIR"
+[ "$VERBOSE" = true ] && log_debug "Build output directory: $BUILD_OUT_DIR"
+
 
 # --- Load Verilog Files from _files.f if none provided ---
 if [[ ${#VERILOG_FILES[@]} -eq 0 ]]; then
-    FILE_LIST="$PROJECT_DIR/src/_files_sim.f"
+    FILE_LIST="$HARDWARE_DIR/src/_files_sim.f"
     if [[ -f "$FILE_LIST" ]]; then
         log_info "Loading Verilog sources from: $FILE_LIST"
         while IFS= read -r line || [ -n "$line" ]; do
             # Trim leading/trailing whitespace.
             line="$(echo "$line" | sed 's/^[[:space:]]*//;s/[[:space:]]*$//')"
             [[ "$line" =~ ^#.*$ || -z "$line" ]] && continue
-            VERILOG_FILES+=("$PROJECT_DIR/$line")
+            VERILOG_FILES+=("$HARDWARE_DIR/$line")
         done < "$FILE_LIST"
     else
         log_error "No Verilog files provided and $FILE_LIST not found."
@@ -100,7 +110,7 @@ fi
 # --- Determine Testbench File ---
 if [ -n "$TB_FILE" ]; then
     if [[ "$TB_FILE" != *"/"* ]]; then
-        TB_FILE="$PROJECT_DIR/test/$TB_FILE"
+        TB_FILE="$HARDWARE_DIR/test/$TB_FILE"
     fi
     TESTBENCH_FILE="$(cd "$(dirname "$TB_FILE")" && pwd)/$(basename "$TB_FILE")"
     if [ ! -f "$TESTBENCH_FILE" ]; then
@@ -110,7 +120,7 @@ if [ -n "$TB_FILE" ]; then
     log_info "Using specified testbench file: $TESTBENCH_FILE"
     VERILOG_FILES+=("$TESTBENCH_FILE")
 else
-    TEST_DIR="$PROJECT_DIR/test"
+    TEST_DIR="$HARDWARE_DIR/test"
     if [ -d "$TEST_DIR" ]; then
         log_info "Searching for testbench files in $TEST_DIR..."
         TEST_FILES=( $(find "$TEST_DIR" -maxdepth 1 -type f \( -name "*_tb.v" -o -name "*_tb.sv" \) 2>/dev/null) )
@@ -140,8 +150,7 @@ for file in "${VERILOG_FILES[@]}"; do
 done
 
 # --- Setup Build and Log Directories ---
-BUILD_DIR="$PROJECT_DIR/build"
-LOG_DIR="$BUILD_DIR/logs"
+LOG_DIR="$BUILD_OUT_DIR/logs"
 mkdir -p "$LOG_DIR"
 
 # --- Optional sv2v Conversion ---
@@ -164,7 +173,7 @@ if [ "$USE_SV2V" = true ]; then
     done
 
     # Convert all SystemVerilog files together to support packages.
-    combined_sv2v_file="$BUILD_DIR/combined.v"
+    combined_sv2v_file="$BUILD_OUT_DIR/combined.v"
     log_info "Converting ${#SV_FILES[@]} SystemVerilog files to $combined_sv2v_file"
     sv2v -DSIMULATION "${SV_FILES[@]}" > "$combined_sv2v_file"
     FINAL_VERILOG_FILES+=("$combined_sv2v_file")
@@ -173,12 +182,10 @@ else
 fi
 
 # --- Compile Simulation Sources with Icarus Verilog ---
-SIM_VVP="$BUILD_DIR/sim.vvp"
+SIM_VVP="$BUILD_OUT_DIR/sim.vvp"
 log_info "Compiling simulation sources..."
 # Add the test directory to the include path (-I option) so that test_utilities.sv can be found.
-IVERILOG_CMD=(iverilog -DSIMULATION -g2012 -I "$PROJECT_DIR/test" -o "$SIM_VVP" "${FINAL_VERILOG_FILES[@]}")
-
-#cp "$PROJECT_DIR/fixture/program.hex" "$BUILD_DIR/program.hex"
+IVERILOG_CMD=(iverilog -DSIMULATION -g2012 -I "$HARDWARE_DIR/test" -I "$HARDWARE_DIR/src" -o "$SIM_VVP" "${FINAL_VERILOG_FILES[@]}")
 
 [ "$VERBOSE" = true ] && log_debug "Iverilog command: ${IVERILOG_CMD[*]}"
 if run_cmd "$LOG_DIR/iverilog.log" "${IVERILOG_CMD[@]}"; then
@@ -189,7 +196,7 @@ else
 fi
 
 # --- Run Simulation with vvp ---
-pushd "$BUILD_DIR" > /dev/null
+pushd "$BUILD_OUT_DIR" > /dev/null
 log_info "Running simulation with vvp..."
 if run_cmd "$LOG_DIR/vvp.log" vvp "sim.vvp"; then
     log_success "vvp simulation completed."
@@ -201,13 +208,13 @@ fi
 popd > /dev/null
 
 # --- Optionally Open Waveform in gtkwave ---
-WAVEFORM="$BUILD_DIR/waveform.vcd"
-SESSION_FILE="sim/multi_byte_cpu_full.gtkw"
+WAVEFORM="$BUILD_OUT_DIR/waveform.vcd"
+SESSION_FILE="$HARDWARE_DIR/sim/multi_byte_cpu_full.gtkw"
 if [ -f "$WAVEFORM" ]; then
     if [ "$NO_VIZ" = false ]; then
         log_info "Opening waveform in gtkwave..."
         gtkwave "$WAVEFORM" "$SESSION_FILE" &
-    else
+    else:
         log_info "Waveform generated, skipping visualization (--no-viz)."
     fi
 else
