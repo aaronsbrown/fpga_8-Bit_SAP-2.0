@@ -1,0 +1,66 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Tue May 13 01:38:55 2025
+[*]
+[dumpfile] "/Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/build/waveform.vcd"
+[dumpfile_mtime] "Tue May 13 01:38:44 2025"
+[dumpfile_size] 11612
+[savefile] "/Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/uart_tx.gtkw"
+[timestart] 0
+[size] 1672 600
+[pos] 40 18
+*-18.890774 115000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
+[treeopen] uart_tx_tb.
+[sst_width] 255
+[signals_width] 321
+[sst_expanded] 1
+[sst_vpaned_height] 226
+@420
+uart_tx_tb.uut.arch_defs_pkg_DATA_WIDTH
+uart_tx_tb.uut.BAUD_RATE
+uart_tx_tb.uut.CLOCK_SPEED
+uart_tx_tb.uut.CYCLES_PER_BIT
+@28
+uart_tx_tb.clk
+uart_tx_tb.reset
+uart_tx_tb.dut_data_in[7:0]
+uart_tx_tb.dut_start_strobe
+uart_tx_tb.dut_busy_flag
+uart_tx_tb.dut_data_out
+@22
+uart_tx_tb.uut.bit_count[3:0]
+@2028
+^4 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/filter_uart_tx_state.txt
+uart_tx_tb.uut.current_state[1:0]
+@24
+uart_tx_tb.uut.baud_count[11:0]
+@23
+uart_tx_tb.uut.tx_shift_reg[7:0]
+[pattern_trace] 1
+[pattern_trace] 0

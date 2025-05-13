@@ -1,0 +1,23 @@
+@startuml
+
+[*] --> IDLE
+
+state "<b>IDLE</b>\n<i>Idle state awakened by start_strobe</i>" as IDLE
+state "<b>SET_BUSY</b>\n<i>Sets busy flag</i>" as SET_BUSY
+state "<b>START</b>\n<i>Sends start bit</i>" as START
+state "<b>SEND_DATA</b>\n<i>Serializes 8bits of data to output line</i>" as SEND_DATA
+state "<b>STOP</b>\n<i>Sends stop bit</i>" as STOP
+state "<b>CLEAR_BUSY</b>\n<i>Clears busy flag</i>" as CLEAR_BUSY
+
+
+IDLE        --> SET_BUSY: start_strobe
+SET_BUSY    --> START: true
+START       --> START: baud_count < baud_threshold
+START       --> SEND_DATA: baud_count == baud_threshold
+SEND_DATA        --> SEND_DATA: bit_count < BYTE_SIZE
+SEND_DATA        --> STOP: bit_count == BYTE_SIZE
+STOP        --> STOP: baud_count < baud_threshold
+STOP        --> CLEAR_BUSY: baud_count == baud_threshold
+CLEAR_BUSY  --> IDLE: true
+
+@enduml

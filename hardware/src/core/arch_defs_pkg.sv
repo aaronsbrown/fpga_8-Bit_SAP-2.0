@@ -128,4 +128,9 @@ package arch_defs_pkg;
         logic oe_temp_2;
     } control_word_t;
 
+    
+    typedef enum logic [1:0] {
+        S_UART_TX_IDLE, S_UART_TX_START, S_UART_TX_SEND_DATA, S_UART_TX_STOP
+    } uart_fsm_state_t;
+
 endpackage : arch_defs_pkg
