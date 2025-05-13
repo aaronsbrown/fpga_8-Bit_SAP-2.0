@@ -42,7 +42,8 @@ module control_unit (
             end
             default: begin
                 num_operand_bytes = 2'bxx; // Unknown opcode
-                $display($time, " Warning: Unrecognized Opcode %h in case statement", opcode);
+                if ( opcode != {OPCODE_WIDTH{1'bx}})
+                    $display($time, " Warning: Unrecognized Opcode %h in case statement", opcode);
             end
         endcase
     end
