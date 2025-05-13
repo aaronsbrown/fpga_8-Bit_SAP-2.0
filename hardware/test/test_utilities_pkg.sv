@@ -17,9 +17,9 @@ package test_utils_pkg;
       // Comparison '===' works correctly even if actual vectors are smaller
       // (they get implicitly zero-extended).
       if (actual !== expected) begin
-        $display("\033[0;31mAssertion Failed: %s. Actual: %h, Expected: %h\033[0m", msg, actual, expected); // Use %h for hex
+        $display("[%0t] \033[0;31mAssertion Failed: %s. Actual: %h, Expected: %h\033[0m", $time, msg, actual, expected); // Use %h for hex
       end else begin
-        $display("\033[0;32mAssertion Passed: %s\033[0m", msg);
+        $display("[%0t] \033[0;32mAssertion Passed: %s\033[0m", $time, msg);
       end
     end
   endtask
