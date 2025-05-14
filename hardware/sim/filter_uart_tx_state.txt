@@ -1,6 +1,0 @@
-translate current_state {
-    00 IDLE
-    01 START 
-    10 SEND_DATA
-    11 STOP
-}
