@@ -9,8 +9,8 @@ module uart_transmitter #(
     input logic clk,
     input logic reset,
 
-    input logic [DATA_WIDTH-1:0] data_in,
-    input logic start_strobe,
+    input logic [DATA_WIDTH-1:0] tx_parallel_in_data,
+    input logic tx_start_strobe,
 
     output logic busy_flag,
     output logic data_out
@@ -38,7 +38,7 @@ module uart_transmitter #(
         case (current_state)
         
             S_UART_TX_IDLE: begin
-                if(start_strobe) begin
+                if(tx_start_strobe) begin
                     
                     busy_flag = 1'b1;
                     
@@ -111,8 +111,8 @@ module uart_transmitter #(
             bit_count <= next_bit_count;
             baud_count <= next_baud_count;
             
-            if( current_state == S_UART_TX_IDLE && start_strobe)
-                    tx_shift_reg <= data_in;
+            if( current_state == S_UART_TX_IDLE && tx_start_strobe)
+                    tx_shift_reg <= tx_parallel_in_data;
             
             if( current_state == S_UART_TX_SEND_DATA && baud_count == CYCLES_PER_BIT - 1 )
                 tx_shift_reg <= { DATA_OUT_DEFAULT, tx_shift_reg[DATA_WIDTH-1:1] };

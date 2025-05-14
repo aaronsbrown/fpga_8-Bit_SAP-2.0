@@ -1,0 +1,21 @@
+@startuml
+
+[*] --> IDLE
+
+state "<b>IDLE</b>\n<i>Idle state awakened by data_in going LOW</i>" as IDLE
+state "<b>VALIDATE_START</b>\n<i>Verifies start bit with resample</i>" as VALIDATE_START
+state "<b>READ_DATA</b>\n<i>Deserializes 8bits of data to output line</i>" as READ_DATA
+state "<b>STOP</b>\n<i>Sends stop bit</i>" as STOP
+
+'sample_tick_counter counts number of cycles in oversampling window
+'sample_count holds number of samples
+
+IDLE        --> VALIDATE_START: !data_in
+VALIDATE_START  --> READ_DATA: sample_tick_counter == (sample_count / 2) && !data_in
+VALIDATE_START  --> IDLE: sample_tick_counter == (sample_count / 2) && data_in
+READ_DATA   --> READ_DATA: bit_count < BYTE_SIZE
+READ_DATA   --> STOP: bit_count == BYTE_SIZE
+STOP        --> STOP: sample_tick_counter < (sample_count / 2)
+STOP        --> IDLE: sample_tick_counter == (sample_count / 2)
+
+@enduml

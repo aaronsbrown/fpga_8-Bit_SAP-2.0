@@ -20,8 +20,8 @@ module uart_tx_tb;
         .clk(clk),
         .reset(reset),
         
-        .data_in(dut_data_in),
-        .start_strobe(dut_start_strobe),
+        .tx_parallel_in_data(dut_data_in),
+        .tx_start_strobe(dut_start_strobe),
 
         .busy_flag(dut_busy_flag),
         .data_out(dut_data_out)
@@ -46,13 +46,13 @@ module uart_tx_tb;
 
     // Apply reset and wait for it to release
     reset_and_wait(10); 
-    pretty_print_assert_vec(uut.start_strobe, 1'b0, "start_strobe == 0"); 
+    pretty_print_assert_vec(uut.tx_start_strobe, 1'b0, "tx_start_strobe == 0"); 
     pretty_print_assert_vec(uut.busy_flag, 1'b0, "busy_flag == 0"); 
 
     repeat(1) @(negedge clk);
     dut_start_strobe = 1'b1;
     pretty_print_assert_vec(uut.current_state, S_UART_TX_IDLE, "current_state == S_UART_TX_IDLE");  
-    pretty_print_assert_vec(uut.start_strobe, 1'b1, "start_strobe == 1"); 
+    pretty_print_assert_vec(uut.tx_start_strobe, 1'b1, "tx_start_strobe == 1"); 
     pretty_print_assert_vec(uut.data_out, 1'b1, "data_out == 1"); 
     #01;
     pretty_print_assert_vec(uut.busy_flag, 1'b1, "busy_flag == 1");
