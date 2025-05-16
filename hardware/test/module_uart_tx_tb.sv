@@ -27,7 +27,7 @@ module uart_tx_tb;
         .data_out(dut_data_out)
     );
 
-    // --- Clock Generation: 10 ns period ---
+  // --- Clock Generation: 10 ns period ---
   initial begin clk = 0;  forever #5 clk = ~clk; end
 
   // --- Testbench Stimulus ---
