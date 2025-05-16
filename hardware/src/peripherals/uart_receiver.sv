@@ -13,29 +13,34 @@ module uart_receiver #(
     input logic rx_serial_in_data,
 
     // OUTPUTS
-    output logic rx_data_ready_strobe,
-    output logic [DATA_WIDTH-1:0] data_out
-    output logic [1:0] status_reg;
+    output logic rx_strobe_data_ready,
+    output logic [DATA_WIDTH-1:0] rx_parallel_data_out,
+    output logic [1:0] rx_status
 );
 
     localparam CYCLES_PER_BIT = CLOCK_SPEED / BAUD_RATE;
     localparam CYCLES_PER_SAMPLE = CLOCK_SPEED / (BAUD_RATE * OVERSAMPLING_RATE );
-    localparam DATA_OUT_DEFAULT = 8'b0;
+    localparam RX_PARALLEL_DATA_OUT_DEFAULT = 8'b0;
     localparam SIGNAL_START_BIT = 1'b0;
-    localparam SINAL_END_BIT = 1'b1;
+    localparam SIGNAL_END_BIT = 1'b1;
     
     logic [DATA_WIDTH-1:0] i_rx_shift_reg;
-    logic [1:0]            i_status_reg;
-    
+    logic [1:0]            i_status_reg; // [0] => Frame Error; [1] => Overshoot Error
+
     // ====================================================================== 
     // SYNCHRONIZATION REGISTERS: align incoming signal with internal clock
     // ====================================================================== 
     logic sync_ff1;
     logic synced_serial_in;
     
-    always @(posedge clk) begin
-        sync_ff1 <= rx_serial_in_data;
-        synced_serial_in <= sync_ff1;
+    always_ff @(posedge clk) begin
+        if( reset) begin
+            sync_ff1 <= 1'b0;
+            synced_serial_in <= 1'b0;
+        end else begin
+            sync_ff1 <= rx_serial_in_data;
+            synced_serial_in <= sync_ff1;
+        end
     end
 
 
@@ -50,67 +55,81 @@ module uart_receiver #(
     logic cmd_reset_internal_timer;
     logic cmd_reset_sample_count;
     logic cmd_latch_serial_input;
+    logic cmd_flag_frame_error;
+    
     always_comb begin
         
         next_state = current_state;
+        next_bit_count = bit_count;
+        cmd_enable_sample_timer = 1'b0;
+        cmd_reset_internal_timer = 1'b0;
+        cmd_reset_sample_count = 1'b0;
+        cmd_latch_serial_input = 1'b0;
+        cmd_flag_frame_error = 1'b0;
 
         case(current_state)
 
             S_UART_RX_IDLE: begin
-                // TODO data_ready reset?
-                if( synced_serial_in == 1'b0 ) begin
+                
+                i_status_reg <= 'b0; // TODO rethin
+                i_rx_shift_reg <= 'b0; // TODO remove
+                rx_strobe_data_ready = 1'b0;
+
+                if( synced_serial_in == SIGNAL_START_BIT ) begin
                     next_state = S_UART_RX_VALIDATE_START;
-                    next_internal_timer = 8'b0;
-                    next_sample_count = 3'b0; 
                     next_bit_count = 3'b0;
+                    cmd_reset_internal_timer = 1'b1;
+                    cmd_reset_sample_count = 1'b1; 
                 end
             end
 
             S_UART_RX_VALIDATE_START: begin
-                if( event_middle_of_bit && !synced_serial_in ) begin
+                cmd_enable_sample_timer = 1'b1;
+                if( event_middle_of_bit && (synced_serial_in == SIGNAL_START_BIT )) begin
                     next_state = S_UART_RX_READ_DATA;
-                    next_internal_timer = 8'b0;
-                    next_sample_count = 3'b0;
-                end else if (event_middle_of_bit && synced_serial_in ) begin
+                    cmd_reset_internal_timer = 1'b1;
+                    cmd_reset_sample_count = 1'b1;
+                end else if (event_middle_of_bit && ( synced_serial_in == SIGNAL_END_BIT ) ) begin
                     next_state = S_UART_RX_IDLE;                  
                 end
             end
 
             S_UART_RX_READ_DATA: begin
-                
-                latch_input = 1'b0;
+                cmd_enable_sample_timer = 1'b1; 
+                cmd_latch_serial_input = 1'b0;
 
                 if ( event_end_of_bit ) begin
                     
-                    latch_input = 1'b1; // sample
+                    cmd_latch_serial_input = 1'b1; // sample
                     next_bit_count = bit_count + 1; // start new bit count
-                    next_sample_count = 3'b0;
+                    cmd_reset_sample_count = 3'b1;
                     
                     if ( bit_count == DATA_WIDTH - 1) begin // sampled 8 bits!
                         next_state = S_UART_RX_STOP;
-                        next_internal_timer = 8'b0;
-                        next_sample_count = 3'b0; 
                         next_bit_count = 3'b0;
-                        latch_input = 1'b0;
+                        cmd_reset_internal_timer = 1'b1;
+                        cmd_reset_sample_count = 1'b1;
                     end
                 end 
                
             end
 
             S_UART_RX_STOP: begin
-
-                if( event_end_of_bit) begin
-                    if( synced_serial_in ) begin // STOP BIT VALID
+                cmd_latch_serial_input = 1'b0;
+                cmd_enable_sample_timer = 1'b1;
+                if( event_end_of_bit ) begin
+                    if( synced_serial_in == SIGNAL_END_BIT ) begin // STOP BIT VALID
                         next_state = S_UART_RX_DATA_READY; 
                     end else begin
-                       next_state = S_UART_RX_IDLE; 
+                        next_state = S_UART_RX_IDLE; 
+                        cmd_flag_frame_error = 1'b1;
                     end
                 end 
             end
 
             S_UART_RX_DATA_READY: begin
                 next_state = S_UART_RX_IDLE; 
-                rx_data_ready_strobe = 1'b1;
+                rx_strobe_data_ready = 1'b1;
             end
 
             default: begin
@@ -122,18 +141,39 @@ module uart_receiver #(
     end
 
     always_ff @(posedge clk) begin
+        
         if(reset) begin
+        
             current_state <= S_UART_RX_IDLE; 
-            data_out <= 8'b0;
-            rx_shift_reg <= 8'b0;
+            rx_strobe_data_ready <=1'b0;
+            rx_parallel_data_out <= RX_PARALLEL_DATA_OUT_DEFAULT;
+            rx_status <= 2'b0;
+
+            i_rx_shift_reg <= 8'b0;
+            i_status_reg <= 2'b0;
+            
             bit_count <= 3'b0;
-            rx_data_ready_strobe <=1'b0;
+        
         end else begin
             current_state <= next_state;
             bit_count <= next_bit_count;
+
+            if(cmd_latch_serial_input) begin
+                i_rx_shift_reg = { synced_serial_in, i_rx_shift_reg[DATA_WIDTH - 1: 1] };
+            end
+
+            if( cmd_flag_frame_error ) begin
+                i_status_reg[0] <= 1'b1;
+            end
+
+            if ( next_state == S_UART_RX_DATA_READY ) begin
+                rx_parallel_data_out <= i_rx_shift_reg;
+                rx_status <= i_status_reg;
+            end
             
         end
     end
+
 
     // ============================================= 
     // (OVER)SAMPLE COUNTER
@@ -153,14 +193,22 @@ module uart_receiver #(
         next_sample_count = sample_count;
         next_internal_timer = internal_timer;
         
-        if(cmd_inc_sample_count) begin
-            next_sample_count = sample_count + 1;
-            next_internal_timer = 8'b0;
-        end else begin
-            if( enable_internal_timer ) begin
+        if( cmd_enable_sample_timer) begin // Timer Enabled vis FSM state logic
+          
+            // Reset timer directly
+            if( cmd_reset_internal_timer) begin
+                next_internal_timer = 'b0;
+            end else if (cmd_inc_sample_count) begin // Reset sample count, and by implication timer
+                next_sample_count = sample_count + 1;
+                next_internal_timer = 'b0;
+            end else if (cmd_reset_sample_count) begin
+                next_sample_count = 'b0;
+                next_internal_timer = 'b0;                
+            end else begin // Count!
                 next_internal_timer = internal_timer + 1;
             end
-        end 
+        end
+
     end
 
     always_ff @( posedge clk ) begin 

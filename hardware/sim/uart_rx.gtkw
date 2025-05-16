@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Fri May 16 01:44:55 2025
+[*] Fri May 16 17:28:06 2025
 [*]
 [dumpfile] "/Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/build/waveform.vcd"
-[dumpfile_mtime] "Fri May 16 01:43:22 2025"
-[dumpfile_size] 79638
+[dumpfile_mtime] "Fri May 16 17:24:20 2025"
+[dumpfile_size] 189634
 [savefile] "/Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/uart_rx.gtkw"
-[timestart] 0
-[size] 1496 600
-[pos] 35 18
-*-17.091198 135000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[timestart] 15080000
+[size] 1496 655
+[pos] 155 103
+*-21.088110 20120000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -40,30 +40,50 @@
 [sst_width] 255
 [signals_width] 321
 [sst_expanded] 1
-[sst_vpaned_height] 226
+[sst_vpaned_height] 286
+@420
+uart_rx_tb.uut.CLOCK_SPEED
+uart_rx_tb.uut.BAUD_RATE
+uart_rx_tb.uut.OVERSAMPLING_RATE
+uart_rx_tb.uut.CYCLES_PER_SAMPLE
 @28
 uart_rx_tb.clk
 uart_rx_tb.reset
 uart_rx_tb.uut.rx_serial_in_data
-@29
 uart_rx_tb.uut.synced_serial_in
 @2028
 ^4 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/filter_uart_state.txt
+uart_rx_tb.uut.next_state[3:0]
+^4 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/filter_uart_state.txt
 uart_rx_tb.uut.current_state[3:0]
 @28
-uart_rx_tb.uut.enable_internal_timer
+uart_rx_tb.uut.cmd_enable_sample_timer
+uart_rx_tb.uut.cmd_reset_internal_timer
 @22
 uart_rx_tb.uut.internal_timer[8:0]
 @28
-uart_rx_tb.uut.tick_sample_counter
+uart_rx_tb.uut.cmd_inc_sample_count
+uart_rx_tb.uut.cmd_reset_sample_count
 @22
-uart_rx_tb.uut.oversample_count[3:0]
-@28
-uart_rx_tb.uut.mid_bit_sample_tick
-uart_rx_tb.uut.full_bit_sample_tick
-@22
+uart_rx_tb.uut.sample_count[3:0]
 uart_rx_tb.uut.bit_count[3:0]
 @28
-uart_rx_tb.uut.latch_input
+uart_rx_tb.uut.event_middle_of_bit
+uart_rx_tb.uut.event_end_of_bit
+uart_rx_tb.uut.cmd_latch_serial_input
+uart_rx_tb.uut.i_rx_shift_reg[7:0]
+uart_rx_tb.uut.cmd_flag_frame_error
+uart_rx_tb.uut.rx_strobe_data_ready
+uart_rx_tb.uut.i_status_reg[1:0]
+@22
+uart_rx_tb.uut.rx_parallel_data_out[7:0]
+uart_rx_tb.uart_transmitter.tx_parallel_in_data[7:0]
+@2028
+^4 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/filter_uart_state.txt
+uart_rx_tb.uart_transmitter.current_state[3:0]
+@28
+uart_rx_tb.uart_transmitter.tx_start_strobe
+@29
+uart_rx_tb.uart_transmitter.busy_flag
 [pattern_trace] 1
 [pattern_trace] 0

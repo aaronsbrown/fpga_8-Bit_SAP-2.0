@@ -38,6 +38,7 @@ module uart_transmitter #(
         case (current_state)
         
             S_UART_TX_IDLE: begin
+                busy_flag = 1'b0;
                 if(tx_start_strobe) begin
                     
                     busy_flag = 1'b1;
