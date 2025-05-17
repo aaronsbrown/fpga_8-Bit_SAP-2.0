@@ -42,7 +42,7 @@ module uart_rx_tb;
         .rx_serial_in_data(stim_serial_data_out),
         .rx_strobe_data_ready(dut_strobe_data_ready),
         .rx_parallel_data_out(dut_data_out),
-        .rx_status(dut_status)
+        .rx_status_reg(dut_status)
     );
 
     // --- Clock Generation: 10 ns period ---
@@ -70,20 +70,16 @@ module uart_rx_tb;
         repeat(1) @(negedge clk);
         stim_start_strobe = 1'b0;
 
-        repeat(2000) @(posedge clk); #01;
+        repeat(3000) @(posedge clk); #01;
 
         repeat(1) @(negedge clk);
         stim_data_in = 8'b10100101; // xA5        
         stim_start_strobe = 1'b1; 
 
-        //wait( stim_busy_flag == 0 && uart_transmitter.current_state == S_UART_TX_IDLE);
-        
-        repeat(300) @(posedge clk); #01;
-
         repeat(1) @(negedge clk);
         stim_start_strobe = 1'b0;
-        
-        repeat(2000) @(posedge clk); #01;
+
+        repeat(3000) @(posedge clk); #01;
 
         $display("UART_RX test finished.\n\n");
         $finish;
