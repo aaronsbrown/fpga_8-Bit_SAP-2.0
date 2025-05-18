@@ -22,10 +22,10 @@ module uart_rx_tb;
     ) uart_transmitter (
         .clk(clk),
         .reset(reset),
-        .tx_parallel_in_data(stim_data_in),
-        .tx_start_strobe(stim_start_strobe),
-        .busy_flag(stim_busy_flag),
-        .data_out(stim_serial_data_out)
+        .tx_parallel_data_in(stim_data_in),
+        .tx_strobe_start(stim_start_strobe),
+        .tx_strobe_busy(stim_busy_flag),
+        .tx_serial_data_out(stim_serial_data_out)
     );
 
 

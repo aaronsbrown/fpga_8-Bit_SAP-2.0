@@ -1,15 +1,15 @@
 [*]
 [*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
-[*] Tue May 13 01:38:55 2025
+[*] Sun May 18 00:01:54 2025
 [*]
 [dumpfile] "/Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/build/waveform.vcd"
-[dumpfile_mtime] "Tue May 13 01:38:44 2025"
-[dumpfile_size] 11612
+[dumpfile_mtime] "Sun May 18 00:00:47 2025"
+[dumpfile_size] 10742
 [savefile] "/Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/uart_tx.gtkw"
 [timestart] 0
 [size] 1672 600
-[pos] 40 18
-*-18.890774 115000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[pos] 33 526
+*-18.585302 1795000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
 [markername] AA
 [markername] BB
 [markername] CC
@@ -43,24 +43,34 @@
 [sst_vpaned_height] 226
 @420
 uart_tx_tb.uut.arch_defs_pkg_DATA_WIDTH
+@421
+uart_tx_tb.uut.WORD_SIZE
+@420
 uart_tx_tb.uut.BAUD_RATE
 uart_tx_tb.uut.CLOCK_SPEED
 uart_tx_tb.uut.CYCLES_PER_BIT
 @28
 uart_tx_tb.clk
 uart_tx_tb.reset
-uart_tx_tb.dut_data_in[7:0]
-uart_tx_tb.dut_start_strobe
-uart_tx_tb.dut_busy_flag
-uart_tx_tb.dut_data_out
-@22
-uart_tx_tb.uut.bit_count[3:0]
+uart_tx_tb.uut.tx_parallel_data_in[7:0]
+uart_tx_tb.uut.tx_strobe_start
 @2028
-^4 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/filter_uart_tx_state.txt
-uart_tx_tb.uut.current_state[1:0]
-@24
-uart_tx_tb.uut.baud_count[11:0]
-@23
-uart_tx_tb.uut.tx_shift_reg[7:0]
+^4 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/filter_uart_state.txt
+uart_tx_tb.uut.current_state[3:0]
+@28
+uart_tx_tb.uut.tx_strobe_busy
+uart_tx_tb.uut.cmd_enable_baud_count
+uart_tx_tb.uut.cmd_reset_baud_count
+@22
+uart_tx_tb.uut.baud_count[4:0]
+@28
+uart_tx_tb.uut.cmd_latch_input_data
+uart_tx_tb.uut.cmd_shift_input_data
+uart_tx_tb.uut.i_tx_shift_reg[9:0]
+uart_tx_tb.uut.next_bit_count[2:0]
+uart_tx_tb.uut.bit_count[2:0]
+uart_tx_tb.uut.event_end_of_bit
+[color] 1
+uart_tx_tb.uut.tx_serial_data_out
 [pattern_trace] 1
 [pattern_trace] 0

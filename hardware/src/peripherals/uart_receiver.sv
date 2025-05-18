@@ -66,7 +66,7 @@ module uart_receiver #(
     localparam DATA_COUNTER_SIZE = $clog2(WORD_SIZE);
     logic [DATA_COUNTER_SIZE-1:0] bit_count, next_bit_count; // Counts sampled message bits, [0, WORD_SIZE - 1]
     
-    logic cmd_enable_sample_timer;
+    logic cmd_enable_internal_timer;
     logic cmd_reset_internal_timer;
     logic cmd_reset_sample_count;
     logic cmd_latch_serial_input;
@@ -78,7 +78,7 @@ module uart_receiver #(
         
         next_state                  = current_state;
         next_bit_count              = bit_count;
-        cmd_enable_sample_timer     = '0;
+        cmd_enable_internal_timer   = '0;
         cmd_reset_internal_timer    = '0;
         cmd_reset_sample_count      = '0;
         cmd_latch_serial_input      = '0;
@@ -104,7 +104,7 @@ module uart_receiver #(
 
             S_UART_RX_VALIDATE_START: begin
                 
-                cmd_enable_sample_timer = '1;
+                cmd_enable_internal_timer = '1;
                 
                 if( event_middle_of_bit && (synced_serial_in == SIGNAL_START_BIT )) begin
                     next_state = S_UART_RX_READ_DATA;
@@ -117,7 +117,7 @@ module uart_receiver #(
 
             S_UART_RX_READ_DATA: begin
                 
-                cmd_enable_sample_timer = '1; 
+                cmd_enable_internal_timer = '1; 
                 cmd_latch_serial_input = '0;
 
                 if ( event_end_of_bit ) begin
@@ -137,7 +137,7 @@ module uart_receiver #(
 
             S_UART_RX_STOP: begin
                 cmd_latch_serial_input = '0;
-                cmd_enable_sample_timer = '1;
+                cmd_enable_internal_timer = '1;
                 if( event_end_of_bit ) begin
                     if( synced_serial_in == SIGNAL_END_BIT ) begin // STOP BIT VALID
                         next_state = S_UART_RX_DATA_READY;
@@ -220,7 +220,7 @@ module uart_receiver #(
         if ( cmd_reset_internal_timer || cmd_reset_sample_count || cmd_inc_sample_count ) begin
             next_internal_timer = '0;
         end else begin
-            if (cmd_enable_sample_timer)
+            if (cmd_enable_internal_timer)
                 next_internal_timer = internal_timer + 1;
         end
     end
@@ -235,16 +235,16 @@ module uart_receiver #(
 
             // Check for middle of data bit 
             if(cmd_inc_sample_count && ( sample_count == (OVERSAMPLING_RATE / 2) - 1 )) begin
-                event_middle_of_bit <= 1;
+                event_middle_of_bit <= '1;
             end else begin
-                event_middle_of_bit <= 0;
+                event_middle_of_bit <= '0;
             end
 
             // Check for end of data bit
             if(cmd_inc_sample_count && ( sample_count == (OVERSAMPLING_RATE - 1) )) begin
-                event_end_of_bit <= 1;
+                event_end_of_bit <= '1;
             end else begin
-                event_end_of_bit <= 0;
+                event_end_of_bit <= '0;
             end
 
         end

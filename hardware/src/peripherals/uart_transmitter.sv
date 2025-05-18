@@ -1,93 +1,123 @@
 import arch_defs_pkg::*;
 
-
 module uart_transmitter #(
-    parameter CLOCK_SPEED = 20_000_000,
-    parameter BAUD_RATE = 9600
+    parameter CLOCK_SPEED   = 20_000_000,
+    parameter BAUD_RATE     = 9600,
+    parameter WORD_SIZE     = DATA_WIDTH
 ) (
 
     input logic clk,
     input logic reset,
 
-    input logic [DATA_WIDTH-1:0] tx_parallel_in_data,
-    input logic tx_start_strobe,
+    // INPUTS
+    input logic [DATA_WIDTH-1:0]    tx_parallel_data_in,
+    input logic                     tx_strobe_start,
 
-    output logic busy_flag,
-    output logic data_out
+    // OUTPUTS
+    output logic                    tx_strobe_busy,
+    output logic                    tx_serial_data_out
 );
 
     localparam CYCLES_PER_BIT = CLOCK_SPEED / BAUD_RATE;
-    localparam DATA_OUT_DEFAULT = 1'b1; 
+    localparam DATA_OUT_DEFAULT = '1; 
+    localparam SIGNAL_IDLE = '1;
+    localparam SIGNAL_START_BIT = '0;
+    localparam SIGNAL_STOP_BIT = '1;
 
+    
+    // =======================================================================
+    // OUTPUT ASSIGNMENTS
+    // ======================================================================= 
+    assign tx_strobe_busy = i_tx_strobe_busy;
+
+    // =======================================================================
+    // DATA PATH
+    // ======================================================================= 
+    logic [WORD_SIZE-1: 0] i_tx_shift_reg;
+    logic i_tx_strobe_busy, i_tx_strobe_busy_next;
+
+
+    // ======================================================================
+    // CONTROL UNIT: state transitions and control signal management
+    // ====================================================================== 
+    
     uart_fsm_state_t current_state, next_state;
     
-    logic [DATA_WIDTH-1: 0] tx_shift_reg;
-    logic [3:0] bit_count, next_bit_count;
-    logic [11:0] baud_count, next_baud_count;
-
+    localparam DATA_COUNTER_SIZE = $clog2(WORD_SIZE);
+    logic [DATA_COUNTER_SIZE-1:0] bit_count, next_bit_count;
+    
+    logic cmd_enable_baud_count;
+    logic cmd_reset_baud_count;
+    logic cmd_latch_input_data;
+    logic cmd_shift_input_data;
 
     always_comb begin
 
-        // default to remaning in current state
-        next_state = current_state;
-        next_bit_count = bit_count;
-        next_baud_count = baud_count;
-        data_out = DATA_OUT_DEFAULT;
-        busy_flag = 1'b0;
+        next_state              = current_state;
+        next_bit_count          = bit_count;
+        
+        tx_serial_data_out      = SIGNAL_IDLE;
+        i_tx_strobe_busy_next = '0; 
+        
+        cmd_enable_baud_count   = '0;
+        cmd_reset_baud_count    = '0;
+        cmd_latch_input_data    = '0;
+        cmd_shift_input_data    = '0;
 
         case (current_state)
         
             S_UART_TX_IDLE: begin
-                busy_flag = 1'b0;
-                if(tx_start_strobe) begin
-                    
-                    busy_flag = 1'b1;
-                    
+
+                if(tx_strobe_start) begin  
+                    i_tx_strobe_busy_next = '1;
+                    cmd_latch_input_data = '1;
+
                     next_state = S_UART_TX_START;
-                    next_baud_count = 1'b0;
-                    next_bit_count = 1'b0;
+                    next_bit_count = '0;
+                    cmd_reset_baud_count = '1;
                 end
             end
 
             S_UART_TX_START: begin
-                busy_flag = 1'b1;
-                data_out = 1'b0;
+               
+                tx_serial_data_out = SIGNAL_START_BIT;
+                i_tx_strobe_busy_next = '1;
+                cmd_enable_baud_count = '1;     
                 
-                if( baud_count < CYCLES_PER_BIT - 1) begin
-                    next_state = S_UART_TX_START;
-                    next_baud_count = baud_count + 1;    
-                end else begin 
+                if ( event_end_of_bit ) begin
                     next_state = S_UART_TX_SEND_DATA;
-                    next_bit_count = 1'b0;
-                    next_baud_count = 1'b0;
-                end
+                    cmd_reset_baud_count = '1;
+                end 
+                    
             end
 
             S_UART_TX_SEND_DATA: begin
 
-                busy_flag = 1'b1;
-                data_out = tx_shift_reg[0];
-                
-                if( baud_count < CYCLES_PER_BIT - 1 ) begin
-                    next_state = S_UART_TX_SEND_DATA;
-                    next_baud_count = baud_count + 1;
-                end else begin
-                    next_baud_count = 1'b0; 
-                    next_bit_count = bit_count + 1;
-                    if (next_bit_count == DATA_WIDTH)
-                        next_state = S_UART_TX_STOP;
-                end
+                tx_serial_data_out = i_tx_shift_reg[0];
+                i_tx_strobe_busy_next = 1'b1;
+                cmd_enable_baud_count = '1;     
 
+                if ( event_end_of_bit ) begin
+                    
+                    cmd_shift_input_data = '1;
+                    cmd_reset_baud_count = '1; 
+                   
+                    if ( bit_count == WORD_SIZE - 1 ) begin
+                        next_state = S_UART_TX_STOP;
+                        next_bit_count = '0;
+                    end else begin
+                        next_bit_count = bit_count + 1;
+                    end
+                end 
             end
 
             S_UART_TX_STOP: begin
-                busy_flag = 1'b1;
-                data_out = 1'b1;
-
-                if( baud_count < CYCLES_PER_BIT - 1) begin
-                    next_state = S_UART_TX_STOP;
-                    next_baud_count = baud_count + 1;    
-                end else begin 
+                
+                tx_serial_data_out = SIGNAL_STOP_BIT;
+                i_tx_strobe_busy_next = '1;
+                cmd_enable_baud_count = '1;    
+                
+                if ( event_end_of_bit ) begin
                     next_state = S_UART_TX_IDLE;
                 end
             end
@@ -99,26 +129,64 @@ module uart_transmitter #(
     
     end
 
+
+
     always_ff @(posedge clk) begin
 
         if(reset) begin
             current_state <= S_UART_TX_IDLE;
+            i_tx_strobe_busy <= '0;
+            i_tx_shift_reg <= 'x;
             bit_count <= 1'b0;
-            baud_count <= 1'b0;
-            data_out <= DATA_OUT_DEFAULT;
-            tx_shift_reg <= {DATA_WIDTH{ 1'bx }};
+
         end else begin
             current_state <= next_state;
+            i_tx_strobe_busy <= i_tx_strobe_busy_next;
             bit_count <= next_bit_count;
-            baud_count <= next_baud_count;
             
-            if( current_state == S_UART_TX_IDLE && tx_start_strobe)
-                    tx_shift_reg <= tx_parallel_in_data;
-            
-            if( current_state == S_UART_TX_SEND_DATA && baud_count == CYCLES_PER_BIT - 1 )
-                tx_shift_reg <= { DATA_OUT_DEFAULT, tx_shift_reg[DATA_WIDTH-1:1] };
+            if( cmd_latch_input_data ) begin
+                i_tx_shift_reg <= tx_parallel_data_in;
+            end else if( cmd_shift_input_data ) begin
+                i_tx_shift_reg <= { DATA_OUT_DEFAULT, i_tx_shift_reg[WORD_SIZE-1:1] };
+            end
         end            
 
+
+    end
+
+
+    // ===========================================
+    // BAUD COUNTER
+    // ===========================================
+    
+    localparam BAUD_COUNTER_SIZE = $clog2(CYCLES_PER_BIT);
+    logic [BAUD_COUNTER_SIZE-1:0] baud_count, next_baud_count;
+
+    logic event_end_of_bit;
+
+    always_comb begin
+        next_baud_count = baud_count;
+
+        if( cmd_reset_baud_count ) begin
+            next_baud_count = '0;
+        end else if ( cmd_enable_baud_count ) begin
+            next_baud_count = baud_count + 1;
+        end
+    end
+
+    always_ff @(posedge clk) begin
+
+        if(reset) begin
+            baud_count <= '0;    
+        end else begin
+            baud_count <= next_baud_count;
+
+            if ( baud_count == CYCLES_PER_BIT - 1 ) begin
+                event_end_of_bit <='1;
+            end else begin
+                event_end_of_bit <= '0;
+            end
+        end
 
     end
 
