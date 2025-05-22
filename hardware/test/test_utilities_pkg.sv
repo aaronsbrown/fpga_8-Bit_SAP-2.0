@@ -94,14 +94,16 @@ package test_utils_pkg;
     input int cycles;
     begin
       
-      reset = 1;
-      
-      @(posedge clk);
-      
+      reset = 1'b1;
+      repeat(3) @(posedge clk);
       @(negedge clk);
-      reset = 0;
+      reset = 1'b0;
+      @(posedge clk);
+      $display("TB: Reset released at %0t", $time);
       
       repeat (cycles) @(posedge clk);
+      $display("TB: Waited an additional %0d cycles", cycles);
+
     end
   endtask
 

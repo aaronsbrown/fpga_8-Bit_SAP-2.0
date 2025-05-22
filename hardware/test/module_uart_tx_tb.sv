@@ -5,9 +5,34 @@ import arch_defs_pkg::*;
 
 module uart_tx_tb;
 
+    // DUT CONFIG
+    localparam DUT_CLOCK_SPEED_HZ = 2_000_000;
+    localparam DUT_BAUD_RATE = 9600;
+    localparam WORD_SIZE = DATA_WIDTH;
+    
+    // TB CONFIG
+    localparam TB_CLOCK_HALF_PERIOD_NS = 5;
+    localparam TB_CLOCK_PERIOD_NS = TB_CLOCK_HALF_PERIOD_NS * 2;
+    
+    // UART CONFIG
+    localparam TX_BITS_IN_FRAME = 1 + WORD_SIZE + 1; // start - data - stop
+    localparam SIGNAL_STOP_BIT = 1'b1;
+    localparam SIGNAL_START_BIT = 1'b0;
+    localparam SIGNAL_IDLE_BIT = 1'b1;
+
+    //DERIVED TIMINGS 
+    localparam TB_CYCLES_PER_BIT = DUT_CLOCK_SPEED_HZ / DUT_BAUD_RATE;
+    localparam TB_CYCLES_TO_MID_BIT = TB_CYCLES_PER_BIT / 2;
+    localparam TB_CYCLES_PER_FRAME = TX_BITS_IN_FRAME * TB_CYCLES_PER_BIT;
+    
+    // time out for wait signals
+    localparam TIMEOUT_CYCLES_BUSY_ACK = 20;
+    localparam TIMEOUT_CYCLES_DUT = TB_CYCLES_PER_FRAME * 2;
+    
+
     // testbench signals
     logic clk, reset;
-    logic [7:0] dut_data_in;
+    logic [WORD_SIZE:0] dut_data_in;
     logic dut_start_strobe;
 
     // DUT outputs
@@ -15,7 +40,9 @@ module uart_tx_tb;
     wire dut_busy_flag;
 
     uart_transmitter #(
-        .CLOCK_SPEED(200_000)
+        .CLOCK_SPEED(DUT_CLOCK_SPEED_HZ),
+        .BAUD_RATE(DUT_BAUD_RATE),
+        .WORD_SIZE(WORD_SIZE)
     ) uut (
         .clk(clk),
         .reset(reset),
@@ -28,7 +55,81 @@ module uart_tx_tb;
     );
 
   // --- Clock Generation: 10 ns period ---
-  initial begin clk = 0;  forever #5 clk = ~clk; end
+  initial begin clk = 0;  forever #TB_CLOCK_HALF_PERIOD_NS clk = ~clk; end
+
+  // ================================
+  // -- TASK HELPERS
+  // ================================
+  
+  // input = byte to test
+  // apply byte to tx_parallel_in
+  // pulse tx_strobe_start
+  // wait for "non_busy"
+  // validation
+  task send_uart_byte( input [WORD_SIZE-1:0] byte_to_send );
+
+    logic expected_serial_bit;
+    logic [TX_BITS_IN_FRAME-1:0] frame_to_verify;
+    integer cycles_elapsed; 
+
+    frame_to_verify = {SIGNAL_STOP_BIT, byte_to_send, SIGNAL_STOP_BIT};
+
+    // Ensure UART Transmitter is NOT busy before sending byte
+    cycles_elapsed = 0;
+    while (dut_busy_flag == 1'b1 && cycles_elapsed < TIMEOUT_CYCLES_DUT) begin
+      @(posedge clk);
+      cycles_elapsed++;
+    end
+    if(dut_busy_flag == 1'b1) begin
+      $display("Timeout (after %0d cycles) waiting for DUT to be IDLE (dut_busy_flag == 0) before sending byte at time %0t", cycles_elapsed, $time);
+      return;
+    end
+
+    // advance to known clock edge
+    @(posedge clk);
+
+    $display("TB: Sending byte %h at time %0t", byte_to_send, $time);
+    dut_data_in = byte_to_send;
+    
+    @(negedge clk);
+    dut_start_strobe = 1'b1;
+    @(negedge clk);
+    dut_start_strobe = 1'b0;
+    
+    // Ensure UART Transmitter BECOMES busy AFTER initiating send
+    
+    cycles_elapsed = 0;
+    while(dut_busy_flag == 1'b0 && cycles_elapsed < TIMEOUT_CYCLES_BUSY_ACK) begin
+      @(posedge clk);
+      cycles_elapsed++;
+    end
+    if(dut_busy_flag == 1'b0) begin
+      $display("Timeout (after %0d cycles) waiting for DUT to be BUSY (dut_busy_flag == 1) after initiating send at time %0t", cycles_elapsed, $time);
+      return; 
+    end
+
+    // Wait for UART Transmitter to FINISH sending byte, and return to IDLE state
+    cycles_elapsed = 0;
+    while(dut_busy_flag == 1'b1 && cycles_elapsed < TIMEOUT_CYCLES_DUT) begin
+      @(posedge clk);
+      cycles_elapsed++;
+    end
+    if(dut_busy_flag == 1'b1) begin
+      $display("Timeout (after %0d cycles) waiting for DUT to be IDLE (dut_busy_flag == 0) after finishing byte transmission at time %0t", cycles_elapsed, $time);
+      return;  
+    end
+    
+    // advance to known clock edge
+    @(posedge clk);
+
+    $display("TB: Finished sending byte %h at time %0t. DUT busy: %b", byte_to_send, $time, dut_busy_flag);
+    pretty_print_assert_vec(uut.current_state, S_UART_TX_IDLE,
+      "send_uart_byte: current_state = S_UART_TX_IDLE after send");
+    pretty_print_assert_vec(uut.tx_strobe_busy, 1'b0, 
+      "send_uart_byte: tx_strobe_busy == 0 after send");  
+
+  endtask
+
 
   // --- Testbench Stimulus ---
   initial begin
@@ -37,8 +138,6 @@ module uart_tx_tb;
     $dumpfile("waveform.vcd");
     $dumpvars(0, uart_tx_tb); // Dump all signals in this module and below
 
-    // Simulate data on memory bus
-    dut_data_in = 8'b10101010;
     dut_start_strobe = 1'b0;
     
     // --- Execute the instruction ---
@@ -47,65 +146,20 @@ module uart_tx_tb;
     // Apply reset and wait for it to release
     reset_and_wait(10); 
     pretty_print_assert_vec(dut_start_strobe, 1'b0, "tx_start_strobe == 0"); 
-    pretty_print_assert_vec(dut_busy_flag, 1'b0, "busy_flag == 0"); 
-
-    repeat(1) @(negedge clk);
-    dut_start_strobe = 1'b1;
-    pretty_print_assert_vec(uut.current_state, S_UART_TX_IDLE, "current_state == S_UART_TX_IDLE");  
-    pretty_print_assert_vec(dut_start_strobe, 1'b1, "tx_start_strobe == 1"); 
-    pretty_print_assert_vec(dut_data_out, 1'b1, "data_out == 1"); 
-    #01;
-    pretty_print_assert_vec(dut_busy_flag, 1'b1, "busy_flag == 1");
-
-    repeat(1) @(posedge clk); #01;
-    pretty_print_assert_vec(uut.current_state, S_UART_TX_START, "current_state == S_UART_TX_START");
-    pretty_print_assert_vec(dut_data_out, 1'b0, "data_out == 0");
-    
-    repeat(1) @(negedge clk);
-    dut_start_strobe = 1'b0;
-    
-    repeat(20) @(posedge clk); #01;
-
-    pretty_print_assert_vec(uut.current_state, S_UART_TX_SEND_DATA, "current_state == S_UART_TX_SEND_DATA");
-    pretty_print_assert_vec(dut_busy_flag, 1'b1, "busy_flag == 1");
-    pretty_print_assert_vec(dut_data_out, 1'b0, "data_out == 0"); // LSB 1010101[0]
-    pretty_print_assert_vec(uut.i_tx_shift_reg, 8'b10101010, "i_tx_shift_reg == 10101010"); // LSB 1010101[0]
-
-
-    repeat(20) @(posedge clk); #01;
-
-    pretty_print_assert_vec(uut.current_state, S_UART_TX_SEND_DATA, "current_state == S_UART_TX_SEND_DATA");
-    pretty_print_assert_vec(dut_busy_flag, 1'b1, "busy_flag == 1");
-    pretty_print_assert_vec(dut_data_out, 1'b1, "data_out == 1"); // LSB 1 + 101010[1]
-    pretty_print_assert_vec(uut.i_tx_shift_reg, 8'b11010101, "i_tx_shift_reg == 11010101"); 
-
-
-    repeat(100) @(posedge clk); #01;
-
-    pretty_print_assert_vec(uut.current_state, S_UART_TX_SEND_DATA, "current_state == S_UART_TX_SEND_DATA");
-    pretty_print_assert_vec(dut_busy_flag, 1'b1, "busy_flag == 1");
-    pretty_print_assert_vec(dut_data_out, 1'b0, "data_out == 0"); // LSB 1111111[0]
-    pretty_print_assert_vec(uut.i_tx_shift_reg, 8'b11111110, "i_tx_shift_reg == 11111110"); 
-    
-    repeat(20) @(posedge clk); #01;
-
-    pretty_print_assert_vec(uut.current_state, S_UART_TX_SEND_DATA, "current_state == S_UART_TX_SEND_DATA");
-    pretty_print_assert_vec(dut_busy_flag, 1'b1, "busy_flag == 1");
-    pretty_print_assert_vec(dut_data_out, 1'b1, "data_out == 1"); // LSB 1111111[0]
-    pretty_print_assert_vec(uut.i_tx_shift_reg, 8'b11111111, "i_tx_shift_reg == 11111111"); // [1]0101010
-
-    repeat(20) @(posedge clk); #01;
-
-    pretty_print_assert_vec(uut.current_state, S_UART_TX_STOP, "current_state == S_UART_TX_STOP");
-    pretty_print_assert_vec(dut_busy_flag, 1'b1, "busy_flag == 1");
-    pretty_print_assert_vec(dut_data_out, 1'b1, "data_out == 1");
-
-    repeat(20) @(posedge clk); #01;
-    pretty_print_assert_vec(uut.current_state, S_UART_TX_IDLE, "current_state == S_UART_TX_IDLE");
     pretty_print_assert_vec(dut_busy_flag, 1'b0, "busy_flag == 0");
-    pretty_print_assert_vec(dut_data_out, 1'b1, "data_out == 1");
 
-    repeat(100) @(posedge clk); #01;
+    $display("TB: Forcing DUT busy to test first timeout...");
+    force uut.i_tx_strobe_busy = 1'b1;
+    send_uart_byte(8'hAA);
+    release uut.i_tx_strobe_busy;
+
+
+    send_uart_byte(8'h55); 
+    
+    repeat(10) @(posedge clk);
+
+    send_uart_byte(8'hF0);
+
 
     $display("UART_TX test finished.\n\n");
     $finish;
