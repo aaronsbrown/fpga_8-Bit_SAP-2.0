@@ -14,8 +14,8 @@ module uart_peripheral (
     input  logic cmd_read,
 
     // Bus Interface => Data to / from CPU
-    input  [DATA_WIDTH-1:0] logic parallel_data_in,
-    output [DATA_WIDTH-1:0] logic parallel_data_out,
+    input  logic [DATA_WIDTH-1:0] parallel_data_in,
+    output logic [DATA_WIDTH-1:0] parallel_data_out,
     
     // Hardware Interface
     input  serial_rx,
@@ -44,7 +44,7 @@ module uart_peripheral (
     logic [DATA_WIDTH-1:0] status_reg_i;
     assign status_reg_i[TX_BUFFER_EMPTY_BIT] = ~tx_busy_i;
     assign status_reg_i[RX_DATA_READY_BIT] = rx_data_ready_i;
-    assign status_reg_i[ERROR_FRAME_ERROR_BIT] = rx_status_flags_i[0]; // frame error
+    assign status_reg_i[ERROR_FRAME_BIT] = rx_status_flags_i[0]; // frame error
     assign status_reg_i[ERROR_OVERSHOOT_BIT] = rx_status_flags_i[1]; // overshoot error
     assign status_reg_i[DATA_WIDTH-1:4] = { (DATA_WIDTH-4){1'b0} };
 
@@ -58,7 +58,7 @@ module uart_peripheral (
         .rx_serial_in_data(serial_rx),
         .rx_strobe_data_ready(rx_data_ready_i),
         .rx_parallel_data_out(rx_data_out),
-        .rx_status_flags_i(rx_status_flags_i)
+        .rx_status_reg(rx_status_flags_i)
     );
 
     // =======================================================
