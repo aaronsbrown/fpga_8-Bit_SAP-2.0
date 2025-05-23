@@ -134,4 +134,10 @@ package arch_defs_pkg;
         S_UART_RX_IDLE, S_UART_RX_VALIDATE_START, S_UART_RX_READ_DATA, S_UART_RX_DATA_READY, S_UART_RX_STOP
     } uart_fsm_state_t;
 
+    typedef enum logic [1:0] { 
+        UART_REG_CONTROL = 2'b00, 
+        UART_REG_STATUS = 2'b01, 
+        UART_REG_DATA = 2'b10 
+    } uart_reg_offset_e;
+
 endpackage : arch_defs_pkg

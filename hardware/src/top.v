@@ -1,10 +1,12 @@
 module top (
-    input clk,
-    input rst_n,
-    output [7:0]  led,
-    output [23:0] io_led,
-    output [6:0]  io_segment,
-    output [3:0]  io_select
+    input           clk,
+    input           rst_n,
+    output [7:0]    led,
+    output [23:0]   io_led,
+    output [6:0]    io_segment,
+    output [3:0]    io_select,
+    input           usb_rx,
+    output          usb_tx
 );
     
     // Derive 20MHz clock from 100MHz input
@@ -40,7 +42,9 @@ module top (
         .output_port_1(output_value),
         .cpu_flag_zero_o(led[0]),    
         .cpu_flag_carry_o(led[1]),
-        .cpu_flag_negative_o(led[2])
+        .cpu_flag_negative_o(led[2]),
+        .uart_rx(usb_rx),
+        .uart_tx(usb_tx)
     );
   
     // Assign the remaining LEDs to 0

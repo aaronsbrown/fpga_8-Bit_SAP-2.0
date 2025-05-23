@@ -10,7 +10,9 @@ module computer (
     output wire cpu_flag_negative_o,
     output wire [DATA_WIDTH-1:0] cpu_debug_out_B,
     output wire [DATA_WIDTH-1:0] cpu_debug_out_IR,
-    output wire [ADDR_WIDTH-1:0] cpu_debug_out_PC
+    output wire [ADDR_WIDTH-1:0] cpu_debug_out_PC,
+    input  wire uart_rx,
+    output wire uart_tx
 );
 
     
@@ -20,6 +22,7 @@ module computer (
     logic [DATA_WIDTH-1:0]  ram_data_out;
     logic [DATA_WIDTH-1:0]  vram_data_out;
     logic [DATA_WIDTH-1:0]  rom_data_out;
+    logic [DATA_WIDTH-1:0]  uart_data_out;
     logic                   cpu_mem_write;
     logic                   cpu_mem_read;
     logic                   cpu_halt;
@@ -53,16 +56,20 @@ module computer (
     assign ce_mmio = cpu_mem_address[15:12] == 4'b1110; // E000–EFFF
     assign ce_rom_4k = cpu_mem_address[15:12] == 4'b1111; // F000–FFFF
     
-    // MMIO
+    // MMIO -- LED -- E002
     wire ce_led_reg;
-    assign ce_led_reg = ce_mmio && cpu_mem_address[11:0] == 12'h000;
+    assign ce_led_reg = ce_mmio && cpu_mem_address[3:0] == 4'b0010;
+
+    // MMIO -- UART -- E000 (STATUS), E001 (DATA)
+    wire ce_uart_peripheral;
+    assign ce_uart_peripheral = ce_mmio && cpu_mem_address[3:1] == 3'b000; 
 
     // Mux to decide which memory to read from
     assign cpu_mem_data_in = 
-        (ce_ram_8k && cpu_mem_read)  ? ram_data_out : 
-        (ce_rom_4k && cpu_mem_read)  ? rom_data_out : 
-        (ce_vram_4k && cpu_mem_read) ? vram_data_out :
-        (ce_mmio && cpu_mem_read)    ? { DATA_WIDTH{1'bx} } : // MMIO
+        (ce_ram_8k  && cpu_mem_read)            ? ram_data_out  : 
+        (ce_rom_4k  && cpu_mem_read)            ? rom_data_out  : 
+        (ce_vram_4k && cpu_mem_read)            ? vram_data_out :
+        (ce_uart_peripheral && cpu_mem_read)    ? uart_data_out : 
         { DATA_WIDTH{1'bx} };
 
     // Memory Map: 0000–1FFF
@@ -88,6 +95,19 @@ module computer (
         .clk(clk),
         .address(cpu_mem_address[11:0]), // 12-bit address (2^12=4096 bytes)
         .data_out(rom_data_out)
+    );
+
+    uart_peripheral u_uart (
+        .clk(clk),
+        .reset(reset),
+        .address_offset(cpu_mem_address[1:0]),
+        .cmd_enable(ce_uart_peripheral),
+        .cmd_write(cpu_mem_write),
+        .cmd_read(cpu_mem_read),
+        .parallel_data_in(cpu_mem_data_out),
+        .parallel_data_out(uart_data_out),
+        .serial_rx(uart_rx),
+        .serial_tx(uart_tx)
     );
 
     register_nbit #( .N(DATA_WIDTH) ) u_output_port_1 (
