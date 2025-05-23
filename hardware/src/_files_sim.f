@@ -18,7 +18,7 @@ src/utils/clock_divider.sv
 #peripherals
 src/peripherals/uart_transmitter.sv
 src/peripherals/uart_receiver.sv
-
+src/peripherals/uart_peripheral.sv
 
 # core
 src/core/arch_defs_pkg.sv
