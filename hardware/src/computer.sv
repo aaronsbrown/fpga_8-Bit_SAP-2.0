@@ -62,7 +62,7 @@ module computer (
 
     // MMIO -- UART -- E000 (STATUS), E001 (DATA)
     wire ce_uart_peripheral;
-    assign ce_uart_peripheral = ce_mmio && cpu_mem_address[3:2] == 2'b00; 
+    assign ce_uart_peripheral = ce_mmio && ( cpu_mem_address[3:0] >> 2 ) == 2'b00; 
 
     // Mux to decide which memory to read from
     assign cpu_mem_data_in = 

@@ -196,13 +196,13 @@ module control_unit (
         microcode_rom[JMP][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1};
 
         microcode_rom[JZ][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1, check_zero: 1}; 
-        microcode_rom[JZ][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, check_zero: 1, last_step: 1};
+        microcode_rom[JZ][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1};
 
-        microcode_rom[JNZ][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1}; 
-        microcode_rom[JNZ][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1, check_not_zero: 1};
+        microcode_rom[JNZ][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1, check_not_zero: 1}; 
+        microcode_rom[JNZ][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1};
 
-        microcode_rom[JN][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1}; 
-        microcode_rom[JN][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1, check_negative: 1};
+        microcode_rom[JN][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1, check_negative: 1}; 
+        microcode_rom[JN][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1};
 
         // REG_A ARITH
         microcode_rom[ADD_B][MS0] = '{default: 0, alu_op: ALU_ADD, alu_src2_c: 0} ;
