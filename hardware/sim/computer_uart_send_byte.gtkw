@@ -1,0 +1,104 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Sat May 24 02:56:46 2025
+[*]
+[dumpfile] "/Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/build/waveform.vcd"
+[dumpfile_mtime] "Sat May 24 02:55:28 2025"
+[dumpfile_size] 110769
+[savefile] "/Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/computer_uart_send_byte.gtkw"
+[timestart] 0
+[size] 1504 807
+[pos] 40 18
+*-19.048538 315000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
+[treeopen] computer_tb.
+[treeopen] computer_tb.uut.
+[treeopen] computer_tb.uut.u_uart.
+[sst_width] 255
+[signals_width] 321
+[sst_expanded] 1
+[sst_vpaned_height] 323
+@28
+[color] 3
+computer_tb.uut.clk
+computer_tb.uut.reset
+@22
+computer_tb.uut.u_cpu.counter_out[15:0]
+@2028
+^1 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/filter_state.txt
+computer_tb.uut.u_cpu.u_control_unit.next_state[2:0]
+[color] 3
+^1 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/filter_state.txt
+computer_tb.uut.u_cpu.u_control_unit.current_state[2:0]
+^2 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/filter_opcode.txt
+computer_tb.uut.u_cpu.opcode[7:0]
+@28
+computer_tb.uut.u_cpu.u_control_unit.num_operand_bytes[1:0]
+@2028
+[color] 3
+^3 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/filter_timestep.txt
+computer_tb.uut.u_cpu.u_control_unit.current_microstep[3:0]
+@22
+computer_tb.uut.u_cpu.internal_bus[7:0]
+@28
+computer_tb.uut.u_cpu.load_flags
+computer_tb.uut.u_cpu.u_register_flags.load
+computer_tb.uut.u_cpu.u_register_flags.data_in[2:0]
+computer_tb.uut.u_cpu.flags_reg_out[2:0]
+computer_tb.uut.u_cpu.flag_zero_o
+@22
+computer_tb.uut.u_cpu.mem_address[15:0]
+@28
+computer_tb.uut.cpu_mem_read
+computer_tb.uut.ce_uart_peripheral
+computer_tb.uut.u_uart.cmd_enable
+computer_tb.uut.u_uart.cmd_read
+@c00023
+computer_tb.uut.u_uart.parallel_data_out[7:0]
+@29
+(0)computer_tb.uut.u_uart.parallel_data_out[7:0]
+(1)computer_tb.uut.u_uart.parallel_data_out[7:0]
+(2)computer_tb.uut.u_uart.parallel_data_out[7:0]
+(3)computer_tb.uut.u_uart.parallel_data_out[7:0]
+(4)computer_tb.uut.u_uart.parallel_data_out[7:0]
+(5)computer_tb.uut.u_uart.parallel_data_out[7:0]
+(6)computer_tb.uut.u_uart.parallel_data_out[7:0]
+(7)computer_tb.uut.u_uart.parallel_data_out[7:0]
+@1401201
+-group_end
+@28
+computer_tb.uut.u_uart.address_offset[1:0]
+@22
+computer_tb.uut.u_cpu.u_alu.in_one[7:0]
+computer_tb.uut.u_cpu.u_alu.in_two[7:0]
+computer_tb.uut.u_cpu.u_alu.latched_result[7:0]
+computer_tb.uut.u_cpu.u_alu.comb_result[7:0]
+@28
+computer_tb.uut.u_cpu.u_alu.zero_flag
+[pattern_trace] 1
+[pattern_trace] 0

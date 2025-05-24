@@ -139,7 +139,7 @@ module control_unit (
                                        control_word.check_carry || control_word.check_negative;
                 
                 jump_condition_satisfied = (control_word.check_zero && flags[0])                    ||
-                                           (control_word.check_not_zero && !flags[0])  ||
+                                           (control_word.check_not_zero && !flags[0])               ||
                                            (control_word.check_carry && flags[1])                   ||
                                            (control_word.check_negative && flags[2]);
 
@@ -195,8 +195,8 @@ module control_unit (
         microcode_rom[JMP][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1}; 
         microcode_rom[JMP][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1};
 
-        microcode_rom[JZ][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1}; 
-        microcode_rom[JZ][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1, check_zero: 1 };
+        microcode_rom[JZ][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1, check_zero: 1}; 
+        microcode_rom[JZ][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, check_zero: 1, last_step: 1};
 
         microcode_rom[JNZ][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1}; 
         microcode_rom[JNZ][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1, check_not_zero: 1};

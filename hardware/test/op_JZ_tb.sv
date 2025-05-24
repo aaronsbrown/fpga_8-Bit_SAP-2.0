@@ -74,8 +74,8 @@ module computer_tb;
     pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0");  
 
 
-    // JMP ============================================
-    $display("\nJMP ============");
+    // JZ ============================================
+    $display("\nJZ ============");
     
     $display("BYTE 1");
     repeat (3) @(posedge clk);  #0.1;
