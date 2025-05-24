@@ -1,7 +1,9 @@
 ; test_phase3_labels_comments.asm
+INCLUDE "includes/test.inc"
+
 ; Tests various label definitions, comment styles, and blank lines.
 
-            ORG $C000
+            ORG CODE_ORIGIN
 
 ; Test 1: Label on its own line
 label_on_own_line:
@@ -11,11 +13,11 @@ label_on_own_line:
 ; The next instruction should follow normally after these blank lines.
 
 
-            LDI A, #$11     ; Instruction after blank lines
+            LDI A, #A_ADDRESS     ; Instruction after blank lines
 
 ; Test 3: Label followed immediately by a comment (no instruction on that line)
 label_with_comment_only:    ; This is a label with only a comment after it
-            LDI B, #$22     ; Instruction associated with this label
+            LDI B, #B_ADDRESS     ; Instruction associated with this label
 
 ; Test 4: Instruction with a trailing comment
             LDI C, #$33     ; This LDI C has a trailing comment.
