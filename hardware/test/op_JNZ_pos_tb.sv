@@ -1,11 +1,13 @@
+// POS VALUES:
+// INFO:   'JUMP_SUCCESS' -> 0xF007
+
 `timescale 1ns/1ps
 import test_utils_pkg::*; 
 import arch_defs_pkg::*;  
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_manual/op_JNZ_prog.hex";
-
+  localparam string HEX_FILE = "../hardware/test/fixtures_generated/OP_JNZ_pos/ROM.hex";
   reg clk;
   reg reset;
   
@@ -25,7 +27,6 @@ module computer_tb;
     $dumpvars(0, computer_tb); // Dump all signals in this module and below
 
     // Init ram/rom to 00 
-    uut.u_ram.init_sim_ram();
     uut.u_rom.init_sim_rom();
 
     // load the hex file into RAM
@@ -37,10 +38,10 @@ module computer_tb;
     reset_and_wait(0); 
 
     // --- Execute the instruction ---
-    $display("\n\nRunning JNZ instruction test");
+    $display("\n\nRunning JNZ instruction test: Positive Case");
 
-    // LDI_A FF============================================
-    $display("\nLDI_A FF ============");
+    // LDI_A 0F============================================
+    $display("\nLDI_A 0F ============");
     
     $display("BYTE 1");
     repeat (1 + 4) @(posedge clk);  #0.1;
@@ -48,13 +49,13 @@ module computer_tb;
 
     $display("BYTE 2");
     repeat (4) @(posedge clk);  #0.1;
-    pretty_print_assert_vec(uut.u_cpu.temp_1_out, 8'hFF, "EXECUTE: cpu.temp_1_out = xFF"); 
+    pretty_print_assert_vec(uut.u_cpu.temp_1_out, 8'h0F, "EXECUTE: cpu.temp_1_out = x0F"); 
 
     $display("POST_EXECUTE");
     repeat (1 + 1) @(posedge clk);  #0.1;
-    inspect_register(uut.u_cpu.a_out, 8'hFF, "Register A", DATA_WIDTH);
+    inspect_register(uut.u_cpu.a_out, 8'h0F, "Register A", DATA_WIDTH);
     pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b1, "cpu.flag_negative_o == 1"); 
+    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0"); 
 
 
     // JNZ ============================================
@@ -94,6 +95,7 @@ module computer_tb;
     pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
     pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0");
 
+    // HALT ===============================================
     $display("\nHLT ============"); 
     repeat (3) @(posedge clk); #0.1; 
     pretty_print_assert_vec(uut.u_cpu.u_control_unit.opcode, HLT, "HALT: cpu.opcode == HLT"); 
