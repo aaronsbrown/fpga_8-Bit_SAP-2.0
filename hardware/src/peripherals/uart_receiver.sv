@@ -12,9 +12,10 @@ module uart_receiver #(
 
     // INPUTS
     input logic rx_serial_in_data,
+    input logic cpu_read_data_ack_pulse,
 
     // OUTPUTS
-    output logic                 rx_strobe_data_ready,
+    output logic                 rx_strobe_data_ready_level,
     output logic [WORD_SIZE-1:0] rx_parallel_data_out,
     output logic [1:0]           rx_status_reg
 );
@@ -62,10 +63,13 @@ module uart_receiver #(
     // ====================================================================== 
     
     uart_fsm_state_t current_state, next_state;
+    logic i_data_ready_flag_reg;
     
     localparam DATA_COUNTER_SIZE = $clog2(WORD_SIZE);
     logic [DATA_COUNTER_SIZE-1:0] bit_count, next_bit_count; // Counts sampled message bits, [0, WORD_SIZE - 1]
     
+    logic cmd_clear_data_ready_flag;
+    logic cmd_set_data_ready_flag; 
     logic cmd_enable_internal_timer;
     logic cmd_reset_internal_timer;
     logic cmd_reset_sample_count;
@@ -73,7 +77,9 @@ module uart_receiver #(
     logic cmd_flag_frame_error;
     logic cmd_clear_status_reg;
     logic cmd_clear_rx_shift_reg;
-    
+
+    assign rx_strobe_data_ready_level = i_data_ready_flag_reg; 
+
     always_comb begin
         
         next_state                  = current_state;
@@ -85,13 +91,13 @@ module uart_receiver #(
         cmd_flag_frame_error        = '0;
         cmd_clear_status_reg        = '0;
         cmd_clear_rx_shift_reg      = '0;
+        cmd_set_data_ready_flag     = '0;
+        cmd_clear_data_ready_flag   = '0;
 
         case(current_state)
 
             S_UART_RX_IDLE: begin
                 
-                rx_strobe_data_ready = '0;
-
                 if( synced_serial_in == SIGNAL_START_BIT ) begin
                     next_state = S_UART_RX_VALIDATE_START;
                     next_bit_count = '0;
@@ -99,6 +105,7 @@ module uart_receiver #(
                     cmd_reset_sample_count = '1; 
                     cmd_clear_status_reg = '1;
                     cmd_clear_rx_shift_reg = '1;
+                    cmd_clear_data_ready_flag = '1;
                 end
             end
 
@@ -141,6 +148,7 @@ module uart_receiver #(
                 if( event_end_of_bit ) begin
                     if( synced_serial_in == SIGNAL_END_BIT ) begin // STOP BIT VALID
                         next_state = S_UART_RX_DATA_READY;
+                        cmd_set_data_ready_flag = '1;
                     end else begin
                         next_state = S_UART_RX_IDLE; 
                         cmd_flag_frame_error = '1;
@@ -149,8 +157,14 @@ module uart_receiver #(
             end
 
             S_UART_RX_DATA_READY: begin
-                next_state = S_UART_RX_IDLE; 
-                rx_strobe_data_ready = '1;
+                
+                if (cpu_read_data_ack_pulse) begin
+                    next_state = S_UART_RX_IDLE;
+                    cmd_clear_data_ready_flag = '1; 
+                end else begin
+                    next_state = S_UART_RX_DATA_READY; 
+                end
+                
             end
 
             default: begin
@@ -166,11 +180,12 @@ module uart_receiver #(
         if(reset) begin
         
             current_state <= S_UART_RX_IDLE; 
-            rx_strobe_data_ready <='0;
+            rx_strobe_data_ready_level <='0;
            
             i_rx_shift_reg <= RX_PARALLEL_DATA_OUT_DEFAULT;
             i_status_reg <= '0;
-            
+            i_data_ready_flag_reg <= '0;
+
             bit_count <= '0;
         
         end else begin
@@ -186,7 +201,12 @@ module uart_receiver #(
                 i_status_reg <= '0;
             else if( cmd_flag_frame_error ) 
                 i_status_reg[0] <= '1;
-            
+
+            if (cmd_set_data_ready_flag)
+                i_data_ready_flag_reg <= '1;
+            else if (cmd_clear_data_ready_flag)
+                i_data_ready_flag_reg <= '0;
+ 
         end
     end
 

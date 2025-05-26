@@ -70,7 +70,7 @@ uart_rx_tb.uut.cmd_latch_serial_input
 uart_rx_tb.uut.i_rx_shift_reg[7:0]
 uart_rx_tb.uut.cmd_flag_frame_error
 uart_rx_tb.uut.i_status_reg[1:0]
-uart_rx_tb.uut.rx_strobe_data_ready
+uart_rx_tb.uut.rx_strobe_data_ready_level
 @23
 [color] 7
 uart_rx_tb.uut.rx_parallel_data_out[7:0]

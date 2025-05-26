@@ -40,7 +40,7 @@ module uart_rx_tb;
         .clk(clk),
         .reset(reset),
         .rx_serial_in_data(stim_serial_data_out),
-        .rx_strobe_data_ready(dut_strobe_data_ready),
+        .rx_strobe_data_ready_level(dut_strobe_data_ready),
         .rx_parallel_data_out(dut_data_out),
         .rx_status_reg(dut_status)
     );

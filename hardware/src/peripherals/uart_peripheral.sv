@@ -48,6 +48,23 @@ module uart_peripheral (
     assign status_reg_i[ERROR_OVERSHOOT_BIT] = rx_status_flags_i[1]; // overshoot error
     assign status_reg_i[DATA_WIDTH-1:4] = { (DATA_WIDTH-4){1'b0} };
 
+    // ========================================================
+    // READ_ACKNOWLEDGEMENT 
+    // ========================================================
+    logic cpu_read_signal, cpu_read_signal_dly;
+    assign cpu_read_signal = cmd_enable && cmd_read && (address_offset == UART_REG_DATA);
+
+    always_ff @(posedge clk) begin
+        if (reset) begin
+            cpu_read_signal_dly <= 1'b0;
+        end else begin
+            cpu_read_signal_dly <= cpu_read_signal;
+        end
+    end
+
+    logic cpu_read_ack_pulse;
+    assign cpu_read_ack_pulse = cpu_read_signal && !cpu_read_signal_dly;
+
     // =======================================================
     // UART_RECEIVER 
     // =======================================================
@@ -56,7 +73,8 @@ module uart_peripheral (
         .clk(clk),
         .reset(reset),
         .rx_serial_in_data(serial_rx),
-        .rx_strobe_data_ready(rx_data_ready_i),
+        .cpu_read_data_ack_pulse(cpu_read_ack_pulse),
+        .rx_strobe_data_ready_level(rx_data_ready_i),
         .rx_parallel_data_out(rx_data_out),
         .rx_status_reg(rx_status_flags_i)
     );
