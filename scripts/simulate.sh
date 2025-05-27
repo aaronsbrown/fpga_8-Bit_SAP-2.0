@@ -214,7 +214,7 @@ if [ -f "$WAVEFORM" ]; then
     if [ "$NO_VIZ" = false ]; then
         log_info "Opening waveform in gtkwave..."
         gtkwave "$WAVEFORM" "$SESSION_FILE" &
-    else:
+    else
         log_info "Waveform generated, skipping visualization (--no-viz)."
     fi
 else
