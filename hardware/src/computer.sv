@@ -56,13 +56,13 @@ module computer (
     assign ce_mmio = cpu_mem_address[15:12] == 4'b1110; // E000–EFFF
     assign ce_rom_4k = cpu_mem_address[15:12] == 4'b1111; // F000–FFFF
     
-    // MMIO -- LED -- E002
+    // MMIO -- LED -- E004
     wire ce_led_reg;
-    assign ce_led_reg = ce_mmio && cpu_mem_address[3:0] == 4'b0010;
+    assign ce_led_reg = ce_mmio && (cpu_mem_address[2:0] >> 2) ==  1'b1;
 
-    // MMIO -- UART -- E000 (STATUS), E001 (DATA)
+    // MMIO -- UART -- E000 (CONTROL), E001 (STATUS), E002 (DATA)
     wire ce_uart_peripheral;
-    assign ce_uart_peripheral = ce_mmio && ( cpu_mem_address[3:0] >> 2 ) == 2'b00; 
+    assign ce_uart_peripheral = ce_mmio && ( cpu_mem_address[2:0] >> 2 ) == 1'b0; 
 
     // Mux to decide which memory to read from
     assign cpu_mem_data_in = 
