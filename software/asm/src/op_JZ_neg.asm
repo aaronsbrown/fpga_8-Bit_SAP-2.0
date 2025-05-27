@@ -1,7 +1,7 @@
 ; op_JZ_neg.asm
 ; Tests continuing sequential execution 
 ; upon failed jump condition
-INCLUDE "includes/uart_defs.inc"
+INCLUDE "includes/mmio_defs.inc"
 
 ; -- CODE --
     ORG $F000

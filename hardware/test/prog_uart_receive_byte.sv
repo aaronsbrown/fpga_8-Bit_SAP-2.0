@@ -20,7 +20,7 @@ module computer_tb;
   reg reset;
   wire uut_uart_tx_signal;
   
-  // UART RECEIVER for asserting Computer UART functionality
+  // UART TRANSMITTER to generate test stimulus
   logic stim_start_strobe;
   logic [DATA_WIDTH-1:0] stim_data_in;
   logic stim_busy_flag;

@@ -1,5 +1,5 @@
 ; uart_send_byte.asm
-INCLUDE "includes/uart_defs.inc"
+INCLUDE "includes/mmio_defs.inc"
 
 ; --- Code Section ---
     ORG $F000

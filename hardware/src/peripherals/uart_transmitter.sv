@@ -9,7 +9,7 @@ module uart_transmitter #(
     input logic clk,
     input logic reset,
 
-    // INPUTS
+   // INPUTS
     input logic [DATA_WIDTH-1:0]    tx_parallel_data_in,
     input logic                     tx_strobe_start,
 

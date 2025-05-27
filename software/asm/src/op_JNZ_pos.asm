@@ -1,6 +1,6 @@
 ; op_JNZ_pos.asm
 ; Tests jumping to new address upon successful jump condition
-INCLUDE "includes/uart_defs.inc"
+INCLUDE "includes/mmio_defs.inc"
 
 ; -- CODE --
     ORG $F000

@@ -32,12 +32,18 @@ module uart_peripheral (
     
     // =======================================================
     // Control Register
+    // 0: Clear Frame Error
+    // 1: Clear Overshoot Error
     // TODO: add control logic in future, for now just a place holder
     // =======================================================
     logic [DATA_WIDTH-1:0] control_reg, next_control_reg;
 
     // =======================================================
-    // Status Register 
+    // Status Register
+    // 0: Tx Buffer Empty
+    // 1: Rx Data Ready
+    // 2: Frame Error
+    // 3: Overshoot Error
     // =======================================================
     logic rx_data_ready_i, tx_busy_i;
     logic [1:0] rx_status_flags_i;
