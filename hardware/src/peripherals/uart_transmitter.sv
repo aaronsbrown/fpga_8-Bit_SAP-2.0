@@ -12,6 +12,7 @@ module uart_transmitter #(
    // INPUTS
     input logic [DATA_WIDTH-1:0]    tx_parallel_data_in,
     input logic                     tx_strobe_start,
+    input logic                     tx_force_frame_error,
 
     // OUTPUTS
     output logic                    tx_strobe_busy,
@@ -113,7 +114,11 @@ module uart_transmitter #(
 
             S_UART_TX_STOP: begin
                 
-                tx_serial_data_out = SIGNAL_STOP_BIT;
+                if(tx_force_frame_error) 
+                    tx_serial_data_out = SIGNAL_START_BIT;
+                else
+                    tx_serial_data_out = SIGNAL_STOP_BIT;
+                
                 i_tx_strobe_busy_next = '1;
                 cmd_enable_baud_count = '1;    
                 

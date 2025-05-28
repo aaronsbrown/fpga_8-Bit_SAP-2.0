@@ -10,11 +10,9 @@ module uart_receiver #(
     input logic clk,
     input logic reset,
 
-    // INPUTS
     input logic rx_serial_in_data,
     input logic cpu_read_data_ack_pulse,
 
-    // OUTPUTS
     output logic                 rx_strobe_data_ready_level,
     output logic [WORD_SIZE-1:0] rx_parallel_data_out,
     output logic [1:0]           rx_status_reg
@@ -26,19 +24,23 @@ module uart_receiver #(
     localparam SIGNAL_START_BIT = '0;
     localparam SIGNAL_END_BIT = '1;
 
+    localparam STATUS_REG_DEFAULT = {WORD_SIZE{1'b0}};
+    localparam STATUS_ERROR_FRAME_BIT = 0;
+    localparam STATUS_ERROR_OVERSHOOT_BIT = 1;
+
     
     // =======================================================================
     // OUTPUT ASSIGNMENT
     // ======================================================================= 
-    assign rx_parallel_data_out = i_rx_shift_reg;
-    assign rx_status_reg = i_status_reg;
+    assign rx_parallel_data_out = rx_shift_reg_i;
+    assign rx_status_reg = status_reg_i;
 
 
     // =======================================================================
     // DATA PATH
     // ======================================================================= 
-    logic [WORD_SIZE-1:0]  i_rx_shift_reg;
-    logic [1:0]            i_status_reg; // [0] => Frame Error; [1] => Overshoot Error
+    logic [WORD_SIZE-1:0]  rx_shift_reg_i;
+    logic [1:0]            status_reg_i; // [0] => Frame Error; [1] => Overshoot Error
 
 
     // ====================================================================== 
@@ -182,8 +184,8 @@ module uart_receiver #(
             current_state <= S_UART_RX_IDLE; 
             rx_strobe_data_ready_level <='0;
            
-            i_rx_shift_reg <= RX_PARALLEL_DATA_OUT_DEFAULT;
-            i_status_reg <= '0;
+            rx_shift_reg_i <= RX_PARALLEL_DATA_OUT_DEFAULT;
+            status_reg_i <= STATUS_REG_DEFAULT;
             i_data_ready_flag_reg <= '0;
 
             bit_count <= '0;
@@ -193,14 +195,14 @@ module uart_receiver #(
             bit_count <= next_bit_count;
 
             if (cmd_clear_rx_shift_reg)
-                i_rx_shift_reg <= '0;
+                rx_shift_reg_i <= '0;
             else if (cmd_latch_serial_input) 
-                i_rx_shift_reg <= { synced_serial_in, i_rx_shift_reg[WORD_SIZE - 1: 1] };
+                rx_shift_reg_i <= { synced_serial_in, rx_shift_reg_i[WORD_SIZE - 1: 1] };
             
             if (cmd_clear_status_reg) 
-                i_status_reg <= '0;
+                status_reg_i <= STATUS_REG_DEFAULT;
             else if( cmd_flag_frame_error ) 
-                i_status_reg[0] <= '1;
+                status_reg_i[STATUS_ERROR_FRAME_BIT] <= '1;
 
             if (cmd_set_data_ready_flag)
                 i_data_ready_flag_reg <= '1;

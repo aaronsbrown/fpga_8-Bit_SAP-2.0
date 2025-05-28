@@ -135,9 +135,10 @@ package arch_defs_pkg;
     } uart_fsm_state_t;
 
     typedef enum logic [1:0] { 
-        UART_REG_CONTROL = 2'b00, 
+        UART_REG_CONFIG = 2'b00, 
         UART_REG_STATUS = 2'b01, 
-        UART_REG_DATA = 2'b10 
+        UART_REG_DATA = 2'b10,
+        UART_REG_COMMAND = 2'b11
     } uart_reg_offset_e;
 
 endpackage : arch_defs_pkg
