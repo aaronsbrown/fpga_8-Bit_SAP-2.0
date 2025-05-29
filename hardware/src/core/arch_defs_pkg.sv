@@ -131,7 +131,7 @@ package arch_defs_pkg;
     
     typedef enum logic [3:0] {
         S_UART_TX_IDLE, S_UART_TX_START, S_UART_TX_SEND_DATA, S_UART_TX_STOP,
-        S_UART_RX_IDLE, S_UART_RX_VALIDATE_START, S_UART_RX_READ_DATA, S_UART_RX_DATA_READY, S_UART_RX_STOP
+        S_UART_RX_IDLE, S_UART_RX_VALIDATE_START, S_UART_RX_READ_DATA, S_UART_RX_STOP
     } uart_fsm_state_t;
 
     typedef enum logic [1:0] { 

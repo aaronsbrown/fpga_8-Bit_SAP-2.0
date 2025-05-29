@@ -121,23 +121,24 @@ This document outlines the planned evolution of a custom 8-bit CPU implemented o
 *(Goal: Add UART communication capability using the MMIO infrastructure and the new assembler)*
 
 1. **Implement/Integrate UART:**
-    - Add UART Verilog modules (transmitter, receiver).
-    - Assign specific 16-bit addresses (e.g., `$E000` Status, `$E001` Data) within the I/O range defined in Phase 2.
-    - Connect UART registers to the system bus using the MMIO decoding/routing logic in `computer.sv`. Ensure `cs_uart_status`, `cs_uart_data` are generated correctly.
-    - Connect UART TX/RX pins in top-level constraints (`top.v`, `.pcf`).
+    - Add UART Verilog modules (transmitter, receiver, and a wrapper peripheral).
+    - Assign specific 16-bit addresses for UART registers (e.g., Control/Config, Status, Data, Command) within the I/O range.
+    - Connect UART registers to the system bus using MMIO decoding/routing logic.
+    - Implement necessary UART features such as data ready flags and basic error detection (e.g., frame, overshoot) with corresponding status bits and mechanisms for CPU interaction (e.g., clearing errors).
+    - Connect UART TX/RX pins in top-level constraints for hardware.
 
 2. **Write Test Programs (Assembly):**
-    - Use the Phase 4 assembler to write simple programs to:
-        - Send a character or string out via the UART TX.
-        - Poll the UART RX status register and echo received characters back.
-    - *Prompt: How do you read/write to the specific UART addresses using your defined instructions (e.g., `LDA $E001`, `STA $E001`)?*
+    - Use the Phase 4 assembler to write programs to:
+        - Send characters/strings via UART TX.
+        - Poll UART RX status and echo received characters.
+        - Test error detection and handling capabilities of the UART and CPU.
 
 3. **Test via Simulation & Hardware:**
-    - Simulate UART interaction.
-    - Synthesize and test on hardware using a serial terminal connected to the FPGA.
+    - Simulate UART interactions, including error scenarios.
+    - Synthesize and test on hardware using a serial terminal.
 
 > **Prerequisite:** Phase 3 (CPU Arch), Phase 4 (Assembler).
-> **Goal:** Functional serial communication, proving MMIO and assembler viability.
+> **Goal:** Functional serial communication, proving MMIO and assembler viability, and establishing robust UART peripheral behavior.
 
 ---
 

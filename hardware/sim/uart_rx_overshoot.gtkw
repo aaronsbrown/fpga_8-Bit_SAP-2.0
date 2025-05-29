@@ -1,0 +1,85 @@
+[*]
+[*] GTKWave Analyzer v3.4.0 (w)1999-2022 BSI
+[*] Thu May 29 01:45:34 2025
+[*]
+[dumpfile] "/Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/build/waveform.vcd"
+[dumpfile_mtime] "Thu May 29 01:30:39 2025"
+[dumpfile_size] 1848355
+[savefile] "/Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/foo.gtkw"
+[timestart] 49555000
+[size] 1496 600
+[pos] 40 18
+*-19.486158 40845000 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0
+[markername] AA
+[markername] BB
+[markername] CC
+[markername] DD
+[markername] EE
+[markername] FF
+[markername] GG
+[markername] HH
+[markername] II
+[markername] JJ
+[markername] KK
+[markername] LL
+[markername] MM
+[markername] NN
+[markername] OO
+[markername] PP
+[markername] QQ
+[markername] RR
+[markername] SS
+[markername] TT
+[markername] UU
+[markername] VV
+[markername] WW
+[markername] XX
+[markername] YY
+[markername] ZZ
+[treeopen] computer_tb.
+[treeopen] computer_tb.uut.
+[treeopen] computer_tb.uut.u_cpu.
+[treeopen] computer_tb.uut.u_uart.
+[sst_width] 255
+[signals_width] 321
+[sst_expanded] 1
+[sst_vpaned_height] 226
+@28
+[color] 3
+computer_tb.uut.clk
+computer_tb.uut.reset
+@22
+computer_tb.uut.u_cpu.counter_out[15:0]
+@2028
+^1 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/filter_state.txt
+computer_tb.uut.u_cpu.u_control_unit.next_state[2:0]
+[color] 3
+^1 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/filter_state.txt
+computer_tb.uut.u_cpu.u_control_unit.current_state[2:0]
+^2 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/filter_opcode.txt
+computer_tb.uut.u_cpu.opcode[7:0]
+@28
+computer_tb.uut.u_cpu.u_control_unit.num_operand_bytes[1:0]
+@2028
+[color] 3
+^3 /Users/aaronbrown/Documents/Code/3_FPGA_8-Bit_SAP2/hardware/sim/filter_timestep.txt
+computer_tb.uut.u_cpu.u_control_unit.current_microstep[3:0]
+@22
+computer_tb.uut.u_cpu.internal_bus[7:0]
+computer_tb.uut.u_cpu.mem_address[15:0]
+@28
+computer_tb.uut.u_uart.u_receiver.cpu_read_data_ack_pulse
+computer_tb.uut.u_uart.u_receiver.data_ready_flag_i
+computer_tb.uut.u_uart.u_receiver.current_state[3:0]
+computer_tb.uut.u_uart.u_receiver.event_end_of_bit
+@29
+computer_tb.uut.u_uart.u_receiver.cmd_flag_overshoot_error
+@28
+computer_tb.uut.u_uart.rx_status_reg[1:0]
+computer_tb.uut.u_uart.cmd_clear_overshoot_error
+computer_tb.uut.u_uart.u_receiver.data_ready_flag_i
+computer_tb.uart_transmitter.tx_strobe_busy
+@22
+computer_tb.uut.u_cpu.u_register_B.latched_data[7:0]
+[pattern_trace] 1
+[pattern_trace] 0

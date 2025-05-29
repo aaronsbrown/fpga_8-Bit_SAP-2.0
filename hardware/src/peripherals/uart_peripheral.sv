@@ -125,11 +125,12 @@ module uart_peripheral (
 
     always_comb begin 
         
-        next_config_reg         = config_reg;
-        parallel_data_out       = {DATA_WIDTH{1'bx}};
-        tx_data_in              = {DATA_WIDTH{1'bx}};
-        cmd_tx_start_strobe     = 1'b0;
-        cmd_clear_frame_error   = 1'b0;
+        next_config_reg             = config_reg;
+        parallel_data_out           = {DATA_WIDTH{1'bx}};
+        tx_data_in                  = {DATA_WIDTH{1'bx}};
+        cmd_tx_start_strobe         = 1'b0;
+        cmd_clear_frame_error       = 1'b0;
+        cmd_clear_overshoot_error   = 1'b0;
         
         if ( cmd_enable) begin
             case (address_offset)
@@ -157,6 +158,8 @@ module uart_peripheral (
                     if (cmd_write) begin
                         if(parallel_data_in[CMD_REG_CLEAR_FRAME_ERR_BIT])
                             cmd_clear_frame_error = 1'b1;
+                        if(parallel_data_in[CMD_REG_CLEAR_OVERSHOOT_ERR_BIT])
+                            cmd_clear_overshoot_error = 1'b1;
                     end
                 end
                 
@@ -185,7 +188,7 @@ module uart_peripheral (
 
             if(cmd_set_frame_error)
                 frame_error_flag_i <= 1'b1;
-        else if(cmd_clear_frame_error)
+            else if(cmd_clear_frame_error)
                 frame_error_flag_i <= 1'b0;
 
             if(cmd_set_overshoot_error)

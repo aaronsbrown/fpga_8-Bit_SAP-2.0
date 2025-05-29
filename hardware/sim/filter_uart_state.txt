@@ -5,7 +5,6 @@ translate current_state {
     0011 TX_STOP
     0100 RX_IDLE
     0101 RX_VALIDATE
-    0110 RX_READ
-    0111 RX_DATA_READY
-    1000 RX_STOP
+    0110 RX_READ_DATA
+    0111 RX_STOP
 }
