@@ -72,8 +72,8 @@ Comprehensive testbenches and assembly programs have been developed to validate 
   * [x] Assembler is a command-line Python script.
   * [x] Workflow: Write `.asm`, invoke assembler, load generated `.hex` into Verilog testbenches.
   * [ ] Future: Consider options for more automated integration into `simulate.sh` if desired.
-* [ ] **4. Documentation:**
-  * [ ] Document the specific assembly language syntax supported. *(Partially done via discussions, formal document pending)*
+* [x] **4. Documentation:**
+  * [x] Document the specific assembly language syntax supported. 
   * [x] Update project README with assembler capabilities. *(Partially done)*
 
 > **Phase 4 Status:** **Complete.** The assembler is functional, robust, and has been instrumental in developing test programs for Phase 5. Minor documentation tasks remain.
