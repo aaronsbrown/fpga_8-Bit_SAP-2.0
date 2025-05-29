@@ -115,14 +115,16 @@ module computer_tb;
     wait (stim_busy_flag == 0);
     $display("TB: TB UART finished sending 2nd byte.");
  
-    // // Wait for overrun_error_handling via CPU
-    // $display("TB: Waiting for CPU to detect and handle overrun...");
-    // wait (uut.u_uart.cmd_clear_overshoot_error == 1);
-    repeat(1000) @(posedge clk);
-    
-    // assert error code 
+    //  Wait for overrun_error_handling via CPU
+    $display("TB: Waiting for CPU to detect and handle overrun...");
+    wait (uut.u_uart.cmd_clear_overshoot_error == 1);
     pretty_print_assert_vec(computer_output, 8'h66, "overrun_error_code on output_port_1");
+    pretty_print_assert_vec(uut.u_uart.status_reg_i[3'd3], 1'b1, "overshoot error bit high while clear command goes high");
 
+    @(posedge clk); #0.01;
+    pretty_print_assert_vec(uut.u_uart.status_reg_i[3'd3], 1'b0, "overshoot error bit cleared next cycle");
+
+    
     // visual buffer for waveform
     repeat(100) @(posedge clk);
     

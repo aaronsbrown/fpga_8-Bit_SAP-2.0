@@ -186,15 +186,15 @@ module uart_peripheral (
              overshoot_error_flag_i <= 1'b0;
         end else begin
 
-            if(cmd_set_frame_error)
-                frame_error_flag_i <= 1'b1;
-            else if(cmd_clear_frame_error)
+            if(cmd_clear_frame_error)
                 frame_error_flag_i <= 1'b0;
+            else if(cmd_set_frame_error)
+                frame_error_flag_i <= 1'b1;
 
-            if(cmd_set_overshoot_error)
-                overshoot_error_flag_i <= 1'b1;
-            else if(cmd_clear_overshoot_error)
+            if(cmd_clear_overshoot_error)
                 overshoot_error_flag_i <= 1'b0;
+            else if(cmd_set_overshoot_error)
+                overshoot_error_flag_i <= 1'b1;
 
         end
     end
