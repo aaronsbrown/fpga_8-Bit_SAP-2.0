@@ -174,8 +174,7 @@ module uart_receiver #(
         if(reset) begin
         
             current_state <= S_UART_RX_IDLE; 
-            rx_strobe_data_ready_level <='0;
-           
+            
             rx_shift_reg_i <= RX_PARALLEL_DATA_OUT_DEFAULT;
             status_reg_i <= STATUS_REG_DEFAULT;
             data_ready_flag_i <= '0;

@@ -26,16 +26,8 @@ module top (
 
     wire [7:0] output_value;
     assign io_led[23:16] = output_value;
+    assign io_led[15:0] = 16'h00;
     
-    // TODO replace slow clock with a 'stepped' clock
-    // clock_divider #(
-    //     .DIV_FACTOR(1_200_000) // 20MHz clock from 100MHz input
-    // ) u_clk_div (
-    //     .clk_in(clk_out),
-    //     .reset(sys_reset),
-    //     .clk_out(clk_div)
-    // );
-
     computer u_computer (
         .clk(clk_out),
         .reset(sys_reset),
@@ -48,7 +40,7 @@ module top (
     );
   
     // Assign the remaining LEDs to 0
-    assign led[3] = 1'b0;
+    assign led[7:3] = 5'b00000;
     
     seg7_display u_display (
         .clk(clk_out),

@@ -119,6 +119,7 @@ module uart_peripheral (
         .reset(reset),
         .tx_parallel_data_in(tx_data_in),
         .tx_strobe_start(cmd_tx_start_strobe),
+        .tx_force_frame_error(1'b0),
         .tx_strobe_busy(tx_busy_i),
         .tx_serial_data_out(serial_tx)
     );

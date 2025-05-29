@@ -10,6 +10,11 @@ utils/seg7_display.v
 utils/digit_to_7seg.v
 utils/clock_divider.sv
 
+#peripherals
+peripherals/uart_transmitter.sv
+peripherals/uart_receiver.sv
+peripherals/uart_peripheral.sv
+
 # core
 core/arch_defs_pkg.sv
 
