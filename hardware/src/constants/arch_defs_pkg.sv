@@ -8,7 +8,8 @@ package arch_defs_pkg;
     parameter int OPCODE_WIDTH = DATA_WIDTH;
     parameter int OPERAND_WIDTH = DATA_WIDTH;
 
-    parameter RESET_VECTOR = 16'hF000; // hardcoded reset vector
+    parameter RESET_VECTOR = 16'hF000;  // hardcoded reset vector
+    parameter SP_VECTOR = 16'h01FF;     // hardcoded sp initialization vector
 
     typedef enum logic [OPCODE_WIDTH-1:0] {
         NOP =   8'h00,  
@@ -51,6 +52,8 @@ package arch_defs_pkg;
         MOV_BC = 8'h63,
         MOV_CA = 8'h64,
         MOV_CB = 8'h65,
+        PHA   = 8'h80,
+        PLA   = 8'h81,
         LDA   = 8'hA0,  
         STA   = 8'hA1,
         LDI_A = 8'hB0, 
@@ -126,6 +129,10 @@ package arch_defs_pkg;
         logic oe_temp_1;
         logic load_temp_2;
         logic oe_temp_2;
+        logic load_sp_default_address;
+        logic sp_inc;
+        logic sp_dec;
+        logic load_mar_sp;
     } control_word_t;
 
     

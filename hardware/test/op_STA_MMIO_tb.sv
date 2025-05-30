@@ -48,13 +48,13 @@ module computer_tb;
 
     $display("BYTE 2");
     repeat (4) @(posedge clk);  #0.1;
-    pretty_print_assert_vec(uut.u_cpu.temp_1_out, 8'h55, "EXECUTE: cpu.temp_1_out = x55"); 
+    pretty_print_assert_vec(uut.u_cpu.temp_1_out, 8'hAB, "EXECUTE: cpu.temp_1_out = xAB"); 
 
     $display("POST_EXECUTE"); // microsteps + latch cycle
     repeat (1 + 1) @(posedge clk);  #0.1;
-    inspect_register(uut.u_cpu.a_out, 8'h55, "Register A", DATA_WIDTH);
+    inspect_register(uut.u_cpu.a_out, 8'hAB, "Register A", DATA_WIDTH);
     pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0"); 
+    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b1, "cpu.flag_negative_o == 1"); 
 
 
     // STA  ============================================

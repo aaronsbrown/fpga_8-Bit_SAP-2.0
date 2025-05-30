@@ -20,18 +20,21 @@ src/peripherals/uart_transmitter.sv
 src/peripherals/uart_receiver.sv
 src/peripherals/uart_peripheral.sv
 
-# core
-src/core/arch_defs_pkg.sv
+# constants
+src/constants/arch_defs_pkg.sv
 
-# logic h
-src/alu.sv
-src/program_counter.sv
+# cpu components
+src/cpu/alu.sv
+src/cpu/program_counter.sv
+src/cpu/stack_pointer.sv
+src/cpu/register_memory_address.sv
+src/cpu/register_nbit.sv
+src/cpu/control_unit.sv
+
+# main components
+src/cpu.sv
 src/rom_4k.sv
 src/vram_4k.sv
 src/ram_8k.sv
-src/register_memory_address.sv
-src/register_nbit.sv
-src/control_unit.sv
-src/cpu.sv
 src/computer.sv
 src/top.v

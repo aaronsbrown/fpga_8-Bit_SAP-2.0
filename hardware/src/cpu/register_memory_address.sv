@@ -4,10 +4,12 @@ module register_memory_address (
     input logic                     clk,
     input logic                     reset,
     input logic                     load_pc, 
+    input logic                     load_sp,
     input logic                     load_addr_high,
     input logic                     load_addr_low,
     input logic  [DATA_WIDTH-1:0]   bus_in,
     input logic  [ADDR_WIDTH-1:0]   program_counter_in,
+    input logic  [ADDR_WIDTH-1:0]   stack_pointer_in,
     output logic [ADDR_WIDTH-1:0]   address_out
 );
     
@@ -20,7 +22,9 @@ module register_memory_address (
             address_out[DATA_WIDTH-1:0] <= bus_in;  
         end else if (load_pc) begin
             address_out <= program_counter_in;
-        end 
+        end else if (load_sp) begin
+            address_out <= stack_pointer_in;
+        end
     end
 
 

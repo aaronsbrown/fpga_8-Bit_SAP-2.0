@@ -30,7 +30,8 @@ module control_unit (
             NOP, HLT, ADD_B, ADD_C, SUB_B, SUB_C, INR_A, DCR_A,
             ADC_B, ADC_C, SBC_B, SBC_C, ANA_B, ANA_C, ORA_B, ORA_C,
             XRA_B, XRA_C, CMP_B, CMP_C, MOV_AB, MOV_AC, MOV_BA, MOV_BC, 
-            MOV_CA, MOV_CB, CMA, INR_B, DCR_B, INR_C, DCR_C, RAR, RAL
+            MOV_CA, MOV_CB, CMA, INR_B, DCR_B, INR_C, DCR_C, RAR, RAL,
+            PHA, PLA
             : begin
                 num_operand_bytes = 2'b00; // No operands
             end
@@ -85,6 +86,7 @@ module control_unit (
             
             S_INIT: begin
                 control_word.load_origin = 1'b1; 
+                control_word.load_sp_default_address = 1'b1;
                 next_state = S_LATCH_ADDR; 
             end
 
@@ -292,7 +294,6 @@ module control_unit (
         microcode_rom[DCR_C][MS0] = '{default: 0, alu_op: ALU_DCR, alu_src1_c: 1};
         microcode_rom[DCR_C][MS1] = '{default: 0, oe_alu: 1, load_c: 1, load_flags: 1, last_step: 1};
 
-
         // REGISTER MOVES
         microcode_rom[MOV_AB][MS0] = '{default: 0, oe_a: 1, load_b: 1, last_step: 1} ; 
         microcode_rom[MOV_AC][MS0] = '{default: 0, oe_a: 1, load_c: 1, last_step: 1} ; 
@@ -301,6 +302,17 @@ module control_unit (
         microcode_rom[MOV_CA][MS0] = '{default: 0, oe_c: 1, load_a: 1, last_step: 1} ; 
         microcode_rom[MOV_CB][MS0] = '{default: 0, oe_c: 1, load_b: 1, last_step: 1} ; 
 
+        // STACK: "Empty Descending Stack"; SP initialized to first empty memrory cell in Stack
+        microcode_rom[PHA][MS0] = '{default: 0, load_mar_sp: 1} ;
+        microcode_rom[PHA][MS1] = '{default: 0, sp_dec: 1} ;  
+        microcode_rom[PHA][MS2] = '{default: 0, oe_a: 1} ;  
+        microcode_rom[PHA][MS3] = '{default: 0, oe_a: 1, load_ram: 1, last_step: 1} ; 
+
+        microcode_rom[PLA][MS0] = '{default: 0, sp_inc: 1} ;
+        microcode_rom[PLA][MS1] = '{default: 0, load_mar_sp: 1} ;  
+        microcode_rom[PLA][MS2] = '{default: 0, oe_ram: 1} ;  
+        microcode_rom[PLA][MS3] = '{default: 0, oe_ram: 1, load_a: 1, last_step: 1, load_flags: 1, load_sets_zn: 1};  
+         
         // MEMORY
         microcode_rom[LDA][MS0] = '{default: 0, oe_temp_1: 1}; 
         microcode_rom[LDA][MS1] = '{default: 0, oe_temp_1: 1, load_mar_addr_low: 1}; 

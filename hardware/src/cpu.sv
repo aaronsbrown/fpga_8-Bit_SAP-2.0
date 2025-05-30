@@ -42,7 +42,7 @@ module cpu (
     assign mem_read = control_word.oe_ram;
     assign mem_write = control_word.load_ram;
     assign mem_address = mar_out;
-    assign mem_data_out = a_out; 
+    assign mem_data_out = internal_bus; 
     
     // =============== CONNECT FLAGS  ======================
     // =====================================================
@@ -66,6 +66,10 @@ module cpu (
     logic [ADDR_WIDTH-1:0] default_rom_origin;
     assign default_rom_origin = RESET_VECTOR;
 
+    // =============== DEFAULT SP ORIGIN ================
+    // ===================================================
+    logic [ADDR_WIDTH-1:0] default_sp_origin;
+    assign default_sp_origin = SP_VECTOR;
 
     // =============== CONTROL SIGNALS ===================
     // ===================================================
@@ -93,6 +97,9 @@ module cpu (
 
     // Control signal to enable program counter
     logic pc_enable;
+
+    // Control signals for SP
+    logic load_sp_default_address, load_mar_sp, sp_inc, sp_dec;
 
     // Control signals for loading data from the internal_bus into registers
     logic load_a, load_b, load_c, load_tmp, load_ir, load_flags, load_sets_zn, load_temp_1, load_temp_2;
@@ -135,13 +142,17 @@ module cpu (
     assign alu_src2_temp1 = control_word.alu_src2_temp1; 
     assign alu_src1_b = control_word.alu_src1_b;
     assign alu_src1_c = control_word.alu_src1_c;
+    assign load_sp_default_address = control_word.load_sp_default_address;
+    assign sp_inc = control_word.sp_inc;
+    assign sp_dec = control_word.sp_dec;
+    assign load_mar_sp = control_word.load_mar_sp;
     
     
     // ================= BUS INTERFACE and 'internal_bus staging' registers ==================
     // ==============================================================================
     logic [DATA_WIDTH-1:0] internal_bus;
     logic [DATA_WIDTH-1:0] a_out, b_out, c_out, temp_1_out, temp_2_out, alu_out;
-    logic [ADDR_WIDTH-1:0] counter_out, mar_out;
+    logic [ADDR_WIDTH-1:0] counter_out, stack_pointer_out, mar_out;
     
     // Tri-state bus logic modeled using a priority multiplexer
     assign internal_bus =    
@@ -169,7 +180,16 @@ module cpu (
         .counter_out(counter_out)
     );
 
-    
+    stack_pointer u_stack_pointer (
+        .clk(clk),
+        .reset(reset),
+        .load_initial_address(load_sp_default_address),
+        .increment(sp_inc),
+        .decrement(sp_dec),
+        .address_in(default_sp_origin),
+        .address_out(stack_pointer_out)
+    );
+
     register_nbit #( .N(DATA_WIDTH) ) u_register_A (
         .clk(clk),
         .reset(reset),
@@ -215,10 +235,12 @@ module cpu (
       .clk(clk),
       .reset(reset),
       .load_pc(load_mar_pc),
+      .load_sp(load_mar_sp),
       .load_addr_high(load_mar_addr_high),
       .load_addr_low(load_mar_addr_low),
       .bus_in(internal_bus),
       .program_counter_in(counter_out),
+      .stack_pointer_in(stack_pointer_out),
       .address_out(mar_out)
     );   
 
@@ -303,12 +325,12 @@ module cpu (
             // We know we executing an operation that sets the flags
             unique case (opcode)
                 LDI_A, LDI_B, LDI_C: begin
-                    // LDI sets the flags based on the operand
+                    // Sets the flags based on the operand
                     load_data_is_zero_w = ( temp_1_out == {DATA_WIDTH{1'b0}} );
                     load_data_is_negative_w = temp_1_out[DATA_WIDTH - 1];
                 end
-                LDA: begin
-                    // LDA sets the flags based on the internal_bus
+                LDA, PLA: begin
+                    // Sets the flags based on the internal_bus (i.e. RAM output)
                     load_data_is_zero_w = ( internal_bus == {DATA_WIDTH{1'b0}} );
                     load_data_is_negative_w = internal_bus[DATA_WIDTH - 1];
                 end

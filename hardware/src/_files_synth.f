@@ -16,17 +16,20 @@ peripherals/uart_receiver.sv
 peripherals/uart_peripheral.sv
 
 # core
-core/arch_defs_pkg.sv
+constants/arch_defs_pkg.sv
 
-# logic
-alu.sv
-program_counter.sv
+# cpu components
+cpu/alu.sv
+cpu/program_counter.sv
+cpu/stack_pointer.sv
+cpu/register_memory_address.sv
+cpu/register_nbit.sv
+cpu/control_unit.sv
+
+# main components
+cpu.sv
 rom_4k.sv
 vram_4k.sv
 ram_8k.sv
-register_memory_address.sv
-register_nbit.sv
-control_unit.sv
-cpu.sv
 computer.sv
 top.v
