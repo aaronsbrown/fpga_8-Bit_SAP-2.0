@@ -55,8 +55,9 @@ INSTRUCTION_SET: dict[str, InstrInfo] = {
     "RAR":   InstrInfo(opcode=0x41, size=1),
     "PHA":   InstrInfo(opcode=0x80, size=1),
     "PLA":   InstrInfo(opcode=0x81, size=1),
+    "PHP":   InstrInfo(opcode=0x82, size=1),
+    "PLP":   InstrInfo(opcode=0x83, size=1),
     
-
     # — One‑operand instructions (2 bytes total) —
     "ANI":   InstrInfo(opcode=0x32, size=2),
     "ORI":   InstrInfo(opcode=0x36, size=2),

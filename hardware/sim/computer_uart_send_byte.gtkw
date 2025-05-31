@@ -66,10 +66,10 @@ computer_tb.uut.u_cpu.u_control_unit.current_microstep[3:0]
 @22
 computer_tb.uut.u_cpu.internal_bus[7:0]
 @28
-computer_tb.uut.u_cpu.load_flags
-computer_tb.uut.u_cpu.u_register_flags.load
-computer_tb.uut.u_cpu.u_register_flags.data_in[2:0]
-computer_tb.uut.u_cpu.flags_reg_out[2:0]
+computer_tb.uut.u_cpu.load_status
+computer_tb.uut.u_cpu.u_register_status.load
+computer_tb.uut.u_cpu.u_register_status.data_in[7:0]
+computer_tb.uut.u_cpu.status_out[7:0]
 computer_tb.uut.u_cpu.flag_zero_o
 @22
 computer_tb.uut.u_cpu.mem_address[15:0]

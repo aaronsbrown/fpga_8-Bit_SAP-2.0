@@ -2,7 +2,6 @@ package arch_defs_pkg;
 
     parameter int DATA_WIDTH = 8;
     parameter int ADDR_WIDTH = 16;
-    parameter int FLAG_COUNT = 3;
     
     parameter int RAM_DEPTH  = (1 << ADDR_WIDTH);
     parameter int OPCODE_WIDTH = DATA_WIDTH;
@@ -63,6 +62,8 @@ package arch_defs_pkg;
         MOV_CB = 8'h65,
         PHA   = 8'h80,
         PLA   = 8'h81,
+        PHP   = 8'h82,
+        PLP   = 8'h83,
         LDA   = 8'hA0,  
         STA   = 8'hA1,
         LDI_A = 8'hB0, 
@@ -124,7 +125,9 @@ package arch_defs_pkg;
         logic alu_src2_c;
         logic alu_src2_temp1;       
         logic oe_alu;             
-        logic load_flags;   
+        logic load_status;   
+        logic oe_status;
+        logic status_src_ram;
         logic load_sets_zn; 
         logic check_zero; 
         logic check_not_zero;        

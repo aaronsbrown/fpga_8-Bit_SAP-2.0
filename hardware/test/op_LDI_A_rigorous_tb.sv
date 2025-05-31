@@ -44,11 +44,11 @@ module computer_tb;
     $display("INIT");
     
     // Cycle 1: INIT
-    repeat (1) @(posedge clk);  #0.1;
+    #0.1;
     pretty_print_assert_vec(uut.u_cpu.load_origin, 1'b1, "INIT: cpu.load_origin");
 
 
-    // BYTE 1 =================================
+    // BYTE 1 ================================
     // ========================================
     $display("BYTE 1");
     
@@ -107,7 +107,7 @@ module computer_tb;
     pretty_print_assert_vec(uut.u_cpu.u_control_unit.current_microstep, MS0, "EXECUTE: MS0"); 
     pretty_print_assert_vec(uut.u_cpu.oe_temp_1, 1'b1, "MS1: cpu.oe_temp_1");
     pretty_print_assert_vec(uut.u_cpu.load_a, 1'b1, "MS1: cpu.load_a");  
-    pretty_print_assert_vec(uut.u_cpu.load_flags, 1'b1, "MS1: cpu.load_flags");  
+    pretty_print_assert_vec(uut.u_cpu.load_status, 1'b1, "MS1: cpu.load_status");  
     pretty_print_assert_vec(uut.u_cpu.load_sets_zn, 1'b1, "MS1: cpu.load_sets_zn");  
    
    

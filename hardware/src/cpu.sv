@@ -49,9 +49,9 @@ module cpu (
     // =============== CONNECT FLAGS  ======================
     // =====================================================
     // TODO replace with status register
-    assign flag_zero_o = flags_reg_out[STATUS_CPU_ZERO];
-    assign flag_carry_o = flags_reg_out[STATUS_CPU_CARRY];
-    assign flag_negative_o = flags_reg_out[STATUS_CPU_NEG];
+    assign flag_zero_o = status_out[STATUS_CPU_ZERO];
+    assign flag_carry_o = status_out[STATUS_CPU_CARRY];
+    assign flag_negative_o = status_out[STATUS_CPU_NEG];
 
 
     // =============== OPCODE  ==============
@@ -107,14 +107,17 @@ module cpu (
     logic load_sp_default_address, load_mar_sp, sp_inc, sp_dec;
 
     // Control signals for loading data from the internal_bus into registers
-    logic load_a, load_b, load_c, load_tmp, load_ir, load_flags, load_sets_zn, load_temp_1, load_temp_2;
-    logic load_pc_high_byte, load_pc_low_byte, load_origin, oe_pc_low_byte, oe_pc_high_byte;
+    logic load_a, load_b, load_c, load_tmp, load_ir, load_status, load_sets_zn, load_temp_1, load_temp_2;
+    logic load_pc_high_byte, load_pc_low_byte, load_origin;
     
     // Control signals for outputting data to the internal_bus
-    logic oe_a, oe_b, oe_c, oe_temp_1, oe_temp_2, oe_ram, oe_alu;
+    logic oe_a, oe_b, oe_c, oe_temp_1, oe_temp_2, oe_ram, oe_alu, oe_status, oe_pc_low_byte, oe_pc_high_byte;
 
     // Control signals for ALU src multiplexer
     logic alu_src2_c, alu_src2_temp1;
+
+    // Control signal for Status Reg mux
+    logic status_src_ram;
 
     control_word_t control_word = '{default: 0};
     assign load_a = control_word.load_a;
@@ -137,7 +140,6 @@ module cpu (
     assign alu_op = control_word.alu_op;
     assign pc_enable = control_word.pc_enable; 
     assign halt = control_word.halt; 
-    assign load_flags = control_word.load_flags;    // TODO change name to status
     assign load_sets_zn = control_word.load_sets_zn;
     assign oe_a = control_word.oe_a;
     assign oe_b = control_word.oe_b; 
@@ -153,12 +155,15 @@ module cpu (
     assign sp_inc = control_word.sp_inc;
     assign sp_dec = control_word.sp_dec;
     assign load_mar_sp = control_word.load_mar_sp;
+    assign load_status = control_word.load_status;
+    assign oe_status = control_word.oe_status;
+    assign status_src_ram = control_word.status_src_ram; 
     
     
     // ================= BUS INTERFACE and 'internal_bus staging' registers ==================
     // ==============================================================================
     logic [DATA_WIDTH-1:0] internal_bus;
-    logic [DATA_WIDTH-1:0] a_out, b_out, c_out, temp_1_out, temp_2_out, alu_out, counter_byte_out;
+    logic [DATA_WIDTH-1:0] a_out, b_out, c_out, temp_1_out, temp_2_out, alu_out, counter_byte_out, status_out;
     logic [ADDR_WIDTH-1:0] counter_out, stack_pointer_out, mar_out;
     
     // Tri-state bus logic modeled using a priority multiplexer
@@ -172,6 +177,7 @@ module cpu (
                     (oe_temp_2)         ? temp_2_out :
                     (oe_pc_low_byte)    ? counter_byte_out :
                     (oe_pc_high_byte)   ? counter_byte_out :
+                    (oe_status)         ? status_out :
                     { DATA_WIDTH {1'b0} };
 
 
@@ -273,27 +279,30 @@ module cpu (
     // across different program complexities. The root cause appears to be
     // an optimization that misinterprets the usage scope of the flags when
     // conditional jumps aren't the final instructions using them.
-    (* keep *) logic [FLAG_COUNT-1:0] flags_reg_out;
+    // (* keep *) logic [DATA_WIDTH-1:0] status_out;
     
     // Flags register to hold the status flags
     // Z: Zero flag, C: Carry flag, N: Negative flag
-    register_nbit #( .N(FLAG_COUNT) ) u_register_flags (
+    
+    logic [DATA_WIDTH-1:0] status_reg_source;
+    assign status_reg_source = (status_src_ram) ? internal_bus : {C_in_w, N_in_w, Z_in_w};
+    
+    register_nbit #( .N(DATA_WIDTH) ) u_register_status (
         .clk(clk),
         .reset(reset),
-        .load(load_flags),
-        .data_in( {C_in_w, N_in_w, Z_in_w} ),
-        .latched_data(flags_reg_out)
+        .load(load_status),
+        .data_in(status_reg_source),
+        .latched_data(status_out)
     );
 
-    // TODO add status register here    
-
+    
     // ================ MAIN COMPONENTS: ALU, CONTROL UNIT ================
     // =========================================================================
     control_unit u_control_unit (
         .clk(clk),
         .reset(reset),
         .opcode(opcode),
-        .flags(flags_reg_out),
+        .flags(status_out),
         .control_word(control_word)
     );
 
@@ -312,7 +321,7 @@ module cpu (
         .reset(reset),
         .in_one(in_one_src),
         .in_two(in_two_src),
-        .in_carry(flags_reg_out[STATUS_CPU_CARRY]),
+        .in_carry(status_out[STATUS_CPU_CARRY]),
         .alu_op(alu_op),
         .latched_result(alu_out),
         .zero_flag(alu_zero_out_w),
@@ -371,7 +380,7 @@ module cpu (
             N_in_w = load_data_is_negative_w;
             C_in_w = 1'b0; // Carry flag is not set for LOAD operations
         end else if ( alu_op == ALU_INR || alu_op == ALU_DCR ) begin
-            C_in_w = flags_reg_out[STATUS_CPU_CARRY]; // INR/DCR maintain previous carry flag
+            C_in_w = status_out[STATUS_CPU_CARRY]; // INR/DCR maintain previous carry flag
         end
     end
 endmodule
