@@ -10,11 +10,21 @@ INCLUDE "includes/mmio_defs.inc"
 START_TEST:
 
     LDI A, #$AA
-    JSR UPDATE_B
-    MOV B, A
+    JSR SUB_1
+    ;MOV B, A
     STA OUTPUT_PORT_1   
     HLT
 
-UPDATE_B:
-    LDI B, #$BB
+SUB_1:
+    LDI A, #$BB
+    JSR SUB_2
+    RET
+
+SUB_2:
+    LDI A, #$CC
+    JSR SUB_3
+    RET
+
+SUB_3:
+    LDI A, #$FF
     RET

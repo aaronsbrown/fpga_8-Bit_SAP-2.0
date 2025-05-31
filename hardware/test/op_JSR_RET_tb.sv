@@ -42,7 +42,7 @@ module computer_tb;
     $display("\n\nRunning JSR_RET instruction test");
 
     wait(uut.cpu_halt);
-    inspect_register(computer_output, 8'hBB, "Output Port 1 = BB", DATA_WIDTH);
+    inspect_register(computer_output, 8'hFF, "Output Port 1 = BB", DATA_WIDTH);
     
     repeat(10) @(posedge clk);
 
