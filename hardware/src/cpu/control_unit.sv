@@ -38,7 +38,7 @@ module control_unit (
             LDI_A, LDI_B, LDI_C, ANI, ORI, XRI: begin
                 num_operand_bytes = 2'b01; // One operand
             end
-            JMP, JZ, JNZ, JN, LDA, STA, JSR: begin
+            JMP, JZ, JNZ, JN, JNN, JC, JNC, LDA, STA, JSR: begin
                 num_operand_bytes = 2'b10; // Two operands
             end
             default: begin
@@ -137,13 +137,16 @@ module control_unit (
             S_EXECUTE: begin
                 control_word = microcode_rom[opcode][current_microstep]; // Fetch control word from microcode ROM
                 
-                check_jump_condition = control_word.check_zero  || control_word.check_not_zero ||
-                                       control_word.check_carry || control_word.check_negative;
+                check_jump_condition = control_word.check_zero     || control_word.check_not_zero     ||
+                                       control_word.check_carry    || control_word.check_not_carry    ||
+                                       control_word.check_negative || control_word.check_not_negative;
                 
-                jump_condition_satisfied = (control_word.check_zero && flags[STATUS_CPU_ZERO])                    ||
-                                           (control_word.check_not_zero && !flags[STATUS_CPU_ZERO])               ||
-                                           (control_word.check_carry && flags[STATUS_CPU_CARRY])                   ||
-                                           (control_word.check_negative && flags[STATUS_CPU_NEG]);
+                jump_condition_satisfied = (control_word.check_zero && flags[STATUS_CPU_ZERO])         ||
+                                           (control_word.check_not_zero && !flags[STATUS_CPU_ZERO])    ||
+                                           (control_word.check_carry && flags[STATUS_CPU_CARRY])       ||
+                                           (control_word.check_not_carry && !flags[STATUS_CPU_CARRY])  ||
+                                           (control_word.check_negative && flags[STATUS_CPU_NEG])      ||
+                                           (control_word.check_not_negative && !flags[STATUS_CPU_NEG]);
 
                 if (control_word.halt) begin
                     next_state = S_HALT; 
@@ -205,6 +208,15 @@ module control_unit (
 
         microcode_rom[JN][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1, check_negative: 1}; 
         microcode_rom[JN][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1};
+
+        microcode_rom[JNN][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1, check_not_negative: 1}; 
+        microcode_rom[JNN][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1};
+        
+        microcode_rom[JC][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1, check_carry: 1}; 
+        microcode_rom[JC][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1};
+
+        microcode_rom[JNC][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1, check_not_carry: 1}; 
+        microcode_rom[JNC][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1};
 
         // SUBROUTINES
         microcode_rom[JSR][MS0] = '{default: 0, load_mar_sp: 1}; 

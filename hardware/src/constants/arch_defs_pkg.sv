@@ -24,6 +24,9 @@ package arch_defs_pkg;
         JZ  =   8'h11,  
         JNZ =   8'h12,  
         JN  =   8'h13, 
+        JNN =   8'h14,
+        JC  =   8'h15,
+        JNC =   8'h16,
         JSR =   8'h18,
         RET =   8'h19, 
         ADD_B = 8'h20,  
@@ -132,7 +135,9 @@ package arch_defs_pkg;
         logic check_zero; 
         logic check_not_zero;        
         logic check_carry;  
-        logic check_negative;  
+        logic check_not_carry;
+        logic check_negative;
+        logic check_not_negative; 
         logic load_a;             
         logic oe_a;               
         logic load_b;             
