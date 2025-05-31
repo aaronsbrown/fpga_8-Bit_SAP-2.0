@@ -140,10 +140,10 @@ module control_unit (
                 check_jump_condition = control_word.check_zero  || control_word.check_not_zero ||
                                        control_word.check_carry || control_word.check_negative;
                 
-                jump_condition_satisfied = (control_word.check_zero && flags[0])                    ||
-                                           (control_word.check_not_zero && !flags[0])               ||
-                                           (control_word.check_carry && flags[1])                   ||
-                                           (control_word.check_negative && flags[2]);
+                jump_condition_satisfied = (control_word.check_zero && flags[STATUS_CPU_ZERO])                    ||
+                                           (control_word.check_not_zero && !flags[STATUS_CPU_ZERO])               ||
+                                           (control_word.check_carry && flags[STATUS_CPU_CARRY])                   ||
+                                           (control_word.check_negative && flags[STATUS_CPU_NEG]);
 
                 if (control_word.halt) begin
                     next_state = S_HALT; 

@@ -18,6 +18,7 @@ module cpu (
     output wire halt,
 
     // ================= FLAGS ======================
+    //TODO replace with status register
     output wire flag_zero_o,
     output wire flag_carry_o,
     output wire flag_negative_o,
@@ -44,11 +45,13 @@ module cpu (
     assign mem_address = mar_out;
     assign mem_data_out = internal_bus; 
     
+
     // =============== CONNECT FLAGS  ======================
     // =====================================================
-    assign flag_zero_o = flags_reg_out[0];
-    assign flag_carry_o = flags_reg_out[1];
-    assign flag_negative_o = flags_reg_out[2];
+    // TODO replace with status register
+    assign flag_zero_o = flags_reg_out[STATUS_CPU_ZERO];
+    assign flag_carry_o = flags_reg_out[STATUS_CPU_CARRY];
+    assign flag_negative_o = flags_reg_out[STATUS_CPU_NEG];
 
 
     // =============== OPCODE  ==============
@@ -66,10 +69,12 @@ module cpu (
     logic [ADDR_WIDTH-1:0] default_rom_origin;
     assign default_rom_origin = RESET_VECTOR;
 
+
     // =============== DEFAULT SP ORIGIN ================
     // ===================================================
     logic [ADDR_WIDTH-1:0] default_sp_origin;
     assign default_sp_origin = SP_VECTOR;
+
 
     // =============== CONTROL SIGNALS ===================
     // ===================================================
@@ -132,7 +137,7 @@ module cpu (
     assign alu_op = control_word.alu_op;
     assign pc_enable = control_word.pc_enable; 
     assign halt = control_word.halt; 
-    assign load_flags = control_word.load_flags;
+    assign load_flags = control_word.load_flags;    // TODO change name to status
     assign load_sets_zn = control_word.load_sets_zn;
     assign oe_a = control_word.oe_a;
     assign oe_b = control_word.oe_b; 
@@ -276,11 +281,11 @@ module cpu (
         .clk(clk),
         .reset(reset),
         .load(load_flags),
-        .data_in( {N_in_w, C_in_w, Z_in_w} ),
+        .data_in( {C_in_w, N_in_w, Z_in_w} ),
         .latched_data(flags_reg_out)
     );
 
-    
+    // TODO add status register here    
 
     // ================ MAIN COMPONENTS: ALU, CONTROL UNIT ================
     // =========================================================================
@@ -307,7 +312,7 @@ module cpu (
         .reset(reset),
         .in_one(in_one_src),
         .in_two(in_two_src),
-        .in_carry(flags_reg_out[1]),
+        .in_carry(flags_reg_out[STATUS_CPU_CARRY]),
         .alu_op(alu_op),
         .latched_result(alu_out),
         .zero_flag(alu_zero_out_w),
@@ -318,6 +323,8 @@ module cpu (
 
     // ================================ FLAG LOGIC ===============================
     // ===========================================================================
+    // TODO move to status_logic_unit
+    
     logic alu_zero_out_w;
     logic alu_carry_out_w;
     logic alu_negative_out_w;
@@ -364,7 +371,7 @@ module cpu (
             N_in_w = load_data_is_negative_w;
             C_in_w = 1'b0; // Carry flag is not set for LOAD operations
         end else if ( alu_op == ALU_INR || alu_op == ALU_DCR ) begin
-            C_in_w = flags_reg_out[1]; // INR/DCR maintain previous carry flag
+            C_in_w = flags_reg_out[STATUS_CPU_CARRY]; // INR/DCR maintain previous carry flag
         end
     end
 endmodule

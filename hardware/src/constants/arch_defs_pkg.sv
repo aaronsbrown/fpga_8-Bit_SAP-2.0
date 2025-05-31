@@ -3,7 +3,7 @@ package arch_defs_pkg;
     parameter int DATA_WIDTH = 8;
     parameter int ADDR_WIDTH = 16;
     parameter int FLAG_COUNT = 3;
-
+    
     parameter int RAM_DEPTH  = (1 << ADDR_WIDTH);
     parameter int OPCODE_WIDTH = DATA_WIDTH;
     parameter int OPERAND_WIDTH = DATA_WIDTH;
@@ -13,6 +13,10 @@ package arch_defs_pkg;
 
     parameter RESET_VECTOR = 16'hF000;  // hardcoded reset vector
     parameter SP_VECTOR = 16'h01FF;     // hardcoded sp initialization vector
+
+    parameter STATUS_CPU_ZERO = 0;
+    parameter STATUS_CPU_NEG = 1;
+    parameter STATUS_CPU_CARRY = 2;
 
     typedef enum logic [OPCODE_WIDTH-1:0] {
         NOP =   8'h00,  
@@ -142,7 +146,6 @@ package arch_defs_pkg;
         logic load_mar_sp;
     } control_word_t;
 
-    
     typedef enum logic [3:0] {
         S_UART_TX_IDLE, S_UART_TX_START, S_UART_TX_SEND_DATA, S_UART_TX_STOP,
         S_UART_RX_IDLE, S_UART_RX_VALIDATE_START, S_UART_RX_READ_DATA, S_UART_RX_STOP
