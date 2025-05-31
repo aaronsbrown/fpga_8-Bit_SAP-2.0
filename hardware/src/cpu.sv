@@ -103,7 +103,7 @@ module cpu (
 
     // Control signals for loading data from the internal_bus into registers
     logic load_a, load_b, load_c, load_tmp, load_ir, load_flags, load_sets_zn, load_temp_1, load_temp_2;
-    logic load_pc_high_byte, load_pc_low_byte, load_origin;
+    logic load_pc_high_byte, load_pc_low_byte, load_origin, oe_pc_low_byte, oe_pc_high_byte;
     
     // Control signals for outputting data to the internal_bus
     logic oe_a, oe_b, oe_c, oe_temp_1, oe_temp_2, oe_ram, oe_alu;
@@ -119,6 +119,8 @@ module cpu (
     assign load_temp_2 = control_word.load_temp_2;
     assign load_ir = control_word.load_ir;
     assign load_origin = control_word.load_origin;
+    assign oe_pc_low_byte = control_word.oe_pc_low_byte;
+    assign oe_pc_high_byte = control_word.oe_pc_high_byte;
     assign load_pc_low_byte = control_word.load_pc_low_byte;
     assign load_pc_high_byte = control_word.load_pc_high_byte;
     assign load_mar_pc = control_word.load_mar_pc;
@@ -151,18 +153,20 @@ module cpu (
     // ================= BUS INTERFACE and 'internal_bus staging' registers ==================
     // ==============================================================================
     logic [DATA_WIDTH-1:0] internal_bus;
-    logic [DATA_WIDTH-1:0] a_out, b_out, c_out, temp_1_out, temp_2_out, alu_out;
+    logic [DATA_WIDTH-1:0] a_out, b_out, c_out, temp_1_out, temp_2_out, alu_out, counter_byte_out;
     logic [ADDR_WIDTH-1:0] counter_out, stack_pointer_out, mar_out;
     
     // Tri-state bus logic modeled using a priority multiplexer
     assign internal_bus =    
-                    (oe_ram) ? mem_data_in :
-                    (oe_alu) ? alu_out :
-                    (oe_a)   ? a_out :
-                    (oe_b)   ? b_out :
-                    (oe_c)   ? c_out :
-                    (oe_temp_1) ? temp_1_out :
-                    (oe_temp_2) ? temp_2_out :
+                    (oe_ram)            ? mem_data_in :
+                    (oe_alu)            ? alu_out :
+                    (oe_a)              ? a_out :
+                    (oe_b)              ? b_out :
+                    (oe_c)              ? c_out :
+                    (oe_temp_1)         ? temp_1_out :
+                    (oe_temp_2)         ? temp_2_out :
+                    (oe_pc_low_byte)    ? counter_byte_out :
+                    (oe_pc_high_byte)   ? counter_byte_out :
                     { DATA_WIDTH {1'b0} };
 
 
@@ -172,12 +176,15 @@ module cpu (
         .clk(clk),
         .reset(reset),
         .enable(pc_enable),
+        .output_high_byte(oe_pc_high_byte),
+        .output_low_byte(oe_pc_low_byte),
         .load_origin(load_origin),
         .load_high_byte(load_pc_high_byte),
         .load_low_byte(load_pc_low_byte),
         .origin_address(default_rom_origin),
         .counter_in(internal_bus),
-        .counter_out(counter_out)
+        .counter_out(counter_out),
+        .counter_byte_out(counter_byte_out)
     );
 
     stack_pointer u_stack_pointer (

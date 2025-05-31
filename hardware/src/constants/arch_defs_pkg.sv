@@ -8,6 +8,9 @@ package arch_defs_pkg;
     parameter int OPCODE_WIDTH = DATA_WIDTH;
     parameter int OPERAND_WIDTH = DATA_WIDTH;
 
+    parameter int MAX_OPCODES = (1 << OPCODE_WIDTH);
+    parameter int MAX_MICROSTEPS = 10;
+
     parameter RESET_VECTOR = 16'hF000;  // hardcoded reset vector
     parameter SP_VECTOR = 16'h01FF;     // hardcoded sp initialization vector
 
@@ -17,7 +20,9 @@ package arch_defs_pkg;
         JMP =   8'h10,  
         JZ  =   8'h11,  
         JNZ =   8'h12,  
-        JN  =   8'h13,  
+        JN  =   8'h13, 
+        JSR =   8'h18,
+        RET =   8'h19, 
         ADD_B = 8'h20,  
         ADD_C = 8'h21,  
         ADC_B = 8'h22,  
@@ -61,7 +66,7 @@ package arch_defs_pkg;
         LDI_C = 8'hB2  
     } opcode_t;
         
-    typedef enum logic [3:0] {
+    typedef enum logic [$clog2(MAX_MICROSTEPS)-1:0] {
         ALU_UNDEFINED = 4'bxxxx,
         ALU_ADD = 4'b0000,
         ALU_SUB = 4'b0001,
@@ -89,7 +94,7 @@ package arch_defs_pkg;
     } fsm_state_t;
 
     typedef enum logic [3:0] {
-        MS0, MS1, MS2, MS3, MS4, MS5, MS6, MS7
+        MS0, MS1, MS2, MS3, MS4, MS5, MS6, MS7, MS8, MS9
     } microstep_t;
 
     typedef struct packed {
@@ -97,6 +102,8 @@ package arch_defs_pkg;
         logic last_step;         
         logic load_origin;
         logic pc_enable;           
+        logic oe_pc_low_byte;
+        logic oe_pc_high_byte;
         logic load_pc_low_byte;
         logic load_pc_high_byte;            
         logic oe_pc;              

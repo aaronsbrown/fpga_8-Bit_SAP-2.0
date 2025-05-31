@@ -21,6 +21,7 @@ INSTRUCTION_SET: dict[str, InstrInfo] = {
     # — Zero‑operand instructions (1 byte total) —
     "NOP":   InstrInfo(opcode=0x00, size=1),
     "HLT":   InstrInfo(opcode=0x01, size=1),
+    "RET":   InstrInfo(opcode=0x19, size=1),
     "ADD_B": InstrInfo(opcode=0x20, size=1),
     "ADD_C": InstrInfo(opcode=0x21, size=1),
     "SUB_B": InstrInfo(opcode=0x24, size=1),
@@ -69,6 +70,7 @@ INSTRUCTION_SET: dict[str, InstrInfo] = {
     "JZ":    InstrInfo(opcode=0x11, size=3),
     "JNZ":   InstrInfo(opcode=0x12, size=3),
     "JN":    InstrInfo(opcode=0x13, size=3),
+    "JSR":   InstrInfo(opcode=0x18, size=3),
     "LDA":   InstrInfo(opcode=0xA0, size=3),
     "STA":   InstrInfo(opcode=0xA1, size=3),
 }

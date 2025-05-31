@@ -31,14 +31,14 @@ module control_unit (
             ADC_B, ADC_C, SBC_B, SBC_C, ANA_B, ANA_C, ORA_B, ORA_C,
             XRA_B, XRA_C, CMP_B, CMP_C, MOV_AB, MOV_AC, MOV_BA, MOV_BC, 
             MOV_CA, MOV_CB, CMA, INR_B, DCR_B, INR_C, DCR_C, RAR, RAL,
-            PHA, PLA
+            PHA, PLA, RET
             : begin
                 num_operand_bytes = 2'b00; // No operands
             end
             LDI_A, LDI_B, LDI_C, ANI, ORI, XRI: begin
                 num_operand_bytes = 2'b01; // One operand
             end
-            JMP, JZ, JNZ, JN, LDA, STA: begin
+            JMP, JZ, JNZ, JN, LDA, STA, JSR: begin
                 num_operand_bytes = 2'b10; // Two operands
             end
             default: begin
@@ -180,10 +180,10 @@ module control_unit (
 
     // ==================================================================================================
     // ======================================== MICROCODE ROM ===========================================
-    control_word_t microcode_rom [256][8];
+    control_word_t microcode_rom [MAX_OPCODES][MAX_MICROSTEPS];
     initial begin
-        for (int i = 0; i < 256; i++) begin
-            for (int s = 0; s < 8; s++) begin
+        for (int i = 0; i < MAX_OPCODES; i++) begin
+            for (int s = 0; s < MAX_MICROSTEPS; s++) begin
                 microcode_rom[i][s] = '{default: 0}; // Initialize each microstep to zero
             end
         end
@@ -205,6 +205,28 @@ module control_unit (
 
         microcode_rom[JN][MS0] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1, check_negative: 1}; 
         microcode_rom[JN][MS1] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1};
+
+        // SUBROUTINES
+        microcode_rom[JSR][MS0] = '{default: 0, load_mar_sp: 1}; 
+        microcode_rom[JSR][MS1] = '{default: 0, sp_dec: 1}; 
+        microcode_rom[JSR][MS2] = '{default: 0, oe_pc_high_byte: 1};
+        microcode_rom[JSR][MS3] = '{default: 0, oe_pc_high_byte: 1, load_ram: 1}; 
+        microcode_rom[JSR][MS4] = '{default: 0, load_mar_sp: 1};
+        microcode_rom[JSR][MS5] = '{default: 0, sp_dec: 1};
+        microcode_rom[JSR][MS6] = '{default: 0, oe_pc_low_byte: 1};
+        microcode_rom[JSR][MS7] = '{default: 0, oe_pc_low_byte: 1, load_ram: 1};
+        microcode_rom[JSR][MS8] = '{default: 0, oe_temp_1: 1, load_pc_low_byte: 1};
+        microcode_rom[JSR][MS9] = '{default: 0, oe_temp_2: 1, load_pc_high_byte: 1, last_step: 1};
+
+        microcode_rom[RET][MS0] = '{default: 0, sp_inc: 1};
+        microcode_rom[RET][MS1] = '{default: 0, load_mar_sp: 1};  
+        microcode_rom[RET][MS2] = '{default: 0, oe_ram: 1}; 
+        microcode_rom[RET][MS3] = '{default: 0, oe_ram: 1, load_pc_low_byte: 1};
+        microcode_rom[RET][MS4] = '{default: 0, sp_inc: 1}; 
+        microcode_rom[RET][MS5] = '{default: 0, load_mar_sp: 1};  
+        microcode_rom[RET][MS6] = '{default: 0, oe_ram: 1};
+        microcode_rom[RET][MS7] = '{default: 0, oe_ram: 1, load_pc_high_byte: 1, last_step: 1};
+         
 
         // REG_A ARITH
         microcode_rom[ADD_B][MS0] = '{default: 0, alu_op: ALU_ADD, alu_src2_c: 0} ;

@@ -7,4 +7,6 @@ translate current_step {
     0101 MS5
     0110 MS6
     0111 MS7
+    1000 MS8
+    1001 MS9
 }
