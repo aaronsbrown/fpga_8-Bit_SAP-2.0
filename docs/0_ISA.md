@@ -80,6 +80,3 @@ This table defines the instruction set for the custom 8-bit CPU.
 |                      | `$B0`        | `LDI A`  | byte         | Immediate | 2     | `+/-` | `+/-` | `-` | Load A with Immediate. Sets Z,N. C unaffected.                                        |
 |                      | `$B1`        | `LDI B`  | byte         | Immediate | 2     | `+/-` | `+/-` | `-` | Load B with Immediate. Sets Z,N. C unaffected.                                        |
 |                      | `$B2`        | `LDI C`  | byte         | Immediate | 2     | `+/-` | `+/-` | `-` | Load C with Immediate. Sets Z,N. C unaffected.                                        |
-
-_Note on DCR C: Your spreadsheet said "sets Z/N flags" implying C might be affected differently than INR C/DCR B. I've documented DCR C as "C unaffected" to be consistent with other INRs/DCRs. Please verify if this is intended._
-_Note on RAL: Added Z/N flag effect, consistent with RAR._
