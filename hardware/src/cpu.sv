@@ -7,7 +7,7 @@ module cpu (
     input wire  clk,
     input wire  reset, 
     
-    // ================= MEMORY BUS INTERFACE ==============
+    // ================= MEMORY BUS INTERFACE =============================
     output wire [ADDR_WIDTH-1:0] mem_address,   // address driven by cpu
     output wire mem_read,                       // read request strobe 
     output wire mem_write,                      // write request strobe
@@ -18,7 +18,6 @@ module cpu (
     output wire halt,
 
     // ================= FLAGS ======================
-    //TODO replace with status register
     output wire flag_zero_o,
     output wire flag_carry_o,
     output wire flag_negative_o,
@@ -28,7 +27,7 @@ module cpu (
     output wire [DATA_WIDTH-1:0] debug_out_IR,
     output wire [ADDR_WIDTH-1:0] debug_out_PC
 
-); // END PORT DEFS
+);
 
     
     // ================ CONNECT DEBUG SIGNALS ===============
@@ -48,7 +47,6 @@ module cpu (
 
     // =============== CONNECT FLAGS  ======================
     // =====================================================
-    // TODO replace with status register
     assign flag_zero_o = status_out[STATUS_CPU_ZERO];
     assign flag_carry_o = status_out[STATUS_CPU_CARRY];
     assign flag_negative_o = status_out[STATUS_CPU_NEG];
@@ -56,7 +54,7 @@ module cpu (
 
     // =============== OPCODE  ==============
     // ==============================================================
-    logic [DATA_WIDTH-1:0] opcode; // TODO remove wire for direct connection
+    logic [DATA_WIDTH-1:0] opcode;
     
     
     // =============== ALU OPERATIONS =====================
@@ -98,7 +96,6 @@ module cpu (
     // future iverilog version that resolves this, this section could potentially
     // be removed, and direct connections could be used.
     // =======================================================================
-
 
     // Control signal to enable program counter
     logic pc_enable;
@@ -160,7 +157,7 @@ module cpu (
     assign status_src_ram = control_word.status_src_ram; 
     
     
-    // ================= BUS INTERFACE and 'internal_bus staging' registers ==================
+    // =========== BUS INTERFACE and 'internal_bus staging' registers ===============
     // ==============================================================================
     logic [DATA_WIDTH-1:0] internal_bus;
     logic [DATA_WIDTH-1:0] a_out, b_out, c_out, temp_1_out, temp_2_out, alu_out, counter_byte_out, status_out;
