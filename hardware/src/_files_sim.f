@@ -25,6 +25,7 @@ src/constants/arch_defs_pkg.sv
 
 # cpu components
 src/cpu/alu.sv
+src/cpu/status_logic_unit.sv
 src/cpu/program_counter.sv
 src/cpu/stack_pointer.sv
 src/cpu/register_memory_address.sv

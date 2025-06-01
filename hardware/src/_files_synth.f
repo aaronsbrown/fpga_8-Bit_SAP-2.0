@@ -20,6 +20,7 @@ constants/arch_defs_pkg.sv
 
 # cpu components
 cpu/alu.sv
+cpu/status_logic_unit.sv
 cpu/program_counter.sv
 cpu/stack_pointer.sv
 cpu/register_memory_address.sv

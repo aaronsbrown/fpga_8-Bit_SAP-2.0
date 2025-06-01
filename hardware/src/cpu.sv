@@ -285,7 +285,9 @@ module cpu (
     // Z: Zero flag, C: Carry flag, N: Negative flag
     
     logic [DATA_WIDTH-1:0] status_reg_source;
-    assign status_reg_source = (status_src_ram) ? internal_bus : {C_in_w, N_in_w, Z_in_w};
+    assign status_reg_source = (status_src_ram) ? 
+                               internal_bus : 
+                               {status_reg_carry_flag, status_reg_neg_flag, status_reg_zero_flag};
     
     register_nbit #( .N(DATA_WIDTH) ) u_register_status (
         .clk(clk),
@@ -296,8 +298,9 @@ module cpu (
     );
 
     
-    // ================ MAIN COMPONENTS: ALU, CONTROL UNIT ================
-    // =========================================================================
+    // ================ MAIN COMPONENTS: ALU, CONTROL UNIT, STATUS LOGIC UNIT ================
+    // =======================================================================================
+    
     control_unit u_control_unit (
         .clk(clk),
         .reset(reset),
@@ -306,12 +309,11 @@ module cpu (
         .control_word(control_word)
     );
 
+    // ALU source muxes
     logic [DATA_WIDTH-1:0] in_one_src, in_two_src; 
-    
     assign in_one_src = (alu_src1_b) ? b_out :
                         (alu_src1_c) ? c_out :
                         a_out;
-
     assign in_two_src = (alu_src2_c) ? c_out : 
                         (alu_src2_temp1) ? temp_1_out :
                         b_out;
@@ -324,63 +326,29 @@ module cpu (
         .in_carry(status_out[STATUS_CPU_CARRY]),
         .alu_op(alu_op),
         .latched_result(alu_out),
-        .zero_flag(alu_zero_out_w),
-        .carry_flag(alu_carry_out_w),
-        .negative_flag(alu_negative_out_w)
+        .zero_flag(alu_zero_flag),
+        .carry_flag(alu_carry_flag),
+        .negative_flag(alu_neg_flag)
     );
 
-
-    // ================================ FLAG LOGIC ===============================
-    // ===========================================================================
-    // TODO move to status_logic_unit
+    logic alu_zero_flag;
+    logic alu_carry_flag;
+    logic alu_neg_flag;
+    logic status_reg_zero_flag, status_reg_neg_flag, status_reg_carry_flag;
     
-    logic alu_zero_out_w;
-    logic alu_carry_out_w;
-    logic alu_negative_out_w;
-
-    // Determine if the LOAD operation resulted in zero or negative
-    logic load_data_is_zero_w, load_data_is_negative_w;
-    always_comb begin
-        load_data_is_zero_w = 1'b0;
-        load_data_is_negative_w = 1'b0;
-
-        if (load_sets_zn) begin
-            // We know we executing an operation that sets the flags
-            unique case (opcode)
-                LDI_A, LDI_B, LDI_C: begin
-                    // Sets the flags based on the operand
-                    load_data_is_zero_w = ( temp_1_out == {DATA_WIDTH{1'b0}} );
-                    load_data_is_negative_w = temp_1_out[DATA_WIDTH - 1];
-                end
-                LDA, PLA: begin
-                    // Sets the flags based on the internal_bus (i.e. RAM output)
-                    load_data_is_zero_w = ( internal_bus == {DATA_WIDTH{1'b0}} );
-                    load_data_is_negative_w = internal_bus[DATA_WIDTH - 1];
-                end
-                default: begin
-                    load_data_is_zero_w = 1'b0;
-                    load_data_is_negative_w = 1'b0;
-                end
-            endcase
-        end
-    end
-
-
-    // Determine if flags should be set based on ALU op or LDI/LDA/LDB
-    logic Z_in_w, N_in_w, C_in_w;
-    always_comb begin
-        
-        // Default to current ALU_OP outputs
-        Z_in_w = alu_zero_out_w;
-        N_in_w = alu_negative_out_w;
-        C_in_w = alu_carry_out_w;
-        
-        if (load_sets_zn) begin
-            Z_in_w = load_data_is_zero_w;
-            N_in_w = load_data_is_negative_w;
-            C_in_w = 1'b0; // Carry flag is not set for LOAD operations
-        end else if ( alu_op == ALU_INR || alu_op == ALU_DCR ) begin
-            C_in_w = status_out[STATUS_CPU_CARRY]; // INR/DCR maintain previous carry flag
-        end
-    end
+    status_logic_unit u_status_logic_unit (
+        .alu_zero_in(alu_zero_flag),
+        .alu_carry_in(alu_carry_flag),
+        .alu_negative_in(alu_neg_flag),
+        .load_sets_zn_in(load_sets_zn),
+        .opcode_in(opcode),
+        .temp_1_out_in(temp_1_out),
+        .internal_bus_in(internal_bus),
+        .alu_op_in(alu_op), 
+        .current_status_in(status_out),
+        .zero_flag_out(status_reg_zero_flag),
+        .negative_flag_out(status_reg_neg_flag),
+        .carry_flag_out(status_reg_carry_flag)
+    );
+    
 endmodule
