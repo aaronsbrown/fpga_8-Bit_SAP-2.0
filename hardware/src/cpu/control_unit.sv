@@ -327,7 +327,8 @@ module control_unit (
 
         // REG_A MISC / ROT
         microcode_rom[RAR][MS0] = '{default: 0, alu_op: ALU_ROR};
-        microcode_rom[RAR][MS1] = '{default: 0, oe_alu: 1, load_a: 1, last_step: 1}; 
+        microcode_rom[RAR][MS1] = '{default: 0}; // allow ALU_OP to latch 
+        microcode_rom[RAR][MS2] = '{default: 0, oe_alu: 1, load_a: 1, load_status: 1, last_step: 1}; 
         
         microcode_rom[RAL][MS0] = '{default: 0, alu_op: ALU_ROL};
         microcode_rom[RAL][MS1] = '{default: 0, oe_alu: 1, load_a: 1, last_step: 1};
