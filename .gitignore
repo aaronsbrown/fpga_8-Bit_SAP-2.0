@@ -35,3 +35,4 @@ software/assembler/src/__pycache__/
 # IDE specific (Uncomment if desired)
 .vscode/
 # .idea/
+test_report_all.txt

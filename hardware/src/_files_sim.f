@@ -1,41 +1,36 @@
 # src/_files.f 
 
-# TODO remove leading 'src/', but have to handle test files separate
-
 # clocks
-src/clock/pll.v
-
-# test specific
-test/test_utilities_pkg.sv
-
-# utilities
-src/utils/timescale.v 
-src/utils/button_conditioner.v
-src/utils/seg7_display.v
-src/utils/digit_to_7seg.v
-src/utils/clock_divider.sv
-
-#peripherals
-src/peripherals/uart_transmitter.sv
-src/peripherals/uart_receiver.sv
-src/peripherals/uart_peripheral.sv
+clock/pll.v
 
 # constants
-src/constants/arch_defs_pkg.sv
+constants/arch_defs_pkg.sv
+
+# utilities
+utils/timescale.v 
+utils/button_conditioner.v
+utils/seg7_display.v
+utils/digit_to_7seg.v
+utils/clock_divider.sv
+
+#peripherals
+peripherals/uart_transmitter.sv
+peripherals/uart_receiver.sv
+peripherals/uart_peripheral.sv
 
 # cpu components
-src/cpu/alu.sv
-src/cpu/status_logic_unit.sv
-src/cpu/program_counter.sv
-src/cpu/stack_pointer.sv
-src/cpu/register_memory_address.sv
-src/cpu/register_nbit.sv
-src/cpu/control_unit.sv
+cpu/alu.sv
+cpu/status_logic_unit.sv
+cpu/program_counter.sv
+cpu/stack_pointer.sv
+cpu/register_memory_address.sv
+cpu/register_nbit.sv
+cpu/control_unit.sv
 
 # main components
-src/cpu.sv
-src/rom_4k.sv
-src/vram_4k.sv
-src/ram_8k.sv
-src/computer.sv
-src/top.v
+cpu.sv
+rom_4k.sv
+vram_4k.sv
+ram_8k.sv
+computer.sv
+top.v
