@@ -143,12 +143,41 @@ fi
 pushd "$BUILD_OUT_DIR" > /dev/null
 log_info "Running simulation with vvp (sim.vvp)..."
 VVP_LOG_FILE="$LOG_DIR/vvp_run.log"; rm -f "$VVP_LOG_FILE"; touch "$VVP_LOG_FILE"
-if run_cmd "$VVP_LOG_FILE" vvp "sim.vvp"; then
-    log_success "vvp simulation completed."
+
+# Execute vvp and store its exit code
+run_cmd "$VVP_LOG_FILE" vvp "sim.vvp"
+VVP_EXIT_CODE=$? # Capture the exit code
+
+# Now check both the exit code AND the log content
+SIMULATION_SUCCESSFUL=true
+if [ $VVP_EXIT_CODE -ne 0 ]; then
+    log_error "vvp exited with a non-zero status ($VVP_EXIT_CODE)."
+    SIMULATION_SUCCESSFUL=false
+fi
+
+# Also check for your specific FATAL ERROR message in the log
+if grep -q "FATAL ERROR" "$VVP_LOG_FILE"; then
+    # We don't need to log_error again if vvp_exit_code was already non-zero,
+    # but we ensure the simulation is marked as failed.
+    if [ "$SIMULATION_SUCCESSFUL" = true ]; then # Only log if not already caught by exit code
+      log_error "vvp simulation reported a FATAL ERROR (see $VVP_LOG_FILE)."
+    fi
+    SIMULATION_SUCCESSFUL=false
+fi
+
+
+if [ "$SIMULATION_SUCCESSFUL" = true ]; then
+    log_success "vvp simulation completed successfully."
 else
-    log_error "vvp simulation failed. Check $VVP_LOG_FILE."; popd > /dev/null; exit 1
+    log_error "vvp simulation failed. Check $VVP_LOG_FILE for details."
+    # Content of VVP_LOG_FILE would have been printed by run_cmd if VERBOSE,
+    # or user can check it. We can optionally cat it here on error:
+    # cat "$VVP_LOG_FILE"
+    popd > /dev/null
+    exit 1 # Exit the script on simulation failure
 fi
 popd > /dev/null
+
 
 # --- Optionally Open Waveform ---
 WAVEFORM_FILE="$BUILD_OUT_DIR/waveform.vcd"

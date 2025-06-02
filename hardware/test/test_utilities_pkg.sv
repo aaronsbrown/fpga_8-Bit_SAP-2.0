@@ -107,4 +107,33 @@ package test_utils_pkg;
     end
   endtask
 
+  task safe_readmemh_rom; // Specific task for ROM
+    input string file_path;
+    // No memory_array port needed, we'll use a hierarchical path
+
+    integer file_handle;
+    string task_msg_prefix = "Task safe_readmemh (ROM)"; // Hardcode for clarity
+
+    begin
+      $display("--- %s: Attempting to load hex file: %s ---", task_msg_prefix, file_path);
+      file_handle = $fopen(file_path, "r");
+
+      if (file_handle == 0) begin
+        $display("--------------------------------------------------------------------");
+        $error("FATAL ERROR [%s]: Could not open HEX_FILE for ROM: %s", task_msg_prefix, file_path);
+        $display("Please ensure the fixture .hex file exists and is readable.");
+        $display("--------------------------------------------------------------------");
+        $finish(2);
+      end else begin
+        $fclose(file_handle);
+        $display("--- %s: File found. Loading hex file into ROM memory array ---", task_msg_prefix);
+        // Use the hierarchical path to the ROM memory
+        // This assumes your ROM instance within 'uut' is named 'u_rom' and its memory is 'mem'
+        // And that UUT_PATH is defined correctly (usually as 'uut' from the TB perspective)
+        $readmemh(file_path, `UUT_PATH.u_rom.mem);
+        $display("--- %s: $readmemh call completed for %s. ---", task_msg_prefix, file_path);
+      end
+    end
+  endtask
+
 endpackage : test_utils_pkg

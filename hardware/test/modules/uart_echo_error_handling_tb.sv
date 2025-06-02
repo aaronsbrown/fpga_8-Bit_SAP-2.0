@@ -16,7 +16,7 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_generated/prog_uart_echo_error_handling/ROM.hex";
+  localparam string HEX_FILE = "../hardware/test/fixtures_generated/uart_echo_error_handling/ROM.hex";
 
   localparam DUT_CLOCK_SPEED_HZ = 2_000_000;
   localparam DUT_BAUD_RATE = 9600;
@@ -122,7 +122,7 @@ module computer_tb;
 
     // load the hex file into RAM
     $display("--- Loading hex file: %s ---", HEX_FILE);
-    $readmemh(HEX_FILE, uut.u_rom.mem); 
+    safe_readmemh_rom(HEX_FILE);
     uut.u_rom.dump(); 
 
     // Apply reset and wait for it to release
