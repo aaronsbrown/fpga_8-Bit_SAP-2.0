@@ -141,7 +141,7 @@ module computer_tb;
 
     run_until_halt(100);
 
-    $display("ANA_C instruction finished.\n\n");
+    $display("ANA_C test finished.===========================\n\n");
     $finish;
   end
 

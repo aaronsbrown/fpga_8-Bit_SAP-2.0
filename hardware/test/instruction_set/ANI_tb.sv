@@ -75,7 +75,7 @@ module computer_tb;
 
     run_until_halt(20);
 
-    $display("ANI instruction finished.\n\n");
+    $display("ANI test finished.===========================\n\n");
     $finish;
   end
 

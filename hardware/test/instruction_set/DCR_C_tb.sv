@@ -75,7 +75,7 @@ module computer_tb;
 
     run_until_halt(100);
 
-    $display("DCR_C instruction finished.\n\n");
+    $display("DCR_C test finished.===========================\n\n");
     $finish;
   end
 

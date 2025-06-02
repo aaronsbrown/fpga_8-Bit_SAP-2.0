@@ -198,7 +198,7 @@ module alu_tb;
         // FLAGS: C / Z / N
 
         // End simulation
-        $display("--- ALU Testbench Complete ---");
+        $display("ALU test finished.===========================\n\n");
         @(posedge clk); // Allow last checks to print fully
         $finish;
     end

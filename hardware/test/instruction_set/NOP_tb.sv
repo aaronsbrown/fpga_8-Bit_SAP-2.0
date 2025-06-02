@@ -54,7 +54,7 @@ module computer_tb;
 
     // run_until_halt(50); 
     
-    $display("NOP instruction finished.\n\n");
+    $display("NOP test finished.===========================\n\n");
     $finish;
   end
 

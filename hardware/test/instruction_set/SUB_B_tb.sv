@@ -94,7 +94,7 @@ module computer_tb;
 
     run_until_halt(100);
 
-    $display("SUB_B instruction finished.\n\n");
+    $display("SUB_B test finished.===========================\n\n");
     $finish;
   end
 

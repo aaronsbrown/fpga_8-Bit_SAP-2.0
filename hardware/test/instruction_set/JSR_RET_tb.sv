@@ -4,7 +4,7 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_generated/op_JSR_RET/ROM.hex";
+  localparam string HEX_FILE = "../hardware/test/fixtures_generated/JSR_RET/ROM.hex";
 
   logic clk;
   logic reset;
@@ -46,7 +46,7 @@ module computer_tb;
     
     repeat(10) @(posedge clk);
 
-    $display("JSR_RET instruction finished.\n\n");
+    $display("JSR_RET test finished.===========================\n\n");
     $finish;
   end
 

@@ -4,7 +4,7 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_generated/op_LDI_A/ROM.hex";
+  localparam string HEX_FILE = "../hardware/test/fixtures_generated/LDI_A/ROM.hex";
 
   reg clk;
   reg reset;
@@ -137,7 +137,7 @@ module computer_tb;
     pretty_print_assert_vec(uut.u_cpu.u_control_unit.opcode, HLT, "HALT: cpu.opcode == HLT"); 
     pretty_print_assert_vec(uut.u_cpu.counter_out, 16'hF003, "HALT: cpu.counter_out == xF003"); 
 
-    $display("LDA_I instruction finished.\n\n");
+    $display("LDA_I test finished.===========================\n\n");
     $finish;
   end
 

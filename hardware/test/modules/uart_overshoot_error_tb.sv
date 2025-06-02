@@ -128,7 +128,7 @@ module computer_tb;
     // visual buffer for waveform
     repeat(100) @(posedge clk);
     
-    $display("UART_OVERSHOOT_ERROR test finished.\n\n");
+    $display("UART_OVERSHOOT_ERROR test finished.===========================\n\n");
     $finish;
   end
 

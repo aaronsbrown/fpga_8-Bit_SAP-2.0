@@ -77,7 +77,7 @@ module computer_tb;
 
     run_until_halt(20);
 
-    $display("ORI instruction finished.\n\n");
+    $display("ORI test finished.===========================\n\n");
     $finish;
   end
 

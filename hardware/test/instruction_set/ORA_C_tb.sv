@@ -141,7 +141,7 @@ module computer_tb;
 
     run_until_halt(100);
 
-    $display("ORA_B instruction finished.\n\n");
+    $display("ORA_B test finished.===========================\n\n");
     $finish;
   end
 

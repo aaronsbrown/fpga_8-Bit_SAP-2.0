@@ -93,7 +93,7 @@ module computer_tb;
 
     run_until_halt(100);
 
-    $display("ADD_C instruction finished.\n\n");
+    $display("<<test_name>> test finished.===========================\n\n");
     $finish;
   end
 

@@ -47,12 +47,16 @@ module computer_tb;
     // ============================ BEGIN TEST ==============================
     $display("\n\nRunning <<test_name>> test ========================");
 
-    // wait(signal);
+    // TODO: Implement test <<test_name>>
+
+    // wait(uut.cpu_instruction_finished); @(posedge clk); #0.1;
     // inspect_register(actual, expected, msg, width);
     // pretty_print_assert_vec(actual, expected, msg); 
     
+    run_until_halt(20);
+    
     // Vizual buffer for waveform inspection
-    repeat(100) @(posedge clk);
+    repeat(5) @(posedge clk);
 
     $display("<<test_name>> test finished.===========================\n\n");
     $finish;

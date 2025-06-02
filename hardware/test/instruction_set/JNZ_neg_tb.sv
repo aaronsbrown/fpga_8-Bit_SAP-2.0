@@ -126,7 +126,7 @@ module computer_tb;
     
     run_until_halt(100);
 
-    $display("JNZ instruction finished.\n\n");
+    $display("JNZ test finished.===========================\n\n");
     $finish;
   end
 

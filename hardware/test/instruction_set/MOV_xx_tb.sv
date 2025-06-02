@@ -185,7 +185,7 @@ module computer_tb;
     pretty_print_assert_vec(uut.u_cpu.u_control_unit.opcode, HLT, "HALT: cpu.opcode == HLT"); 
     pretty_print_assert_vec(uut.u_cpu.counter_out, 16'hF011, "HALT: cpu.counter_out == xF011"); 
 
-    $display("MOV_AB instruction finished.\n\n");
+    $display("MOV_XX test finished.===========================\n\n");
     $finish;
   end
 

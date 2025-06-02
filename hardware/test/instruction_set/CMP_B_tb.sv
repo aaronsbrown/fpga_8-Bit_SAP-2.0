@@ -130,7 +130,7 @@ module computer_tb;
 
     run_until_halt(100);
 
-    $display("CMP_B instruction finished.\n\n");
+    $display("CMP_B test finished.===========================\n\n");
     $finish;
   end
 

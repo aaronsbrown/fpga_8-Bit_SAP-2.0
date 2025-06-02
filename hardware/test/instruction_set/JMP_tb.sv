@@ -85,7 +85,7 @@ module computer_tb;
     
     run_until_halt(50);
 
-    $display("JMP instruction finished.\n\n");
+    $display("JMP test finished.===========================\n\n");
     $finish;
   end
 

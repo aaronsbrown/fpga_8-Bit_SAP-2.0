@@ -71,7 +71,7 @@ module computer_tb;
     pretty_print_assert_vec(uut.u_cpu.u_control_unit.opcode, HLT, "HALT: cpu.opcode == HLT"); 
     pretty_print_assert_vec(uut.u_cpu.counter_out, 16'hF004, "HALT: cpu.counter_out == xF004"); 
 
-    $display("LDI_A instruction finished.\n\n");
+    $display("CMA test finished.===========================\n\n");
     $finish;
   end
 

@@ -4,7 +4,7 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_generated/op_CLC/ROM.hex";
+  localparam string HEX_FILE = "../hardware/test/fixtures_generated/CLC/ROM.hex";
 
   logic                  clk;
   logic                  reset;
@@ -45,7 +45,7 @@ module computer_tb;
     reset_and_wait(0); 
 
     // ============================ BEGIN TEST ==============================
-    $display("\n\nRunning op_CLC test ========================");
+    $display("\n\nRunning CLC test ========================");
 
     // wait(signal);
     // inspect_register(actual, expected, msg, width);
@@ -54,7 +54,7 @@ module computer_tb;
     // Vizual buffer for waveform inspection
     repeat(100) @(posedge clk);
 
-    $display("op_CLC test finished.===========================\n\n");
+    $display("CLC test finished.===========================\n\n");
     $finish;
     // ============================ END TEST ==============================
   

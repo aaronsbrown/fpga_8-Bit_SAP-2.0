@@ -58,7 +58,7 @@ module computer_tb;
     pretty_print_assert_vec(uut.u_cpu.u_control_unit.opcode, HLT, "HALT: cpu.opcode == HLT"); 
     pretty_print_assert_vec(uut.u_cpu.counter_out, 16'hF003, "HALT: cpu.counter_out == xF003"); 
 
-    $display("LDI_C instruction finished.\n\n");
+    $display("LDI_C test finished.===========================\n\n");
     $finish;
   end
 

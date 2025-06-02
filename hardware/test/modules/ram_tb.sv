@@ -69,7 +69,7 @@ module ram_tb;
         $display("Read data: %h (expected CD)", data_out);
         pretty_print_assert_vec(data_out, 8'hCD, "Data Out is hCD");
 
-        $display("RAM test complete at time %0t", $time);
+        $display("RAM test finished.===========================\n\n");
         $finish;
     end
 

@@ -4,7 +4,7 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_generated/op_RAR/ROM.hex";
+  localparam string HEX_FILE = "../hardware/test/fixtures_generated/RAR/ROM.hex";
 
   logic                  clk;
   logic                  reset;
@@ -47,7 +47,9 @@ module computer_tb;
     // LDI_A 01 ============================================
     $display("\nLDI_A ============");
     
-    wait(uut.u_cpu.opcode == RAR)
+    wait(uut.cpu_instr_complete);
+    @(posedge clk); #0.1;
+
     inspect_register(uut.u_cpu.a_out, 8'hF0, "Register A", DATA_WIDTH);
     pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
     pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b1, "cpu.flag_negative_o == 1"); 
@@ -55,7 +57,9 @@ module computer_tb;
     // RAR ============================================
     $display("\nRAR ============");
 
-    wait(uut.u_cpu.opcode == HLT)
+    wait(uut.cpu_instr_complete);
+    @(posedge clk); #0.1;
+    
     inspect_register(uut.u_cpu.a_out, 8'h78, "Register A", DATA_WIDTH);
     pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
     pretty_print_assert_vec(uut.u_cpu.flag_carry_o, 1'b0, "cpu.flag_carry_o == 0");  
@@ -63,7 +67,7 @@ module computer_tb;
   
     run_until_halt(100);
 
-    $display("op_RAR test finished.===========================\n\n");
+    $display("RAR test finished.===========================\n\n");
     $finish;
     // ============================ END TEST ==============================
   

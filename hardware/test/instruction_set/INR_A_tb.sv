@@ -75,7 +75,7 @@ module computer_tb;
 
     run_until_halt(100);
 
-    $display("INR_A instruction finished.\n\n");
+    $display("INR_A test finished.===========================\n\n");
     $finish;
   end
 

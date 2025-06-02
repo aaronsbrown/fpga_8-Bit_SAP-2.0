@@ -76,7 +76,7 @@ module computer_tb;
 
     run_until_halt(100);
 
-    $display("RAL instruction finished.\n\n");
+    $display("RAL test finished.===========================\n\n");
     $finish;
   end
 

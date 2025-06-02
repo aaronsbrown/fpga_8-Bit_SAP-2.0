@@ -79,7 +79,7 @@ module program_counter_tb;
         pretty_print_assert_vec(counter_out, 16'h0000, "Counter is 0 after reset");
 
         @(posedge clk);
-        $display("Program Counter test complete at time %0t", $time);
+        $display("Program Counter test finished.===========================\n\n");
         $finish;
     end
 

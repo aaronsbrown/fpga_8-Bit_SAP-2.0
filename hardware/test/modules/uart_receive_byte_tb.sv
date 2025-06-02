@@ -80,7 +80,7 @@ module computer_tb;
     wait( uut.cpu_halt == 1);
     pretty_print_assert_vec(uut.u_cpu.u_register_A.latched_data, 8'hB3, "uart byte latched into Reg A == xB3");    
 
-    $display("UART_RECEIVE_BYTE test finished.\n\n");
+    $display("UART_RECEIVE_BYTE test finished.===========================\n\n");
     $finish;
   end
 

@@ -81,7 +81,7 @@ module uart_rx_tb;
 
         repeat(3000) @(posedge clk); #01;
 
-        $display("UART_RX test finished.\n\n");
+        $display("UART_RX test finished.===========================\n\n");
         $finish;
 
   end

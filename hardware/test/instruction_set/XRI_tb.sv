@@ -77,7 +77,7 @@ module computer_tb;
 
     run_until_halt(20);
 
-    $display("XRI instruction finished.\n\n");
+    $display("XRI test finished.===========================\n\n");
     $finish;
   end
 

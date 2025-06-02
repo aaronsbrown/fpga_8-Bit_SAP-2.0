@@ -60,7 +60,7 @@ module stack_pointer_tb;
         @(posedge clk); #0.1;
         pretty_print_assert_vec(address_out, 16'h01FF, "Incremented SP to x01FF");    
 
-        $display(" module_stack_pointer test finished.===========================\n\n");        
+        $display("stack_pointer test finished.===========================\n\n");        
         $finish;
     end
 

@@ -4,7 +4,7 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_generated/op_JZ_pos/ROM.hex";
+  localparam string HEX_FILE = "../hardware/test/fixtures_generated/JZ_pos/ROM.hex";
 
   reg clk;
   reg reset;
@@ -118,7 +118,7 @@ module computer_tb;
     
     run_until_halt(100);
 
-    $display("JZ instruction finished.\n\n");
+    $display("JZ test finished.===========================\n\n");
     $finish;
   end
 

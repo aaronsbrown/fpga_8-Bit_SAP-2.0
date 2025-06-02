@@ -71,7 +71,7 @@ module computer_tb;
     wait( uart_rx_data_ready_flag == 1);
     pretty_print_assert_vec(uart_rx_data_out, 8'h41, "DESERIALIZED MESSAGE == x41");    
 
-    $display("UART_SEND_BYTE test finished.\n\n");
+    $display("UART_SEND_BYTE test finished.===========================\n\n");
     $finish;
   end
 

@@ -161,7 +161,7 @@ module uart_tx_tb;
     send_uart_byte(8'hF0);
 
 
-    $display("UART_TX test finished.\n\n");
+    $display("UART_TX test finished.===========================\n\n");
     $finish;
 
   end

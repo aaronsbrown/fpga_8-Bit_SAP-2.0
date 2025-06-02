@@ -123,7 +123,7 @@ module computer_tb;
     pretty_print_assert_vec(uut.u_cpu.u_control_unit.opcode, HLT, "HALT: cpu.opcode == HLT"); 
     pretty_print_assert_vec(uut.u_cpu.counter_out, 16'hF009, "HALT: cpu.counter_out == xF009"); 
 
-    $display("ADD_C instruction finished.\n\n");
+    $display("<<test_name>> test finished.===========================\n\n");
     $finish;
   end
 

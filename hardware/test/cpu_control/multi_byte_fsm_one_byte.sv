@@ -60,7 +60,7 @@ module computer_tb;
 
     inspect_register(uut.u_cpu.u_program_counter.counter_out, 16'hF001, "PC after HLT", ADDR_WIDTH);
     inspect_register(uut.u_cpu.u_control_unit.current_state, S_HALT, "S_HALT after HLT", 3);
-    $display("\033[0;32mHLT instruction test completed successfully.\033[0m");
+    $display("HLT test finished.===========================\n\n");
     $finish;
   end
 

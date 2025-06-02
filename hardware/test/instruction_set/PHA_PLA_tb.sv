@@ -4,7 +4,7 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_generated/op_PHA_PLA/ROM.hex";
+  localparam string HEX_FILE = "../hardware/test/fixtures_generated/PHA_PLA/ROM.hex";
 
   logic clk;
   logic reset;
@@ -46,7 +46,7 @@ module computer_tb;
     
     repeat(10) @(posedge clk);
 
-    $display("PHA_PLA instruction finished.\n\n");
+    $display("PHA_PLA test finished.===========================\n\n");
     $finish;
   end
 

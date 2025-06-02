@@ -232,7 +232,7 @@ module computer_tb;
     pretty_print_assert_vec(uut.u_cpu.u_control_unit.opcode, HLT, "HALT: cpu.opcode == HLT"); 
     pretty_print_assert_vec(uut.u_cpu.counter_out, 16'hF00c, "HALT: cpu.counter_out == xF00c"); 
 
-    $display("STA instruction finished.\n\n");
+    $display("STA test finished.===========================\n\n");
     $finish;
   end
 

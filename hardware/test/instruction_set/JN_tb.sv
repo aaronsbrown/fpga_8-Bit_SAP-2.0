@@ -102,7 +102,7 @@ module computer_tb;
     
     run_until_halt(100);
 
-    $display("JN instruction finished.\n\n");
+    $display("JN test finished.===========================\n\n");
     $finish;
   end
 
