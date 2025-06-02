@@ -60,7 +60,7 @@ module stack_pointer_tb;
         @(posedge clk); #0.1;
         pretty_print_assert_vec(address_out, 16'h01FF, "Incremented SP to x01FF");    
 
-        $display("Program Counter test complete at time %0t", $time);
+        $display(" module_stack_pointer test finished.===========================\n\n");        
         $finish;
     end
 

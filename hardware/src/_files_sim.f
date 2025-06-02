@@ -1,8 +1,5 @@
 # src/_files.f 
 
-# clocks
-clock/pll.v
-
 # constants
 constants/arch_defs_pkg.sv
 
@@ -12,6 +9,9 @@ utils/button_conditioner.v
 utils/seg7_display.v
 utils/digit_to_7seg.v
 utils/clock_divider.sv
+
+# clocks
+clock/pll.v
 
 #peripherals
 peripherals/uart_transmitter.sv
