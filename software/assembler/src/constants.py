@@ -53,6 +53,8 @@ INSTRUCTION_SET: dict[str, InstrInfo] = {
     "DCR_C": InstrInfo(opcode=0x55, size=1),
     "RAL":   InstrInfo(opcode=0x40, size=1),
     "RAR":   InstrInfo(opcode=0x41, size=1),
+    "SEC":   InstrInfo(opcode=0x70, size=1),
+    "CLC":   InstrInfo(opcode=0x71, size=1),
     "PHA":   InstrInfo(opcode=0x80, size=1),
     "PLA":   InstrInfo(opcode=0x81, size=1),
     "PHP":   InstrInfo(opcode=0x82, size=1),

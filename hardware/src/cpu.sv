@@ -113,8 +113,9 @@ module cpu (
     // Control signals for ALU src multiplexer
     logic alu_src2_c, alu_src2_temp1;
 
-    // Control signal for Status Reg mux
+    // Control signal for Status Reg 
     logic status_src_ram;
+    logic clear_carry_flag, set_carry_flag;
 
     control_word_t control_word = '{default: 0};
     assign load_a = control_word.load_a;
@@ -154,7 +155,9 @@ module cpu (
     assign load_mar_sp = control_word.load_mar_sp;
     assign load_status = control_word.load_status;
     assign oe_status = control_word.oe_status;
-    assign status_src_ram = control_word.status_src_ram; 
+    assign status_src_ram = control_word.status_src_ram;
+    assign set_carry_flag = control_word.set_carry_flag;
+    assign clear_carry_flag = control_word.clear_carry_flag; 
     
     
     // =========== BUS INTERFACE and 'internal_bus staging' registers ===============
@@ -343,6 +346,8 @@ module cpu (
         .internal_bus_in(internal_bus),
         .alu_op_in(alu_op), 
         .current_status_in(status_out),
+        .set_carry_flag_in(set_carry_flag),
+        .clear_carry_flag_in(clear_carry_flag),
         .zero_flag_out(status_reg_zero_flag),
         .negative_flag_out(status_reg_neg_flag),
         .carry_flag_out(status_reg_carry_flag)

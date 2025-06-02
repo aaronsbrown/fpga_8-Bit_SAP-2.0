@@ -17,6 +17,10 @@ module control_unit (
     microstep_t current_microstep; // Current microstep in execution
     microstep_t next_microstep; // Next microstep to transition to
 
+    logic cmd_latch_alu_op;
+    logic [3:0] current_alu_op;
+    logic [3:0] next_alu_op;
+
     logic [1:0] current_byte_count;
     logic [1:0] next_byte_count;
     logic [1:0] num_operand_bytes;
@@ -31,7 +35,7 @@ module control_unit (
             ADC_B, ADC_C, SBC_B, SBC_C, ANA_B, ANA_C, ORA_B, ORA_C,
             XRA_B, XRA_C, CMP_B, CMP_C, MOV_AB, MOV_AC, MOV_BA, MOV_BC, 
             MOV_CA, MOV_CB, CMA, INR_B, DCR_B, INR_C, DCR_C, RAR, RAL,
-            PHA, PLA, PHP, PLP, RET
+            PHA, PLA, PHP, PLP, RET, SEC, CLC
             : begin
                 num_operand_bytes = 2'b00; // No operands
             end
@@ -58,10 +62,13 @@ module control_unit (
             current_state <= S_RESET;
             current_microstep <= MS0; 
             current_byte_count <= 2'b00; 
+            current_alu_op <= ALU_UNDEFINED;
         end else begin 
             current_state <= next_state; 
             current_microstep <= next_microstep; 
             current_byte_count <= next_byte_count; 
+            if(cmd_latch_alu_op)
+                current_alu_op <= next_alu_op; 
         end
     end
 
@@ -76,7 +83,9 @@ module control_unit (
         next_state = current_state;
         next_microstep = current_microstep; 
         next_byte_count = current_byte_count;
+        next_alu_op = current_alu_op;
         control_word = '{default: 0, alu_op: ALU_UNDEFINED}; 
+        cmd_latch_alu_op = 1'b0;
 
         case (current_state)
             
@@ -148,6 +157,12 @@ module control_unit (
                                            (control_word.check_negative && flags[STATUS_CPU_NEG])      ||
                                            (control_word.check_not_negative && !flags[STATUS_CPU_NEG]);
 
+                
+                if(current_microstep == MS0 && control_word.alu_op != ALU_UNDEFINED) begin
+                    cmd_latch_alu_op = 1'b1;
+                    next_alu_op = control_word.alu_op;
+                end
+
                 if (control_word.halt) begin
                     next_state = S_HALT; 
                     next_microstep = MS0; 
@@ -179,6 +194,10 @@ module control_unit (
                 next_state = S_HALT; // Transition to halt state on error
             end
         endcase
+
+        // Important: Ensure alu_op reflects the latched alu_op code
+        control_word.alu_op = current_alu_op;
+
     end
 
     // ==================================================================================================
@@ -187,7 +206,7 @@ module control_unit (
     initial begin
         for (int i = 0; i < MAX_OPCODES; i++) begin
             for (int s = 0; s < MAX_MICROSTEPS; s++) begin
-                microcode_rom[i][s] = '{default: 0}; // Initialize each microstep to zero
+                microcode_rom[i][s] = '{default: 0, alu_op: ALU_UNDEFINED}; // Initialize each microstep to zero
             end
         end
         
@@ -242,7 +261,8 @@ module control_unit (
 
         // REG_A ARITH
         microcode_rom[ADD_B][MS0] = '{default: 0, alu_op: ALU_ADD, alu_src2_c: 0} ;
-        microcode_rom[ADD_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_status: 1, last_step: 1};
+        microcode_rom[ADD_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1};
+        microcode_rom[ADD_B][MS2] = '{default: 0, load_status: 1, last_step: 1};
 
         microcode_rom[ADD_C][MS0] = '{default: 0, alu_op: ALU_ADD, alu_src2_c: 1} ;
         microcode_rom[ADD_C][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_status: 1, last_step: 1};
@@ -252,7 +272,7 @@ module control_unit (
 
         microcode_rom[ADC_C][MS0] = '{default: 0, alu_op: ALU_ADC, alu_src2_c: 1} ;
         microcode_rom[ADC_C][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_status: 1, last_step: 1};  
-
+ 
         microcode_rom[SUB_B][MS0] = '{default: 0, alu_op: ALU_SUB, alu_src2_c: 0} ;
         microcode_rom[SUB_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_status: 1, last_step: 1};
 
@@ -335,6 +355,11 @@ module control_unit (
         microcode_rom[MOV_BC][MS0] = '{default: 0, oe_b: 1, load_c: 1, last_step: 1} ; 
         microcode_rom[MOV_CA][MS0] = '{default: 0, oe_c: 1, load_a: 1, last_step: 1} ; 
         microcode_rom[MOV_CB][MS0] = '{default: 0, oe_c: 1, load_b: 1, last_step: 1} ; 
+
+        // STATUS REG CONTROL
+        microcode_rom[SEC][MS0] = '{default: 0, set_carry_flag: 1, load_status: 1, last_step: 1} ;
+        microcode_rom[CLC][MS0] = '{default: 0, clear_carry_flag: 1, load_status: 1, last_step: 1} ; 
+        
 
         // STACK: "Empty Descending Stack"; SP initialized to first empty memrory cell in Stack
         microcode_rom[PHA][MS0] = '{default: 0, load_mar_sp: 1} ;

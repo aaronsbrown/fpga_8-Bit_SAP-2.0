@@ -63,6 +63,8 @@ package arch_defs_pkg;
         MOV_BC = 8'h63,
         MOV_CA = 8'h64,
         MOV_CB = 8'h65,
+        SEC    = 8'h70,
+        CLC    = 8'h71,
         PHA   = 8'h80,
         PLA   = 8'h81,
         PHP   = 8'h82,
@@ -75,19 +77,19 @@ package arch_defs_pkg;
     } opcode_t;
         
     typedef enum logic [$clog2(MAX_MICROSTEPS)-1:0] {
-        ALU_UNDEFINED = 4'bxxxx,
-        ALU_ADD = 4'b0000,
-        ALU_SUB = 4'b0001,
-        ALU_AND = 4'b0010,
-        ALU_OR  = 4'b0011,
-        ALU_INR = 4'b0100,
-        ALU_DCR = 4'b0101,
-        ALU_ADC = 4'b0110,
-        ALU_SBC = 4'b0111,
-        ALU_XOR = 4'b1000,
-        ALU_INV = 4'b1001,
-        ALU_ROL = 4'b1010,
-        ALU_ROR = 4'b1011
+        ALU_UNDEFINED   = 4'b0000,
+        ALU_ADD         = 4'b0001,
+        ALU_SUB         = 4'b0010,
+        ALU_AND         = 4'b0011,
+        ALU_OR          = 4'b0100,
+        ALU_INR         = 4'b0101,
+        ALU_DCR         = 4'b0110,
+        ALU_ADC         = 4'b0111,
+        ALU_SBC         = 4'b1000,
+        ALU_XOR         = 4'b1001,
+        ALU_INV         = 4'b1010,
+        ALU_ROL         = 4'b1011,
+        ALU_ROR         = 4'b1100
     } alu_op_t;
 
     typedef enum logic [2:0] {
@@ -152,6 +154,8 @@ package arch_defs_pkg;
         logic sp_inc;
         logic sp_dec;
         logic load_mar_sp;
+        logic set_carry_flag;
+        logic clear_carry_flag;
     } control_word_t;
 
     typedef enum logic [3:0] {

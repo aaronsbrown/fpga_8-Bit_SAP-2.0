@@ -24,6 +24,10 @@ module status_logic_unit (
     // Current status register value (needed for INR/DCR to maintain carry)
     input logic [DATA_WIDTH-1:0] current_status_in,
 
+    // Control signals for explicit set or clear of Carry flag
+    input logic                  set_carry_flag_in,
+    input logic                  clear_carry_flag_in,
+
     // Outputs: Final calculated flag values
     output logic                 zero_flag_out,
     output logic                 negative_flag_out,
@@ -31,23 +35,24 @@ module status_logic_unit (
 );
 
     // Internal wires for intermediate calculations
-    logic load_data_is_zero_w;
-    logic load_data_is_negative_w;
+    logic loaded_data_is_zero;
+    logic loaded_data_is_neg;
 
     // Combinational logic for load operations that set Z/N flags
+    // Determine if data loaded from RAM or immediately is <= 0
     always_comb begin
-        load_data_is_zero_w = 1'b0;
-        load_data_is_negative_w = 1'b0;
+        loaded_data_is_zero = 1'b0;
+        loaded_data_is_neg = 1'b0;
 
         if (load_sets_zn_in) begin
             unique case (opcode_in)
                 LDI_A, LDI_B, LDI_C: begin
-                    load_data_is_zero_w = (temp_1_out_in == {DATA_WIDTH{1'b0}});
-                    load_data_is_negative_w = temp_1_out_in[DATA_WIDTH - 1];
+                    loaded_data_is_zero = (temp_1_out_in == {DATA_WIDTH{1'b0}});
+                    loaded_data_is_neg = temp_1_out_in[DATA_WIDTH - 1];
                 end
                 LDA, PLA: begin
-                    load_data_is_zero_w = (internal_bus_in == {DATA_WIDTH{1'b0}});
-                    load_data_is_negative_w = internal_bus_in[DATA_WIDTH - 1];
+                    loaded_data_is_zero = (internal_bus_in == {DATA_WIDTH{1'b0}});
+                    loaded_data_is_neg = internal_bus_in[DATA_WIDTH - 1];
                 end
                 default: begin
                     // Default to 0 for unknown load-setting opcodes (shouldn't happen if `load_sets_zn_in` is correct)
@@ -58,20 +63,50 @@ module status_logic_unit (
 
     // Combinational logic to determine the final flags to be loaded into the status register
     always_comb begin
-        // Default to ALU's output flags
-        zero_flag_out = alu_zero_in;
-        negative_flag_out = alu_negative_in;
-        carry_flag_out = alu_carry_in;
+        
+        // Default flags to current state from status register
+        zero_flag_out = current_status_in[STATUS_CPU_ZERO];
+        negative_flag_out = current_status_in[STATUS_CPU_NEG];
+        carry_flag_out = current_status_in[STATUS_CPU_CARRY];
 
-        // Override if flags are set by a LOAD operation
-        if (load_sets_zn_in) begin
-            zero_flag_out = load_data_is_zero_w;
-            negative_flag_out = load_data_is_negative_w;
-            carry_flag_out = 1'b0; // Carry flag is always cleared for LOAD operations
+        // Now set flags based on specific criteria
+        // Case 1: Load operations set Z, N flags; preserve C
+        // Op list: LDA, PLA, LDI => all set "load_sets_zn" control bit
+        if(load_sets_zn_in) begin
+            zero_flag_out = loaded_data_is_zero;
+            negative_flag_out = loaded_data_is_neg;
+        end else begin
+            unique case (alu_op_in)
+                
+                // Case 2: ALU Operations that set Z, N, C
+                ALU_ADD, ALU_ADC, ALU_SUB, ALU_SBC, ALU_ROL, ALU_ROR: begin
+                   zero_flag_out = alu_zero_in;
+                   negative_flag_out = alu_negative_in;
+                   carry_flag_out = alu_carry_in; 
+                end
+                
+                // Case 3: ALU Operations that set Z, N; force C = 0
+                // TODO: i think this can go away due to ALU implementation
+                ALU_AND, ALU_OR, ALU_XOR, ALU_INV: begin
+                    zero_flag_out = alu_zero_in;
+                    negative_flag_out = alu_negative_in;
+                    carry_flag_out = 1'b0;    
+                end
+
+                // Case 4: ALU Operations that set Z, N; preserve C 
+                ALU_INR, ALU_DCR: begin
+                    zero_flag_out = alu_zero_in;
+                    negative_flag_out = alu_negative_in;                    
+                end
+            endcase
         end
-        // Special handling for INR/DCR which preserve the carry flag
-        else if (alu_op_in == ALU_INR || alu_op_in == ALU_DCR) begin
-            carry_flag_out = current_status_in[STATUS_CPU_CARRY]; // Maintain previous carry flag
+
+        //Special Case: Explict set/clear of C
+        //Op list: SEC, SLC
+        if (set_carry_flag_in) begin
+            carry_flag_out = 1'b1;
+        end else if (clear_carry_flag_in) begin
+            carry_flag_out = 1'b0;
         end
     end
 

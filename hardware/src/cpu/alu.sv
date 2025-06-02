@@ -18,9 +18,7 @@ module alu (
     logic [DATA_WIDTH-1:0] comb_carry;
 
     always_comb begin
-        comb_result = 'x;
-        comb_carry  = 1'bx;
-
+        
         case (alu_op)
         
             //ARITHMETIC
@@ -50,7 +48,6 @@ module alu (
                 comb_carry  = sum[DATA_WIDTH]; // Natural carry out
             end
             ALU_DCR: begin
-                 
                 logic [DATA_WIDTH:0] sum = {1'b0, in_one} + 8'hFE + 1'b1;
                 comb_result = sum[DATA_WIDTH-1:0];
                 comb_carry  = sum[DATA_WIDTH];
@@ -82,6 +79,11 @@ module alu (
             ALU_ROR: begin
                 comb_result = {in_carry, in_one[DATA_WIDTH-1:1]};
                 comb_carry  = in_one[0];
+            end
+
+            ALU_UNDEFINED: begin
+                comb_result = '0;
+                comb_carry  = 1'b0;  
             end
 
             default: begin

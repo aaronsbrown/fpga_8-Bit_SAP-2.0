@@ -1,11 +1,15 @@
 translate alu_op {
-    0000 ADD
-    0001 SUB 
-    0010 AND
-    0011 OR
-    0100 INR
-    0101 DCR
-    0110 ADC
-    0111 SBC
-    1000 XOR
+    0000 UNDEFINED
+    0001 ADD 
+    0010 SUB
+    0011 AND
+    0100 OR
+    0101 INR
+    0110 DCR
+    0111 ADC
+    1000 SBC
+    1001 XOR
+    1010 INV
+    1011 ROL
+    1100 ROR
 }
