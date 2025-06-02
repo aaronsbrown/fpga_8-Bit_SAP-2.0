@@ -26,6 +26,7 @@ module computer (
     logic                   cpu_mem_write;
     logic                   cpu_mem_read;
     logic                   cpu_halt;
+    logic                   cpu_instr_complete;
 
     cpu u_cpu (
         .clk(clk),
@@ -40,6 +41,7 @@ module computer (
         
         // OUTPUT INTERFACE 
         .halt(cpu_halt),
+        .instr_complete(cpu_instr_complete),
 
         // DEBUG SIGNALS
         .flag_zero_o(cpu_flag_zero_o),

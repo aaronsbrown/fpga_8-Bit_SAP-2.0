@@ -16,6 +16,7 @@ module cpu (
     
     // ================= HALT SIGNAL ================
     output wire halt,
+    output wire instr_complete,
 
     // ================= FLAGS ======================
     output wire flag_zero_o,
@@ -137,7 +138,7 @@ module cpu (
     assign oe_alu = control_word.oe_alu;
     assign alu_op = control_word.alu_op;
     assign pc_enable = control_word.pc_enable; 
-    assign halt = control_word.halt; 
+    assign halt = control_word.halt;
     assign load_sets_zn = control_word.load_sets_zn;
     assign oe_a = control_word.oe_a;
     assign oe_b = control_word.oe_b; 
@@ -301,12 +302,23 @@ module cpu (
     // ================ MAIN COMPONENTS: ALU, CONTROL UNIT, STATUS LOGIC UNIT ================
     // =======================================================================================
     
+    // Register an Instruction_Complete pulse
+    logic instr_complete_current, instr_complete_next;
+    always_ff @(posedge clk) begin 
+        if (reset) 
+            instr_complete_current <= 1'b0;
+        else 
+            instr_complete_current <= instr_complete_next;
+    end
+    assign instr_complete = instr_complete_current;
+
     control_unit u_control_unit (
         .clk(clk),
         .reset(reset),
         .opcode(opcode),
         .flags(status_out),
-        .control_word(control_word)
+        .control_word(control_word),
+        .last_microstep(instr_complete_next)
     );
 
     // ALU source muxes

@@ -1,11 +1,13 @@
 import arch_defs_pkg::*;
 
 module control_unit (
-    input   wire                                clk,
-    input   wire                                reset,
+    input   logic                               clk,
+    input   logic                               reset,
     input   opcode_t                            opcode,
     input   logic           [2:0]               flags,
-    output  control_word_t                      control_word
+    output  control_word_t                      control_word,
+    output  logic                               last_microstep
+
 );
 
 
@@ -85,7 +87,9 @@ module control_unit (
         next_byte_count = current_byte_count;
         next_alu_op = current_alu_op;
         control_word = '{default: 0, alu_op: ALU_UNDEFINED}; 
+        last_microstep = 1'b0;
         cmd_latch_alu_op = 1'b0;
+
 
         case (current_state)
             
@@ -157,16 +161,22 @@ module control_unit (
                                            (control_word.check_negative && flags[STATUS_CPU_NEG])      ||
                                            (control_word.check_not_negative && !flags[STATUS_CPU_NEG]);
 
-                
+
+                // Latch ALU_OP for duration of Exectuion cycle 
                 if(current_microstep == MS0 && control_word.alu_op != ALU_UNDEFINED) begin
                     cmd_latch_alu_op = 1'b1;
                     next_alu_op = control_word.alu_op;
                 end
 
+                // Derive last_microstep pulse
+                last_microstep = control_word.halt || control_word.last_step || (check_jump_condition && !jump_condition_satisfied);
+
+                // HALT
                 if (control_word.halt) begin
                     next_state = S_HALT; 
                     next_microstep = MS0; 
                
+                // UN/CONDITIONAL BRANCH
                 end else if ( check_jump_condition && !jump_condition_satisfied) begin
                    
                    // Don't Jump! Suppress loading PC with new JMP address if conditions aren't met
@@ -175,9 +185,12 @@ module control_unit (
                    next_state = S_LATCH_ADDR;
                    next_microstep = MS0; 
                 
+                // LAST STEP
                 end else if (control_word.last_step) begin
                     next_state = S_LATCH_ADDR; 
-                    next_microstep = MS0; 
+                    next_microstep = MS0;
+                
+                // NEXT STEP
                 end else begin
                     next_state = S_EXECUTE;
                     next_microstep = current_microstep + 1; // Increment microstep

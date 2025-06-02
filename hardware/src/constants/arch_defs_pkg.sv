@@ -108,7 +108,7 @@ package arch_defs_pkg;
     } microstep_t;
 
     typedef struct packed {
-        logic halt;               
+        logic halt;   
         logic last_step;         
         logic load_origin;
         logic pc_enable;           
