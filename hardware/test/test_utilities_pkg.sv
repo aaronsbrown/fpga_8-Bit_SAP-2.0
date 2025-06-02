@@ -79,11 +79,11 @@ package test_utils_pkg;
       mask = (expected_width == 32) ? 32'hFFFFFFFF : (32'h1 << expected_width) - 1;
       // Compare only the lower 'expected_width' bits
       if ((actual & mask) !== (expected & mask)) begin
-           $display("\033[0;31mAssertion Failed: %s (%0d bits). Actual: %0h, Expected: %0h\033[0m",
-                    name, expected_width, actual & mask, expected & mask);
+           $display("[%0t] \033[0;31mAssertion Failed: %s (%0d bits). Actual: %0h, Expected: %0h\033[0m",
+                    $time, name, expected_width, actual & mask, expected & mask);
       end else begin
-           $display("\033[0;32mAssertion Passed: %s (%0d bits) = %0h\033[0m",
-                    name, expected_width, actual & mask);
+           $display("[%0t] \033[0;32mAssertion Passed: %s (%0d bits) = %0h\033[0m",
+                    $time, name, expected_width, actual & mask);
       end
       // Call the original pretty_print_assert_vec if you want the full binary view too
       // pretty_print_assert_vec(actual & mask, expected & mask, {name, " register check"});
