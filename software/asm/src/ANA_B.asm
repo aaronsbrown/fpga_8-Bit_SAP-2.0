@@ -1,0 +1,20 @@
+; ANA_B.asm
+; TODO: Add short description
+
+INCLUDE "includes/mmio_defs.inc"
+
+; === constants ===
+CONSTANT    EQU $00
+
+; === program start ===
+
+    ORG $F000
+
+START:
+    LDI A, #$E1             ;     1110 0001
+    LDI B, #$FE             ;     1111 1110
+    ADD B                   ; (1) 1101 1111
+    ANA B                   ;     1101 1110
+    LDI B, #$00             ;     0000 0000
+    ANA B                   ;     0000 0000
+    HLT

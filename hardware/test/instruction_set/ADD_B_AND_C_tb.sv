@@ -4,7 +4,7 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_generated/ANI/ROM.hex";
+  localparam string HEX_FILE = "../hardware/test/fixtures_generated/ADD_B_AND_C/ROM.hex";
 
   logic                  clk;
   logic                  reset;
@@ -45,26 +45,39 @@ module computer_tb;
     reset_and_wait(0); 
 
     // ============================ BEGIN TEST ==============================
-    $display("\n\nRunning ANI test ========================");
-
+    $display("\n\nRunning ADD_B_AND_C test ========================");
 
     wait(uut.cpu_instr_complete); @(posedge clk); #0.1;
-    inspect_register(uut.u_cpu.a_out, 8'hAA, "Register A", DATA_WIDTH);
+    inspect_register(uut.u_cpu.a_out, 8'hFF, "Register A", DATA_WIDTH);
     pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b1, "cpu.flag_negative_o == 1");  
+    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b1, "cpu.flag_negative_o == 1"); 
+    
+    wait(uut.cpu_instr_complete); @(posedge clk); #0.1;
+    inspect_register(uut.u_cpu.b_out, 8'h01, "Register B", DATA_WIDTH);
+    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
+    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0"); 
+    
+    wait(uut.cpu_instr_complete); @(posedge clk); #0.1;
+    inspect_register(uut.u_cpu.c_out, 8'h05, "Register C", DATA_WIDTH);
+    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
+    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0"); 
+
+    wait(uut.cpu_instr_complete); @(posedge clk); #0.1;
+    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b1, "cpu.flag_carry_o == 1"); 
+    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b1, "cpu.flag_zero_o == 1"); 
+    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0");  
   
     wait(uut.cpu_instr_complete); @(posedge clk); #0.1;
-    inspect_register(uut.u_cpu.a_out, 8'hA0, "Register A", DATA_WIDTH);
+    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_carry_o == 0"); 
     pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b1, "cpu.flag_negative_o == 1");  
-  
+    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0");  
 
     run_until_halt(20);
     
     // Vizual buffer for waveform inspection
     repeat(2) @(posedge clk);
 
-    $display("ANI test finished.===========================\n\n");
+    $display("ADD_B_AND_C test finished.===========================\n\n");
     $finish;
     // ============================ END TEST ==============================
   
