@@ -347,10 +347,10 @@ module control_unit (
         microcode_rom[RAR][MS2] = '{default: 0, oe_alu: 1, load_a: 1, load_status: 1, last_step: 1}; 
         
         microcode_rom[RAL][MS0] = '{default: 0, alu_op: ALU_ROL};
-        microcode_rom[RAL][MS1] = '{default: 0, oe_alu: 1, load_a: 1, last_step: 1};
+        microcode_rom[RAL][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_status: 1, last_step: 1};
 
         microcode_rom[CMA][MS0] = '{default: 0, alu_op: ALU_INV};
-        microcode_rom[CMA][MS1] = '{default: 0, oe_alu: 1, load_a: 1, last_step: 1}; 
+        microcode_rom[CMA][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_status: 1, last_step: 1}; 
 
         // REG_B / REG_C
         microcode_rom[INR_B][MS0] = '{default: 0, alu_op: ALU_INR, alu_src1_b: 1};

@@ -78,25 +78,16 @@ module status_logic_unit (
         end else begin
             unique case (alu_op_in)
                 
-                // Case 2: ALU Operations that set Z, N, C
-                ALU_ADD, ALU_ADC, ALU_SUB, ALU_SBC, ALU_ROL, ALU_ROR: begin
-                   zero_flag_out = alu_zero_in;
-                   negative_flag_out = alu_negative_in;
-                   carry_flag_out = alu_carry_in; 
-                end
-                
-                // Case 3: ALU Operations that set Z, N; force C = 0
-                // TODO: i think this can go away due to ALU implementation
-                ALU_AND, ALU_OR, ALU_XOR, ALU_INV: begin
-                    zero_flag_out = alu_zero_in;
-                    negative_flag_out = alu_negative_in;
-                    carry_flag_out = 1'b0;    
-                end
-
-                // Case 4: ALU Operations that set Z, N; preserve C 
+                // Case 1: ALU Operations that set Z, N; preserve C 
                 ALU_INR, ALU_DCR: begin
                     zero_flag_out = alu_zero_in;
                     negative_flag_out = alu_negative_in;                    
+                end
+
+                default: begin
+                    zero_flag_out = alu_zero_in;
+                    negative_flag_out = alu_negative_in;
+                    carry_flag_out = alu_carry_in;  
                 end
             endcase
         end

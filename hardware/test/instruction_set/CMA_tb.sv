@@ -4,15 +4,21 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_manual/op_CMA_prog.hex";
+  localparam string HEX_FILE = "../hardware/test/fixtures_generated/CMA/ROM.hex";
 
-  reg clk;
-  reg reset;
-  
+  logic                  clk;
+  logic                  reset;
+  logic [DATA_WIDTH-1:0] computer_output;
+  logic                  uart_rx;
+  logic                  uart_tx;
+
   computer uut (
         .clk(clk),
         .reset(reset),
-    );
+        .output_port_1(computer_output),
+        .uart_rx(uart_rx),
+        .uart_tx(uart_rx)
+  );
 
   // --- Clock Generation: 10 ns period ---
   initial begin clk = 0;  forever #5 clk = ~clk; end
@@ -28,51 +34,48 @@ module computer_tb;
     uut.u_ram.init_sim_ram();
     uut.u_rom.init_sim_rom();
 
-    // load the hex file into RAM
+    // load the hex files into RAM
     $display("--- Loading hex file: %s ---", HEX_FILE);
-    $readmemh(HEX_FILE, uut.u_rom.mem); 
+    $readmemh(HEX_FILE, uut.u_rom.mem);
+
+    // Print ROM content     
     uut.u_rom.dump(); 
 
     // Apply reset and wait for it to release
     reset_and_wait(0); 
 
-    // --- Execute the instruction ---
-    $display("\n\nRunning LDI_A instruction test");
+    // ============================ BEGIN TEST ==============================
+    $display("\n\nRunning CMA test ========================");
 
-    
-    $display("LDI_A===============");
-    $display("BYTE 1");
-    repeat (5) @(posedge clk);  #0.1;
-    pretty_print_assert_vec(uut.u_cpu.opcode, LDI_A, "CHK_MORE_BYTES: cpu.opcode == LDI_A"); 
-
-    $display("BYTE 2");
-    repeat (4) @(posedge clk);  #0.1;
-    pretty_print_assert_vec(uut.u_cpu.temp_1_out, 16'hAA, "CHK_MORE_BYTES: cpu.temp_1_out = xAA"); 
-
-    $display("POST_EXECUTION");
-    repeat (2) @(posedge clk);  #0.1;
+    // LDI
+    wait(uut.cpu_instr_complete); @(posedge clk); #0.1;
     inspect_register(uut.u_cpu.a_out, 8'hAA, "Register A", DATA_WIDTH);
     pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
     pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b1, "cpu.flag_negative_o == 1");  
+    pretty_print_assert_vec(uut.u_cpu.flag_carry_o, 1'b0, "cpu.flag_negative_o == 0");  
   
-    $display("CMA===============");
-    $display("BYTE 1");
-    repeat (5) @(posedge clk);  #0.1;
-    pretty_print_assert_vec(uut.u_cpu.opcode, CMA, "CHK_MORE_BYTES: cpu.opcode == CMA"); 
 
-    $display("POST_EXECUTION");
-    repeat (2) @(posedge clk);  #0.1;
+    //SEC
+    wait(uut.cpu_instr_complete); @(posedge clk); #0.1;
+    pretty_print_assert_vec(uut.u_cpu.flag_carry_o, 1'b1, "cpu.flag_negative_o == 1");  
+   
+    // CMA
+    wait(uut.cpu_instr_complete); @(posedge clk); #0.1;
     inspect_register(uut.u_cpu.a_out, 8'h55, "Register A", DATA_WIDTH);
     pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b1, "cpu.flag_negative_o == 1 **FLAG UNAFFECTED**");  
+    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0");  
+    pretty_print_assert_vec(uut.u_cpu.flag_carry_o, 1'b0, "cpu.flag_carry_o == 0 **FLAG SET = 0**");  
   
-
-    repeat (3) @(posedge clk); #0.1; 
-    pretty_print_assert_vec(uut.u_cpu.u_control_unit.opcode, HLT, "HALT: cpu.opcode == HLT"); 
-    pretty_print_assert_vec(uut.u_cpu.counter_out, 16'hF004, "HALT: cpu.counter_out == xF004"); 
+    
+    run_until_halt(20);
+    
+    // Vizual buffer for waveform inspection
+    repeat(2) @(posedge clk);
 
     $display("CMA test finished.===========================\n\n");
     $finish;
+    // ============================ END TEST ==============================
+  
   end
 
 endmodule
