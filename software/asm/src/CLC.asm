@@ -1,5 +1,5 @@
 ; op_SEC.asm
-; TODO: Add short description
+ TODO: Add short description
 
 INCLUDE "includes/mmio_defs.inc"
 

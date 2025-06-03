@@ -47,12 +47,30 @@ module computer_tb;
     // ============================ BEGIN TEST ==============================
     $display("\n\nRunning CLC test ========================");
 
-    // wait(signal);
-    // inspect_register(actual, expected, msg, width);
-    // pretty_print_assert_vec(actual, expected, msg); 
+    wait(uut.cpu_instr_complete); @(posedge clk); #0.1;
+    inspect_register(uut.u_cpu.a_out, 8'hFF, "Register A", DATA_WIDTH);
+    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
+    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b1, "cpu.flag_negative_o == 1");  
+
+    wait(uut.cpu_instr_complete); @(posedge clk); #0.1;
+    inspect_register(uut.u_cpu.b_out, 8'hFF, "Register B", DATA_WIDTH);
+    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
+    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b1, "cpu.flag_negative_o == 1");  
+ 
+    wait(uut.cpu_instr_complete); @(posedge clk); #0.1;
+    inspect_register(uut.u_cpu.a_out, 8'hFE, "Register A", DATA_WIDTH);
+    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
+    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b1, "cpu.flag_negative_o == 1");  
+    pretty_print_assert_vec(uut.u_cpu.flag_carry_o, 1'b1, "cpu.flag_carry_o == 1");  
+
+    wait(uut.cpu_instr_complete); @(posedge clk); #0.1;
+    pretty_print_assert_vec(uut.u_cpu.flag_carry_o, 1'b0, "cpu.flag_carry_o == 0");  
+
+    
+    run_until_halt(20);
     
     // Vizual buffer for waveform inspection
-    repeat(100) @(posedge clk);
+    repeat(2) @(posedge clk);
 
     $display("CLC test finished.===========================\n\n");
     $finish;
