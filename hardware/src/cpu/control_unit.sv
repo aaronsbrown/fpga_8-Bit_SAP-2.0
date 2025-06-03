@@ -163,9 +163,12 @@ module control_unit (
 
 
                 // Latch ALU_OP for duration of Exectuion cycle 
-                if(current_microstep == MS0 && control_word.alu_op != ALU_UNDEFINED) begin
+                if(current_microstep == MS0) begin
                     cmd_latch_alu_op = 1'b1;
                     next_alu_op = control_word.alu_op;
+                end else begin
+                    // ensure control word's alu_op reflects the latched alu_op
+                    control_word.alu_op = current_alu_op;
                 end
 
                 // Derive last_microstep pulse
@@ -209,7 +212,8 @@ module control_unit (
         endcase
 
         // Important: Ensure alu_op reflects the latched alu_op code
-        control_word.alu_op = current_alu_op;
+        if (current_microstep != MS0 && current_state == S_EXECUTE)
+            control_word.alu_op = current_alu_op;
 
     end
 
@@ -273,10 +277,9 @@ module control_unit (
          
 
         // REG_A ARITH
-        microcode_rom[ADD_B][MS0] = '{default: 0, alu_op: ALU_ADD, alu_src2_c: 0} ;
-        microcode_rom[ADD_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1};
-        microcode_rom[ADD_B][MS2] = '{default: 0, load_status: 1, last_step: 1};
-
+        microcode_rom[ADD_B][MS0] = '{default: 0, alu_op: ALU_ADD, alu_src2_c: 0};
+        microcode_rom[ADD_B][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_status: 1, last_step: 1};
+        
         microcode_rom[ADD_C][MS0] = '{default: 0, alu_op: ALU_ADD, alu_src2_c: 1} ;
         microcode_rom[ADD_C][MS1] = '{default: 0, oe_alu: 1, load_a: 1, load_status: 1, last_step: 1};
 
