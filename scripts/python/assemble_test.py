@@ -19,10 +19,14 @@ ASM_TEMPLATE_FILE = PROJECT_ROOT / "software/asm/templates/test_template.asm"
 SV_TEMPLATE_FILE = PROJECT_ROOT / "hardware/test/templates/test_template.sv"
 
 ASM_SRC_DIR = PROJECT_ROOT / "software/asm/src"
-SV_TEST_DIR = PROJECT_ROOT / "hardware/test"
+# SV_TEST_DIR = PROJECT_ROOT / "hardware/test" # OLD
+SV_TEST_BASE_DIR = PROJECT_ROOT / "hardware/test" # NEW - base for subdirectories
 GENERATED_FIXTURES_BASE_DIR = PROJECT_ROOT / "hardware/test/fixtures_generated"
 
 ASSEMBLER_SCRIPT_PATH = PROJECT_ROOT / "software/assembler/src/assembler.py"
+
+# Define valid subdirectories for tests
+VALID_TEST_SUBDIRS = ["instruction_set", "cpu_control", "modules"]
 
 
 def create_file_from_template(template_path: Path, output_path: Path, test_name_value: str, dry_run: bool, force: bool) -> str:
@@ -43,13 +47,13 @@ def create_file_from_template(template_path: Path, output_path: Path, test_name_
         if output_path.exists() and force:
             action = "overwrite"
             print(f"[DRY RUN] --force specified, would overwrite.")
-        elif output_path.exists() and not force: # Should have been caught above, but for completeness
+        elif output_path.exists() and not force:
              action = "skip (already exists)"
         print(f"[DRY RUN] Would {action} file: {output_path.relative_to(PROJECT_ROOT)} from template {template_path.relative_to(PROJECT_ROOT)}")
         return "dry_run_ok"
 
     try:
-        output_path.parent.mkdir(parents=True, exist_ok=True)
+        output_path.parent.mkdir(parents=True, exist_ok=True) # This will create sub_dir if needed
         with open(template_path, 'r', encoding='utf-8') as f_template:
             content = f_template.read()
         modified_content = content.replace(TEST_NAME_PLACEHOLDER, test_name_value)
@@ -73,9 +77,9 @@ def create_file_from_template(template_path: Path, output_path: Path, test_name_
 
 def clean_test_artifacts(test_name: str, asm_file: Path, sv_file: Path, fixture_dir: Path, dry_run: bool):
     """
-    Removes artifacts for a given test_name.
+    Removes artifacts for a given test_name. sv_file now includes the sub-directory.
     """
-    print(f"\n--- Cleaning artifacts for test: {test_name} ---")
+    print(f"\n--- Cleaning artifacts for test: {test_name} (SV file at {sv_file.relative_to(PROJECT_ROOT)}) ---") # Updated log
     paths_to_delete = []
     if asm_file.exists():
         paths_to_delete.append(asm_file)
@@ -105,7 +109,6 @@ def clean_test_artifacts(test_name: str, asm_file: Path, sv_file: Path, fixture_
         print("Confirmation required. Clean operation cancelled (non-interactive environment).")
         return
 
-
     for p in paths_to_delete:
         try:
             if p.is_file():
@@ -126,7 +129,18 @@ def main():
     )
     parser.add_argument(
         "test_name",
-        help="The name of the test (e.g., 'my_alu_test'). This will be used for filenames and placeholders."
+        help="The name of the test (e.g., 'ADD_B'). This will be used for filenames and placeholders."
+    )
+    # NEW ARGUMENT
+    parser.add_argument(
+        "--sub-dir",
+        type=str,
+        choices=VALID_TEST_SUBDIRS,
+        required=True,
+        help=(
+            "The sub-directory within 'hardware/test/' where the .sv testbench will be created. "
+            f"Choices: {', '.join(VALID_TEST_SUBDIRS)}"
+        )
     )
     parser.add_argument(
         "--init",
@@ -166,11 +180,18 @@ def main():
         print("* No commands will be executed.      *")
         print("**************************************\n")
 
+    # Path for .asm file (no change)
     new_asm_file_path = ASM_SRC_DIR / f"{test_name}.asm"
-    new_sv_file_path = SV_TEST_DIR / f"{test_name}_tb.sv"
+    
+    # Path for .sv file (incorporates sub-dir)
+    target_sv_test_dir = SV_TEST_BASE_DIR / args.sub_dir
+    new_sv_file_path = target_sv_test_dir / f"{test_name}_tb.sv"
+    
+    # Path for fixture output (no change in structure, could be nested under args.sub_dir if desired later)
     test_fixture_output_dir = GENERATED_FIXTURES_BASE_DIR / test_name
 
     if args.clean:
+        # new_sv_file_path now correctly points to the sub-directory
         clean_test_artifacts(test_name, new_asm_file_path, new_sv_file_path, test_fixture_output_dir, dry_run)
         sys.exit(0)
 
@@ -178,15 +199,12 @@ def main():
     init_errors_occurred = False
 
     if args.init:
-        print(f"\n--- Initializing test: {test_name} ---")
+        print(f"\n--- Initializing test: {test_name} in hardware/test/{args.sub_dir}/ ---") # Updated log
 
         print(f"\nProcessing ASM source file...")
         asm_status = create_file_from_template(ASM_TEMPLATE_FILE, new_asm_file_path, test_name, dry_run, args.force)
-        if asm_status == "skipped":
-            init_skipped_any_file = True
-        elif asm_status == "error":
-            init_errors_occurred = True
-
+        if asm_status == "skipped": init_skipped_any_file = True
+        elif asm_status == "error": init_errors_occurred = True
 
         print(f"\nEnsuring fixture directory exists...")
         if dry_run:
@@ -197,15 +215,12 @@ def main():
                 print(f"Successfully ensured directory exists: {test_fixture_output_dir.relative_to(PROJECT_ROOT)}")
             except OSError as e:
                 print(f"Error: Could not create directory {test_fixture_output_dir}: {e}")
-                init_errors_occurred = True # Count this as an error for init
+                init_errors_occurred = True
 
-        print(f"\nProcessing SystemVerilog testbench file...")
+        print(f"\nProcessing SystemVerilog testbench file in hardware/test/{args.sub_dir}/ ...") # Updated log
         sv_status = create_file_from_template(SV_TEMPLATE_FILE, new_sv_file_path, test_name, dry_run, args.force)
-        if sv_status == "skipped":
-            init_skipped_any_file = True
-        elif sv_status == "error":
-            init_errors_occurred = True
-
+        if sv_status == "skipped": init_skipped_any_file = True
+        elif sv_status == "error": init_errors_occurred = True
 
         if not dry_run and init_errors_occurred:
             print(f"\n--- Initialization for '{test_name}' failed due to errors. Aborting. ---")
@@ -214,12 +229,11 @@ def main():
             print(f"\n--- Initialization for '{test_name}' involved skipping some existing files. ---")
             print(f"To overwrite these files, use the --force flag.")
             print(f"Assembly step will be SKIPPED as not all files were newly created/overwritten.")
-            sys.exit(0) # Successful exit, but indicate action was not fully completed as expected
+            sys.exit(0) 
         else:
             print(f"\n--- Initialization for '{test_name}' complete. ---")
 
-
-    # --- Assembler section ---
+    # --- Assembler section (THIS SECTION IS UNCHANGED BY THE --sub-dir FEATURE) ---
     print(f"\n--- Assembling: {new_asm_file_path.name} ---")
 
     if not new_asm_file_path.is_file() and not dry_run:
