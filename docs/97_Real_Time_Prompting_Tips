@@ -1,0 +1,28 @@
+# Dialogue Tips
+
+## 1. Be Explicit About Your Current Understanding/Hypothesis
+
+- Instead of just "How does X work?", try: "My current understanding of X is [your understanding]. Is that accurate, or what am I missing?" This gives me a baseline and helps me correct misconceptions rather than starting from scratch.
+
+- When proposing a solution: "For [problem], I'm thinking of implementing [your idea] because [your reasoning]. What are the potential pitfalls or alternative conceptual approaches a 'seasoned teacher' might point out here?"
+
+## 2. Ask "Coaching" Questions Directly
+
+- "What are the 2-3 most important conceptual building blocks I need for [task, e.g., 'writing a hex string to byte conversion routine']?"
+
+- "If I were to explain [concept X] back to you, what key points would you be listening for to confirm my understanding?"
+- "What's a common 'gotcha' when first implementing [feature Y] on an 8-bit system?"
+
+## 3. Signal When You're Ready for More/Less Detail
+
+- Your current meta-prompt handles "concise at first" well.
+
+- You can also say: "Okay, that conceptual overview makes sense. Could you now elaborate on [specific part]?" or "Let's pause on the details there; I want to try and sketch out the overall flow myself first."
+
+## 4. "Teach Back" for Confirmation
+
+- After an explanation, try summarizing: "So, if I understand correctly, the key idea is [your summary]. And the next logical step would be [your proposed step]. Is that on the right track?" This helps solidify your learning and allows me to affirm or gently correct.
+
+## 5. Frame "What if" Scenarios
+
+"What if my ISA didn't have a JSR instruction? How would subroutines typically be managed conceptually then?" (This prompts for deeper understanding beyond just your specific implementation).
