@@ -1,94 +1,107 @@
 name: Verilog CI Tests
 
-# Controls when the workflow will run
 on:
-  push: # Run on pushes to these branches
+  push:
     branches:
       - main
-  pull_request: # Run on pull requests targeting these branches
+      - develop
+  pull_request:
     branches:
       - main
-      # - develop # If you make PRs against develop too
 
 jobs:
   run-verilog-tests:
     name: Run Verilog Simulation Tests
-    runs-on: ubuntu-latest # Use a GitHub-hosted Linux runner
+    runs-on: ubuntu-latest
 
     steps:
-      # Step 1: Check out your repository code
       - name: Checkout repository
-        uses: actions/checkout@v4 # Or latest version
+        uses: actions/checkout@v4
 
-      # Step 2: Set up Python (your run_tests.py is a Python script)
       - name: Set up Python
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10' # Or '3.x' or your preferred Python 3 version
+          python-version: '3.10'
 
-      # Step 3: Install dependencies (Icarus Verilog and sv2v)
-      - name: Install Icarus Verilog and sv2v
+      - name: Install Icarus Verilog, sv2v, and unzip
         run: |
           sudo apt-get update -y
-          sudo apt-get install -y iverilog curl unzip 
-
+          sudo apt-get install -y iverilog curl unzip
+          # sv2v installation (corrected path)
           SV2V_VERSION="v0.0.13"
           SV2V_ZIP_NAME="sv2v-Linux.zip"
           SV2V_ASSET_URL="https://github.com/zachjs/sv2v/releases/download/${SV2V_VERSION}/${SV2V_ZIP_NAME}"
-          
           echo "Downloading sv2v ${SV2V_VERSION} zip from ${SV2V_ASSET_URL}..."
           curl -L "${SV2V_ASSET_URL}" -o /tmp/sv2v.zip
-
           echo "Unzipping sv2v..."
           mkdir -p /tmp/sv2v_extracted
-          unzip -q /tmp/sv2v.zip -d /tmp/sv2v_extracted # -q for quiet unzip
-
-          # Corrected path to the binary INSIDE the unzipped folder
-          SV2V_BINARY_PATH="/tmp/sv2v_extracted/sv2v-Linux/sv2v" 
-
+          unzip -q /tmp/sv2v.zip -d /tmp/sv2v_extracted
+          SV2V_BINARY_PATH="/tmp/sv2v_extracted/sv2v-Linux/sv2v"
           if [ -f "${SV2V_BINARY_PATH}" ]; then
               echo "sv2v binary found at ${SV2V_BINARY_PATH}"
               sudo mv "${SV2V_BINARY_PATH}" /usr/local/bin/sv2v
               sudo chmod +x /usr/local/bin/sv2v
-              echo "sv2v installation complete. Version:"
-              sv2v --version # Verify installation
+              echo "sv2v installation complete. Version:"; sv2v --version
           else
-              echo "ERROR: sv2v binary not found at ${SV2V_BINARY_PATH}."
-              echo "Contents of /tmp/sv2v_extracted:"
-              ls -lR /tmp/sv2v_extracted # List contents for debugging
-              exit 1
+              echo "ERROR: sv2v binary not found at ${SV2V_BINARY_PATH}."; ls -lR /tmp/sv2v_extracted; exit 1
           fi
-          
-          # Clean up temporary files
-          rm /tmp/sv2v.zip
-          rm -rf /tmp/sv2v_extracted
+          rm /tmp/sv2v.zip; rm -rf /tmp/sv2v_extracted
 
-      # Step 4: Make your scripts executable (if not already in git)
       - name: Make scripts executable
         run: |
           chmod +x scripts/python/run_tests.py
-          chmod +x scripts/python/assemble_test.py # If run_tests.py calls it
-          chmod +x software/assembler/src/assembler.py # If run_tests.py calls it
+          chmod +x scripts/python/assemble_test.py
+          chmod +x software/assembler/src/assembler.py # If assemble_test calls it
 
-      # Step 5: Run your tests
-      # The script should exit with 0 for all pass, non-zero for any fail
+      # NEW STEP: Generate .hex fixtures for all tests
+      - name: Generate Test Fixtures (.hex files)
+        run: |
+          echo "Generating .hex files for ISA tests..."
+          find hardware/test/instruction_set -name '*_tb.sv' -print0 | while IFS= read -r -d $'\0' tb_file; do
+            test_name=$(basename "${tb_file}" _tb.sv)
+            echo "Assembling for: ${test_name}"
+            python3 scripts/python/assemble_test.py "${test_name}" --sub-dir instruction_set 
+            # No --init needed here if .asm files are already in software/asm/src/
+            # If .asm files are also generated from template by assemble_test.py, 
+            # you might need --init for the *first ever run* or if they are not in git.
+            # For CI, typically .asm files are committed, and we just assemble them.
+          done
+          
+          echo "Generating .hex files for CPU Control tests..."
+          find hardware/test/cpu_control -name '*_tb.sv' -print0 | while IFS= read -r -d $'\0' tb_file; do
+            test_name=$(basename "${tb_file}" _tb.sv)
+            echo "Assembling for: ${test_name}"
+            python3 scripts/python/assemble_test.py "${test_name}" --sub-dir cpu_control
+          done
+
+          echo "Generating .hex files for Module tests (if any need .asm fixtures)..."
+          # Many module tests might not use .asm fixtures, but if some do:
+          find hardware/test/modules -name '*_tb.sv' -print0 | while IFS= read -r -d $'\0' tb_file; do
+            test_name=$(basename "${tb_file}" _tb.sv)
+            # Check if an ASM file exists for this module test
+            if [ -f "software/asm/src/${test_name}.asm" ]; then
+              echo "Assembling for: ${test_name}"
+              python3 scripts/python/assemble_test.py "${test_name}" --sub-dir modules
+            else
+              echo "No ASM file found for module test: ${test_name}, skipping assembly."
+            fi
+          done
+          echo "Fixture generation complete."
+          echo "Listing generated fixtures directory:"
+          ls -R hardware/test/fixtures_generated/
+
       - name: Execute all Verilog tests
         run: |
           python3 scripts/python/run_tests.py
-          # If your script used to take --sv2v and now it's mandatory internal:
-          # If your script still expects --sv2v (even if it's ignored):
-          # python3 scripts/python/run_tests.py --sv2v
+          # sv2v is handled internally by run_tests.py or by the iverilog step if not sv module
 
-      # Step 6 (Optional but Recommended): Upload test reports/logs as artifacts
-      # This allows you to download them from the GitHub Actions run page if tests fail.
       - name: Upload test reports and logs
-        if: always() # Run this step even if previous steps (like tests) fail
+        if: always() 
         uses: actions/upload-artifact@v4
         with:
-          name: test-artifacts-${{ github.run_id }} # Unique name for artifacts
+          name: test-artifacts-${{ github.run_id }}
           path: |
             test_report_all.txt
             test_run_all.log
-            build/sim_run_all_temp/ # Upload the directory with individual test logs
-            # Add other logs or VCDs if desired, e.g., build/waveform.vcd (but VCDs can be large)
-          retention-days: 7 # How long to keep artifacts
+            build/sim_run_all_temp/
+          retention-days: 7
