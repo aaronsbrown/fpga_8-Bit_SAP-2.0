@@ -27,45 +27,45 @@ jobs:
           python-version: '3.10' # Or '3.x' or your preferred Python 3 version
 
       # Step 3: Install dependencies (Icarus Verilog and sv2v)
-    - name: Install Icarus Verilog and sv2v
-      run: |
-        sudo apt-get update -y
-        # Install curl for downloading and unzip for extracting
-        sudo apt-get install -y iverilog curl unzip 
+      - name: Install Icarus Verilog and sv2v
+        run: |
+          sudo apt-get update -y
+          # Install curl for downloading and unzip for extracting
+          sudo apt-get install -y iverilog curl unzip 
 
-        # For sv2v - download the zipped binary for Linux and extract it
-        SV2V_VERSION="v0.0.13"
-        SV2V_ZIP_NAME="sv2v-Linux.zip" # Correct asset name from your screenshot
-        SV2V_ASSET_URL="https://github.com/zachjs/sv2v/releases/download/${SV2V_VERSION}/${SV2V_ZIP_NAME}"
-        
-        echo "Downloading sv2v ${SV2V_VERSION} zip from ${SV2V_ASSET_URL}..."
-        curl -L "${SV2V_ASSET_URL}" -o /tmp/sv2v.zip # Download to a temporary location
+          # For sv2v - download the zipped binary for Linux and extract it
+          SV2V_VERSION="v0.0.13"
+          SV2V_ZIP_NAME="sv2v-Linux.zip" # Correct asset name from your screenshot
+          SV2V_ASSET_URL="https://github.com/zachjs/sv2v/releases/download/${SV2V_VERSION}/${SV2V_ZIP_NAME}"
+          
+          echo "Downloading sv2v ${SV2V_VERSION} zip from ${SV2V_ASSET_URL}..."
+          curl -L "${SV2V_ASSET_URL}" -o /tmp/sv2v.zip # Download to a temporary location
 
-        echo "Unzipping sv2v..."
-        # Create a temporary directory to unzip into, to avoid clutter and find the binary
-        mkdir -p /tmp/sv2v_extracted
-        unzip /tmp/sv2v.zip -d /tmp/sv2v_extracted
-        
-        # The binary is usually named just 'sv2v' inside the zip for Linux
-        # Find it and move it to /usr/local/bin
-        # This assumes the binary is directly in the unzipped folder or a known subfolder
-        # If the structure inside the zip is different, this 'find' command might need adjustment
-        # For v0.0.13 sv2v-Linux.zip, the binary is at the root of the zip.
-        if [ -f /tmp/sv2v_extracted/sv2v ]; then
-            sudo mv /tmp/sv2v_extracted/sv2v /usr/local/bin/sv2v
-            sudo chmod +x /usr/local/bin/sv2v
-            echo "sv2v installation complete. Version:"
-            sv2v --version # Verify installation
-        else
-            echo "ERROR: sv2v binary not found in the expected location within the zip."
-            # List contents for debugging if needed
-            ls -lR /tmp/sv2v_extracted
-            exit 1
-        fi
-        
-        # Clean up temporary files
-        rm /tmp/sv2v.zip
-        rm -rf /tmp/sv2v_extracted
+          echo "Unzipping sv2v..."
+          # Create a temporary directory to unzip into, to avoid clutter and find the binary
+          mkdir -p /tmp/sv2v_extracted
+          unzip /tmp/sv2v.zip -d /tmp/sv2v_extracted
+          
+          # The binary is usually named just 'sv2v' inside the zip for Linux
+          # Find it and move it to /usr/local/bin
+          # This assumes the binary is directly in the unzipped folder or a known subfolder
+          # If the structure inside the zip is different, this 'find' command might need adjustment
+          # For v0.0.13 sv2v-Linux.zip, the binary is at the root of the zip.
+          if [ -f /tmp/sv2v_extracted/sv2v ]; then
+              sudo mv /tmp/sv2v_extracted/sv2v /usr/local/bin/sv2v
+              sudo chmod +x /usr/local/bin/sv2v
+              echo "sv2v installation complete. Version:"
+              sv2v --version # Verify installation
+          else
+              echo "ERROR: sv2v binary not found in the expected location within the zip."
+              # List contents for debugging if needed
+              ls -lR /tmp/sv2v_extracted
+              exit 1
+          fi
+          
+          # Clean up temporary files
+          rm /tmp/sv2v.zip
+          rm -rf /tmp/sv2v_extracted
 
       # Step 4: Make your scripts executable (if not already in git)
       - name: Make scripts executable
