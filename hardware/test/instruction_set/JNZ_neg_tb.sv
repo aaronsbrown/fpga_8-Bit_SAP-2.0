@@ -33,7 +33,7 @@ module computer_tb;
 
     // load the hex file into RAM
     $display("--- Loading hex file: %s ---", HEX_FILE);
-    $readmemh(HEX_FILE, uut.u_rom.mem); 
+    safe_readmemh_rom(HEX_FILE);  
     uut.u_rom.dump(); 
 
     // Apply reset and wait for it to release

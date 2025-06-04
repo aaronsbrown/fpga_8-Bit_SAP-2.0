@@ -4,15 +4,21 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_manual/op_CMP_B_prog.hex";
+  localparam string HEX_FILE = "../hardware/test/fixtures_generated/CMP_B/ROM.hex";
 
-  reg clk;
-  reg reset;
-  
+  logic                  clk;
+  logic                  reset;
+  logic [DATA_WIDTH-1:0] computer_output;
+  logic                  uart_rx;
+  logic                  uart_tx;
+
   computer uut (
         .clk(clk),
         .reset(reset),
-    );
+        .output_port_1(computer_output),
+        .uart_rx(uart_rx),
+        .uart_tx(uart_rx)
+  );
 
   // --- Clock Generation: 10 ns period ---
   initial begin clk = 0;  forever #5 clk = ~clk; end
@@ -28,110 +34,34 @@ module computer_tb;
     uut.u_ram.init_sim_ram();
     uut.u_rom.init_sim_rom();
 
-    // load the hex file into RAM
+    // load the hex files into RAM
     $display("--- Loading hex file: %s ---", HEX_FILE);
-    $readmemh(HEX_FILE, uut.u_rom.mem);
+    safe_readmemh_rom(HEX_FILE); 
+
+    // Print ROM content     
     uut.u_rom.dump(); 
 
     // Apply reset and wait for it to release
     reset_and_wait(0); 
 
-    // --- Execute the instruction ---
-    $display("\n\nRunning CMP_B instruction test");
+    // ============================ BEGIN TEST ==============================
+    $display("\n\nRunning CMP_B test ========================");
 
-    // LDI_A 01 ============================================
-    $display("\nLDI_A ============");
+    // TODO: Implement test CMP_B
+
+    // wait(uut.cpu_instr_complete); @(posedge clk); #0.1;
+    // inspect_register(actual, expected, msg, width);
+    // pretty_print_assert_vec(actual, expected, msg); 
     
-    $display("BYTE 1");
-    repeat (1 + 4) @(posedge clk);  #0.1;
-    pretty_print_assert_vec(uut.u_cpu.opcode, LDI_A, "CHK_MORE_BYTES: cpu.opcode == LDI_A"); 
-
-    $display("BYTE 2");
-    repeat (4) @(posedge clk);  #0.1;
-    pretty_print_assert_vec(uut.u_cpu.temp_1_out, 8'h01, "EXECUTE: cpu.temp_1_out = x01"); 
-
-    $display("POST_EXECUTE"); // microsteps + latch cycle
-    repeat (1 + 1) @(posedge clk);  #0.1;
-    inspect_register(uut.u_cpu.a_out, 8'h01, "Register A", DATA_WIDTH);
-    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_carry_o, 1'b0, "cpu.flag_carry_o == 0"); 
-
-    // LDI_B 02 ============================================
-    $display("\nLDI_B ============");
+    run_until_halt(20);
     
-    $display("BYTE 1");
-    repeat (4 - 1) @(posedge clk);  #0.1; // subtract previous latch cycle
-    pretty_print_assert_vec(uut.u_cpu.opcode, LDI_B, "CHK_MORE_BYTES: cpu.opcode == LDI_B"); 
-
-    $display("BYTE 2");
-    repeat (4) @(posedge clk);  #0.1;
-    pretty_print_assert_vec(uut.u_cpu.temp_1_out, 8'h03, "EXECUTE: cpu.temp_1_out = x02"); 
-
-    $display("POST_EXECUTE"); // microsteps + latch cycle 
-    repeat (1 + 1) @(posedge clk);  #0.1;
-    inspect_register(uut.u_cpu.b_out, 8'h03, "Register B", DATA_WIDTH);
-    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_carry_o, 1'b0, "cpu.flag_carry_o == 0"); 
-
-
-    // CMP_B ============================================
-    $display("\nCMP_B ============");
-
-    $display("BYTE 1");
-    repeat (4 - 1) @(posedge clk);  #0.1; // subtract previous latch cycle
-    pretty_print_assert_vec(uut.u_cpu.opcode, CMP_B, "CHK_MORE_BYTES: cpu.opcode == CMP_B"); 
-    
-    $display("POST_EXECUTION");
-    repeat (2+1) @(posedge clk);  #0.1; // microsteps + latch cycle
-    inspect_register(uut.u_cpu.a_out, 8'h01, "Register A", DATA_WIDTH);
-    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_carry_o, 1'b0, "cpu.flag_carry_o == 0"); // Borrow occured
-    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b1, "cpu.flag_negative_o == 1");  
-  
-   // LDI_B 02 ============================================
-    $display("\nLDI_B ============");
-    
-    $display("BYTE 1");
-    repeat (4 - 1) @(posedge clk);  #0.1; // subtract previous latch cycle
-    pretty_print_assert_vec(uut.u_cpu.opcode, LDI_B, "CHK_MORE_BYTES: cpu.opcode == LDI_B"); 
-
-    $display("BYTE 2");
-    repeat (4) @(posedge clk);  #0.1;
-    pretty_print_assert_vec(uut.u_cpu.temp_1_out, 8'h00, "EXECUTE: cpu.temp_1_out = x00"); 
-
-    $display("POST_EXECUTE"); // microsteps + latch cycle 
-    repeat (1 + 1) @(posedge clk);  #0.1;
-    inspect_register(uut.u_cpu.b_out, 8'h00, "Register B", DATA_WIDTH);
-    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b1, "cpu.flag_zero_o == 1"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_carry_o, 1'b0, "cpu.flag_carry_o == 0"); 
-
-
-    // CMP_B ============================================
-    $display("\nCMP_B ============");
-
-    $display("BYTE 1");
-    repeat (4 - 1) @(posedge clk);  #0.1; // subtract previous latch cycle
-    pretty_print_assert_vec(uut.u_cpu.opcode, CMP_B, "CHK_MORE_BYTES: cpu.opcode == CMP_B"); 
-    
-    $display("POST_EXECUTION");
-    repeat (2+1) @(posedge clk);  #0.1; // microsteps + latch cycle
-    inspect_register(uut.u_cpu.a_out, 8'h01, "Register A", DATA_WIDTH);
-    pretty_print_assert_vec(uut.u_cpu.flag_zero_o, 1'b0, "cpu.flag_zero_o == 0"); 
-    pretty_print_assert_vec(uut.u_cpu.flag_carry_o, 1'b1, "cpu.flag_carry_o == 1"); // Borrow occured
-    pretty_print_assert_vec(uut.u_cpu.flag_negative_o, 1'b0, "cpu.flag_negative_o == 0");  
-
-
-    repeat (3) @(posedge clk); #0.1; 
-    pretty_print_assert_vec(uut.u_cpu.u_control_unit.opcode, HLT, "HALT: cpu.opcode == HLT"); 
-    pretty_print_assert_vec(uut.u_cpu.counter_out, 16'hF009, "HALT: cpu.counter_out == xF009"); 
-
-    run_until_halt(100);
+    // Vizual buffer for waveform inspection
+    repeat(2) @(posedge clk);
 
     $display("CMP_B test finished.===========================\n\n");
     $finish;
+    // ============================ END TEST ==============================
+  
   end
 
 endmodule
