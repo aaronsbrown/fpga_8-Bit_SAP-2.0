@@ -1,0 +1,98 @@
+name: Verilog CI Tests
+
+# Controls when the workflow will run
+on:
+  push: # Run on pushes to these branches
+    branches:
+      - main
+  pull_request: # Run on pull requests targeting these branches
+    branches:
+      - main
+      # - develop # If you make PRs against develop too
+
+jobs:
+  run-verilog-tests:
+    name: Run Verilog Simulation Tests
+    runs-on: ubuntu-latest # Use a GitHub-hosted Linux runner
+
+    steps:
+      # Step 1: Check out your repository code
+      - name: Checkout repository
+        uses: actions/checkout@v4 # Or latest version
+
+      # Step 2: Set up Python (your run_tests.py is a Python script)
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.10' # Or '3.x' or your preferred Python 3 version
+
+      # Step 3: Install dependencies (Icarus Verilog and sv2v)
+    - name: Install Icarus Verilog and sv2v
+      run: |
+        sudo apt-get update -y
+        # Install curl for downloading and unzip for extracting
+        sudo apt-get install -y iverilog curl unzip 
+
+        # For sv2v - download the zipped binary for Linux and extract it
+        SV2V_VERSION="v0.0.13"
+        SV2V_ZIP_NAME="sv2v-Linux.zip" # Correct asset name from your screenshot
+        SV2V_ASSET_URL="https://github.com/zachjs/sv2v/releases/download/${SV2V_VERSION}/${SV2V_ZIP_NAME}"
+        
+        echo "Downloading sv2v ${SV2V_VERSION} zip from ${SV2V_ASSET_URL}..."
+        curl -L "${SV2V_ASSET_URL}" -o /tmp/sv2v.zip # Download to a temporary location
+
+        echo "Unzipping sv2v..."
+        # Create a temporary directory to unzip into, to avoid clutter and find the binary
+        mkdir -p /tmp/sv2v_extracted
+        unzip /tmp/sv2v.zip -d /tmp/sv2v_extracted
+        
+        # The binary is usually named just 'sv2v' inside the zip for Linux
+        # Find it and move it to /usr/local/bin
+        # This assumes the binary is directly in the unzipped folder or a known subfolder
+        # If the structure inside the zip is different, this 'find' command might need adjustment
+        # For v0.0.13 sv2v-Linux.zip, the binary is at the root of the zip.
+        if [ -f /tmp/sv2v_extracted/sv2v ]; then
+            sudo mv /tmp/sv2v_extracted/sv2v /usr/local/bin/sv2v
+            sudo chmod +x /usr/local/bin/sv2v
+            echo "sv2v installation complete. Version:"
+            sv2v --version # Verify installation
+        else
+            echo "ERROR: sv2v binary not found in the expected location within the zip."
+            # List contents for debugging if needed
+            ls -lR /tmp/sv2v_extracted
+            exit 1
+        fi
+        
+        # Clean up temporary files
+        rm /tmp/sv2v.zip
+        rm -rf /tmp/sv2v_extracted
+
+      # Step 4: Make your scripts executable (if not already in git)
+      - name: Make scripts executable
+        run: |
+          chmod +x scripts/python/run_tests.py
+          chmod +x scripts/python/assemble_test.py # If run_tests.py calls it
+          chmod +x software/assembler/src/assembler.py # If run_tests.py calls it
+
+      # Step 5: Run your tests
+      # The script should exit with 0 for all pass, non-zero for any fail
+      - name: Execute all Verilog tests
+        run: |
+          python3 scripts/python/run_tests.py
+          # If your script used to take --sv2v and now it's mandatory internal:
+          # If your script still expects --sv2v (even if it's ignored):
+          # python3 scripts/python/run_tests.py --sv2v
+
+      # Step 6 (Optional but Recommended): Upload test reports/logs as artifacts
+      # This allows you to download them from the GitHub Actions run page if tests fail.
+      - name: Upload test reports and logs
+        if: always() # Run this step even if previous steps (like tests) fail
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts-${{ github.run_id }} # Unique name for artifacts
+          path: |
+            test_report_all.txt
+            test_run_all.log
+            build/sim_run_all_temp/ # Upload the directory with individual test logs
+            # Add other logs or VCDs if desired, e.g., build/waveform.vcd (but VCDs can be large)
+          retention-days: 7 # How long to keep artifacts
