@@ -7,7 +7,7 @@ INCLUDE "includes/mmio_defs.inc"
 ; == VECTORS TABLE
 ; ======================================================================
     ORG $FFFC
-    DW START           ; Reset Vector points to START label
+    DW START            ; Reset Vector points to START label
 
 
 ; ======================================================================
