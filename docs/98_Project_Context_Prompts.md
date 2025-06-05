@@ -3,6 +3,8 @@ This chat continues work on my 8-bit custom CPU project, "FPGA_8-Bit_SAP2," prim
 
 Project State & Toolchain:
 
+— DevEnv: Macbook Pro, OSX 15.5, iTerm2, VSCode.
+
 - Key Parameters: DATA_WIDTH=8, ADDR_WIDTH=16, OPCODE_WIDTH=8 (defined in `hardware/src/constants/arch_defs_pkg.sv`).
 - CPU Architecture: Microcoded (`hardware/src/cpu/control_unit.sv`), with a 16-bit Stack Pointer. ALU operations that modify registers/flags generally take 3 execute microsteps (MS0: latch ALU op, MS1: ALU computes & registers results/flags, MS2: commit results/flags to registers/status).
 - Assembler: A custom Python two-pass assembler (`software/assembler/src/assembler.py`) generates .hex files from .asm.
@@ -23,13 +25,12 @@ Recent Accomplishments (Phase 6 - Stack & Subroutines):
 
 Current Focus / Next Steps:
 
-- [TODAY'S SPECIFIC LEARNING GOAL/QUESTION: e.g., Understanding self-modifying code for string pointers]
+- TODAY'S SPECIFIC LEARNING GOAL/QUESTION: Debuging why my program's don't seem to be running on my FPGA, even though the simulations look good. Yesterday I implemented a reset_vector in hardware, and modified the FSM. Things looked good in simulation, but none of the programs that used to work (setting simple LEDs on my FPGA) are working now.
 
-- Finalizing Phase 6: Primarily documentation updates for new instructions and ensuring all testbenches are robustly using the `instruction_finished` signal and have standardized completion messages for `run_tests.py`.
+I have just hacked in my old working approach which was hardcoding the Program Counter to start at F000 upon a reset. I'm hoping to get old simple programs working again to help determine if the changes for the software reset_vector are causing issues in synthesis.
 
-- Addressing any remaining test failures identified by `run_tests.py`.
+-
 
-- Planning for Phase 7 (Monitor Program).
 </meta prompt 1>
 
 <meta prompt 2 = "Dialog rules and preferences">
