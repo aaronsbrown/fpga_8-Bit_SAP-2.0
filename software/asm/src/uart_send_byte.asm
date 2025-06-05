@@ -1,10 +1,20 @@
 ; uart_send_byte.asm
 INCLUDE "includes/mmio_defs.inc"
 
-; --- Code Section ---
+; ======================================================================
+; == VECTORS TABLE
+; ======================================================================
+    ORG $FFFC
+    DW START           ; Reset Vector points to START label
+
+
+; ======================================================================
+; == PROGRAM
+; ======================================================================
     ORG $F000
 
-SEND_UART_BYTE:
+
+START:
 
 TX_POLL_LOOP:
     LDA UART_STATUS_REG

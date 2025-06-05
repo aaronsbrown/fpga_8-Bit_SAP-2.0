@@ -20,13 +20,10 @@ module control_unit (
     microstep_t next_microstep; // Next microstep to transition to
 
     logic cmd_latch_alu_op;
-    logic [3:0] current_alu_op;
-    logic [3:0] next_alu_op;
-
-    logic [1:0] current_byte_count;
-    logic [1:0] next_byte_count;
+    logic [3:0] current_alu_op, next_alu_op;
+    logic [1:0] current_byte_count, next_byte_count;
     logic [1:0] num_operand_bytes;
-    
+    logic       current_reset_vec_byte_count, next_reset_vec_byte_count;
 
     // ==================================================================================================
     // ======================================== ISA OPCODE <=> NUM OPERANDS =============================
@@ -64,11 +61,13 @@ module control_unit (
             current_state <= S_RESET;
             current_microstep <= MS0; 
             current_byte_count <= 2'b00; 
+            current_reset_vec_byte_count <= 1'b0;
             current_alu_op <= ALU_UNDEFINED;
         end else begin 
             current_state <= next_state; 
             current_microstep <= next_microstep; 
             current_byte_count <= next_byte_count; 
+            current_reset_vec_byte_count <= next_reset_vec_byte_count;
             if(cmd_latch_alu_op)
                 current_alu_op <= next_alu_op; 
         end
@@ -85,6 +84,7 @@ module control_unit (
         next_state = current_state;
         next_microstep = current_microstep; 
         next_byte_count = current_byte_count;
+        next_reset_vec_byte_count = current_reset_vec_byte_count;
         next_alu_op = current_alu_op;
         control_word = '{default: 0, alu_op: ALU_UNDEFINED}; 
         last_microstep = 1'b0;
@@ -94,11 +94,38 @@ module control_unit (
         case (current_state)
             
             S_RESET: begin
-                next_state = S_INIT; 
+                next_state = S_INIT_RESET_VEC_1; 
+                next_reset_vec_byte_count = 1'b0;
+            end
+
+            S_INIT_RESET_VEC_1: begin
+                if (current_reset_vec_byte_count == 1'b0)
+                    control_word.load_mar_reset_vec_addr_low = 1'b1;
+                else
+                    control_word.load_mar_reset_vec_addr_high = 1'b1;
+                
+                next_state = S_INIT_RESET_VEC_2;                
+            end
+
+            S_INIT_RESET_VEC_2: begin
+                control_word.oe_ram = 1'b1;
+                next_state = S_INIT_RESET_VEC_3;                
             end
             
-            S_INIT: begin
-                control_word.load_origin = 1'b1; 
+            S_INIT_RESET_VEC_3: begin
+                control_word.oe_ram = 1'b1;
+                if( current_reset_vec_byte_count == 1'b0) begin
+                    control_word.load_pc_low_byte = 1'b1;
+                    next_reset_vec_byte_count = 1'b1;                
+                    next_state = S_INIT_RESET_VEC_1;
+                end else begin
+                    control_word.load_pc_high_byte = 1'b1;
+                    next_state = S_INIT_SP;                
+                end
+                
+            end
+           
+            S_INIT_SP: begin
                 control_word.load_sp_default_address = 1'b1;
                 next_state = S_LATCH_ADDR; 
             end

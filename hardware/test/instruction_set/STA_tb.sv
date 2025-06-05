@@ -51,7 +51,6 @@ module computer_tb;
     
     // Cycle 1: INIT
     repeat (1) @(posedge clk);  #0.1;
-    pretty_print_assert_vec(uut.u_cpu.load_origin, 1'b1, "INIT: cpu.load_origin");
 
 
     // BYTE 1 =================================

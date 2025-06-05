@@ -2,9 +2,20 @@
 ; Tests jumping to new address upon successful jump condition
 INCLUDE "includes/mmio_defs.inc"
 
-; -- CODE --
+; ======================================================================
+; == VECTORS TABLE
+; ======================================================================
+    ORG $FFFC
+    DW START           ; Reset Vector points to START label
+
+
+; ======================================================================
+; == PROGRAM
+; ======================================================================
     ORG $F000
 
+
+START:
     LDI_A, #$0F     ; Load Reg A with non-zero value
     JNZ JUMP_SUCCESS
     

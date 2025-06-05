@@ -63,12 +63,6 @@ module cpu (
     logic [3:0] alu_op;
   
    
-    // =============== DEFAULT ROM ORIGIN ================
-    // ===================================================
-    logic [ADDR_WIDTH-1:0] default_rom_origin;
-    assign default_rom_origin = RESET_VECTOR;
-
-
     // =============== DEFAULT SP ORIGIN ================
     // ===================================================
     logic [ADDR_WIDTH-1:0] default_sp_origin;
@@ -102,11 +96,11 @@ module cpu (
     logic pc_enable;
 
     // Control signals for SP
-    logic load_sp_default_address, load_mar_sp, sp_inc, sp_dec;
+    logic load_sp_default_address, sp_inc, sp_dec;
 
     // Control signals for loading data from the internal_bus into registers
     logic load_a, load_b, load_c, load_tmp, load_ir, load_status, load_sets_zn, load_temp_1, load_temp_2;
-    logic load_pc_high_byte, load_pc_low_byte, load_origin;
+    logic load_pc_high_byte, load_pc_low_byte;
     
     // Control signals for outputting data to the internal_bus
     logic oe_a, oe_b, oe_c, oe_temp_1, oe_temp_2, oe_ram, oe_alu, oe_status, oe_pc_low_byte, oe_pc_high_byte;
@@ -125,7 +119,6 @@ module cpu (
     assign load_temp_1 = control_word.load_temp_1;
     assign load_temp_2 = control_word.load_temp_2;
     assign load_ir = control_word.load_ir;
-    assign load_origin = control_word.load_origin;
     assign oe_pc_low_byte = control_word.oe_pc_low_byte;
     assign oe_pc_high_byte = control_word.oe_pc_high_byte;
     assign load_pc_low_byte = control_word.load_pc_low_byte;
@@ -133,6 +126,8 @@ module cpu (
     assign load_mar_pc = control_word.load_mar_pc;
     assign load_mar_addr_high = control_word.load_mar_addr_high;
     assign load_mar_addr_low = control_word.load_mar_addr_low;
+    assign load_mar_reset_vec_addr_low = control_word.load_mar_reset_vec_addr_low;
+    assign load_mar_reset_vec_addr_high = control_word.load_mar_reset_vec_addr_high;
     assign oe_ir = control_word.oe_ir;
     assign oe_pc = control_word.oe_pc;
     assign oe_alu = control_word.oe_alu;
@@ -190,10 +185,8 @@ module cpu (
         .enable(pc_enable),
         .output_high_byte(oe_pc_high_byte),
         .output_low_byte(oe_pc_low_byte),
-        .load_origin(load_origin),
         .load_high_byte(load_pc_high_byte),
         .load_low_byte(load_pc_low_byte),
-        .origin_address(default_rom_origin),
         .counter_in(internal_bus),
         .counter_out(counter_out),
         .counter_byte_out(counter_byte_out)
@@ -249,7 +242,8 @@ module cpu (
         .latched_data(temp_2_out)
     );
 
-    logic load_mar_addr_high, load_mar_addr_low, load_mar_pc;
+    logic load_mar_addr_high, load_mar_addr_low, load_mar_pc, load_mar_sp,
+        load_mar_reset_vec_addr_low, load_mar_reset_vec_addr_high;
     register_memory_address u_register_memory_address (
       .clk(clk),
       .reset(reset),
@@ -257,6 +251,8 @@ module cpu (
       .load_sp(load_mar_sp),
       .load_addr_high(load_mar_addr_high),
       .load_addr_low(load_mar_addr_low),
+      .load_reset_vec_addr_low(load_mar_reset_vec_addr_low),
+      .load_reset_vec_addr_high(load_mar_reset_vec_addr_high),
       .bus_in(internal_bus),
       .program_counter_in(counter_out),
       .stack_pointer_in(stack_pointer_out),

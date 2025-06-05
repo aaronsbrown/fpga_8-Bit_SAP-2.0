@@ -4,7 +4,7 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_manual/op_NOP_prog.hex";
+  localparam string HEX_FILE = "../hardware/test/fixtures_manual/NOP_prog.hex";
 
   reg clk;
   reg reset;

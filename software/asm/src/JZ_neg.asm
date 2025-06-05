@@ -3,9 +3,20 @@
 ; upon failed jump condition
 INCLUDE "includes/mmio_defs.inc"
 
-; -- CODE --
+; ======================================================================
+; == VECTORS TABLE
+; ======================================================================
+    ORG $FFFC
+    DW START           ; Reset Vector points to START label
+
+
+; ======================================================================
+; == PROGRAM
+; ======================================================================
     ORG $F000
 
+
+START:
     LDI A, #$00         ; Ensure Z flag == 0
     LDI A, #$0F         ; LDI sets Z flag
     JZ JUMP_TO_ADDRESS

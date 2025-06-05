@@ -1,28 +1,32 @@
 @startuml
 hide empty description
-
 [*] --> RESET
 
-state "<b>RESET</b>\n<i>Synchronous reset via HIGH signal</i>" as RESET
-state "<b>INIT</b>\n<i>Loads Program Counter with ROM starting address</i>" as INIT
-state "<b>LATCH_ADDR</b>\n<i>Loads MemAddr register with Program Counter</i>" as LATCH_ADDR
-state "<b>READ_BYTE</b>\n<i>Reads byte from memory</i>" as READ_BYTE
-state "<b>LATCH_BYTE</b>\n<i>Latches byte from Memory into IR/Temp1/Temp2. Increments PC.</i>" as LATCH_BYTE
-state "<b>CHK_MORE_BYTES</b>\n<i>Instruction has more bytes?</i>" as CHK_MORE_BYTES
-state "<b>EXECUTE</b>\n<i>Sequences microcode steps</i>" as EXECUTE
-state "<b>HALT</b>\n<i>Halt computer</i>" as HALT
+state "<b>RESET</b>\n<i>Internal: next_reset_byte = 0</i>" as RESET
+state "<b>INIT_SP</b>\n<i>Loads SP Reg</i>" as INIT_SP
+state "<b>INIT_RESET_VEC_1</b>\n<i>MAR <= (current_reset_byte==0 ? $FFFC : $FFFD)</i>" as INIT_RESET_VEC_1
+state "<b>INIT_RESET_VEC_2</b>\n<i>oe_ram = 1</i>" as INIT_RESET_VEC_2
+state "<b>INIT_RESET_VEC_3</b>\n<i>PC_L/PC_H <= bus_data</i>\n<i>Internal logic determines next_state:</i>\n  <i>if current_reset_byte==0, next_state=INIT_RESET_VEC_1, next_reset_byte=1</i>\n  <i>if current_reset_byte==1, next_state=INIT_SP, next_reset_byte=2</i>" as INIT_RESET_VEC_3
+state "<b>LATCH_ADDR</b>\n<i>Loads MAR with PC</i>" as LATCH_ADDR
+state "<b>READ_BYTE</b>" as READ_BYTE
+state "<b>LATCH_BYTE</b>" as LATCH_BYTE
+state "<b>CHK_MORE_BYTES</b>" as CHK_MORE_BYTES
+state "<b>EXECUTE</b>" as EXECUTE
+state "<b>HALT</b>" as HALT
 
-RESET       --> RESET : reset
-RESET       --> INIT : !reset
-INIT        --> LATCH_ADDR : true
+RESET            --> INIT_RESET_VEC_1 : !reset
+INIT_RESET_VEC_1 --> INIT_RESET_VEC_2 : true
+INIT_RESET_VEC_2 --> INIT_RESET_VEC_3 : true
+INIT_RESET_VEC_3 --> INIT_RESET_VEC_1  
+INIT_RESET_VEC_3 --> INIT_SP         
+INIT_SP          --> LATCH_ADDR : true
 LATCH_ADDR  --> READ_BYTE : true
 READ_BYTE   --> LATCH_BYTE : true
 LATCH_BYTE  --> CHK_MORE_BYTES : true
 CHK_MORE_BYTES --> LATCH_ADDR : byte_count <= num_bytes
-CHK_MORE_BYTES --> EXECUTE : byte_count > num_bytes 
+CHK_MORE_BYTES --> EXECUTE : byte_count > num_bytes
 EXECUTE --> EXECUTE : !last_step AND !halt AND !(is_jump AND !jump)
 EXECUTE --> LATCH_ADDR : last_step OR (is_jump AND !jump)
 EXECUTE --> HALT : halt
 HALT --> HALT : true
-
 @enduml

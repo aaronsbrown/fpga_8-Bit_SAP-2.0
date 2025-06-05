@@ -60,7 +60,7 @@ jobs:
           find hardware/test/instruction_set -name '*_tb.sv' -print0 | while IFS= read -r -d $'\0' tb_file; do
             test_name=$(basename "${tb_file}" _tb.sv)
             echo "Assembling for: ${test_name}"
-            python3 scripts/python/assemble_test.py "${test_name}" --sub-dir instruction_set 
+            python3 scripts/python/assemble_test.py --test-name "${test_name}" --sub-dir instruction_set 
             # No --init needed here if .asm files are already in software/asm/src/
             # If .asm files are also generated from template by assemble_test.py, 
             # you might need --init for the *first ever run* or if they are not in git.
@@ -71,7 +71,7 @@ jobs:
           find hardware/test/cpu_control -name '*_tb.sv' -print0 | while IFS= read -r -d $'\0' tb_file; do
             test_name=$(basename "${tb_file}" _tb.sv)
             echo "Assembling for: ${test_name}"
-            python3 scripts/python/assemble_test.py "${test_name}" --sub-dir cpu_control
+            python3 scripts/python/assemble_test.py --test-name "${test_name}" --sub-dir cpu_control
           done
 
           echo "Generating .hex files for Module tests (if any need .asm fixtures)..."
@@ -81,7 +81,7 @@ jobs:
             # Check if an ASM file exists for this module test
             if [ -f "software/asm/src/${test_name}.asm" ]; then
               echo "Assembling for: ${test_name}"
-              python3 scripts/python/assemble_test.py "${test_name}" --sub-dir modules
+              python3 scripts/python/assemble_test.py --test-name "${test_name}" --sub-dir modules
             else
               echo "No ASM file found for module test: ${test_name}, skipping assembly."
             fi

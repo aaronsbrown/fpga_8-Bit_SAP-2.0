@@ -1,15 +1,27 @@
 ; uart_echo_error_handling.asm
 INCLUDE "includes/mmio_defs.inc"
 
+; ======================================================================
+; == VECTORS TABLE
+; ======================================================================
+    ORG $FFFC
+    DW START           ; Reset Vector points to START label
 
-; --- error codes ---
+
+; ======================================================================
+; == CONSTANTS
+; ======================================================================
 ERROR_CODE_FRAME        EQU $08
 ERROR_CODE_OVERSHOOT    EQU $09
 
 
-; --- program start ---
-
+; ======================================================================
+; == PROGRAM
+; ======================================================================
     ORG $F000
+
+
+START:
 
 ; --- startup and reset ---
 LDI A, #UART_CMD_CLEAR_FRAME_ERROR

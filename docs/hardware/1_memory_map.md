@@ -10,7 +10,10 @@ This document details the 64KB memory map for the custom 8-bit CPU.
 | `__unused__`    | `$2000` | `$CFFF` | 45056   | 44      | n/a         | n/a              | (doesn't exist in hardware)                            |
 | VRAM            | `$D000` | `$DFFF` | 4096    | 4       | BRAM        | `vram_4k.sv`     | text or simple bitmap                                  |
 | MMIO            | `$E000` | `$EFFF` | 4096    | 4       | LUT/FF      | `computer.sv`    | Reserved. Decoded: $E000-$E07F (e.g., 8 devices @ 16B) |
-| ROM/Sys         | `$F000` | `$FFFF` | 4096    | 4       | BRAM        | `rom_4k.sv`      | Vectors: reset, NMI, IRQ                               |
+| ROM/Sys         | `$F000` | `$FFF9` | 4090    | 4       | BRAM        | `rom_4k.sv`      | Program ROM                                            |
+| ROM/NMI         | `$FFFA` | `$FFFB` | 2       | 2B      | BRAM        | `rom_4k.sv`      | Vectors: NMI                                           |
+| ROM/Reset       | `$FFFC` | `$FFFD` | 2       | 2B      | BRAM        | `rom_4k.sv`      | Vectors: Reset                                         |
+| ROM/IRQ         | `$FFFE` | `$FFFF` | 2       | 2B      | BRAM        | `rom_4k.sv`      | Vectors: IRQ                                           |
 
 **Notes:**
 

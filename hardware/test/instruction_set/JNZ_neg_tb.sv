@@ -9,7 +9,7 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_generated/OP_JNZ_neg/ROM.hex";
+  localparam string HEX_FILE = "../hardware/test/fixtures_generated/JNZ_neg/ROM.hex";
   reg clk;
   reg reset;
   

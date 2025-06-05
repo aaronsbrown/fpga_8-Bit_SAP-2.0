@@ -1,11 +1,20 @@
 ; op_SEC.asm
- TODO: Add short description
+; TODO: Add short description
 
 INCLUDE "includes/mmio_defs.inc"
 
-; === program start ===
+; ======================================================================
+; == VECTORS TABLE
+; ======================================================================
+    ORG $FFFC
+    DW START           ; Reset Vector points to START label
 
+
+; ======================================================================
+; == PROGRAM
+; ======================================================================
     ORG $F000
+
 
 START:
     LDI A, #$FF

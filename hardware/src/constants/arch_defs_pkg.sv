@@ -10,8 +10,9 @@ package arch_defs_pkg;
     parameter int MAX_OPCODES = (1 << OPCODE_WIDTH);
     parameter int MAX_MICROSTEPS = 10;
 
-    parameter RESET_VECTOR = 16'hF000;  // hardcoded reset vector
-    parameter SP_VECTOR = 16'h01FF;     // hardcoded sp initialization vector
+    parameter SP_VECTOR = 16'h01FF;                 // hardcoded sp initialization vector
+    parameter RESET_VECTOR_ADDR_LOW = 16'hFFFC;     // hardcoded reset vector
+    parameter RESET_VECTOR_ADDR_HIGH = 16'hFFFD;    // hardcoded reset vector
 
     parameter STATUS_CPU_ZERO = 0;
     parameter STATUS_CPU_NEG = 1;
@@ -92,9 +93,12 @@ package arch_defs_pkg;
         ALU_ROR         = 4'b1100
     } alu_op_t;
 
-    typedef enum logic [2:0] {
+    typedef enum logic [3:0] {
         S_RESET,
-        S_INIT,
+        S_INIT_RESET_VEC_1,
+        S_INIT_RESET_VEC_2,
+        S_INIT_RESET_VEC_3,
+        S_INIT_SP,
         S_LATCH_ADDR, 
         S_READ_BYTE,
         S_LATCH_BYTE,
@@ -110,7 +114,6 @@ package arch_defs_pkg;
     typedef struct packed {
         logic halt;   
         logic last_step;         
-        logic load_origin;
         logic pc_enable;           
         logic oe_pc_low_byte;
         logic oe_pc_high_byte;
@@ -121,7 +124,9 @@ package arch_defs_pkg;
         logic oe_ir;              
         logic load_mar_pc;
         logic load_mar_addr_low;
-        logic load_mar_addr_high;           
+        logic load_mar_addr_high; 
+        logic load_mar_reset_vec_addr_low;
+        logic load_mar_reset_vec_addr_high;          
         logic load_ram;           
         logic oe_ram;             
         logic [3:0] alu_op;
