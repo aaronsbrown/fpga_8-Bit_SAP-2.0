@@ -1,0 +1,82 @@
+========================================================
+README: Automated Test Runner Script (run_tests.py)
+========================================================
+
+Purpose:
+--------
+This script automates running Verilog/SystemVerilog testbenches for the
+FPGA_8-Bit_SAP2 project using Icarus Verilog (iverilog) and vvp.
+It mandates the use of sv2v to transpile SystemVerilog sources to
+Verilog-2005 before compilation.
+
+Features:
+---------
+- Automated Test Execution: Finds and runs testbenches in predefined
+  category directories.
+- SystemVerilog to Verilog Transpilation: Always uses sv2v.
+- Icarus Verilog Compilation.
+- Simulation with vvp.
+- Logging:
+  - Main log file (test_run_all.log) with all command outputs.
+  - Individual logs (sv2v, compile, run) per test in
+    build/sim_run_all_temp/.
+- Reporting: Summary report (test_report_all.txt) with PASS/FAIL status.
+- Standardized Test Flow: Consistent sv2v -> iverilog -> vvp.
+- DUT Source Management: Reads DUT files from hardware/src/_files_sim.f.
+- Timescale Priority: Ensures timescale.v is processed early.
+
+File and Directory Structure (Assumed):
+---------------------------------------
+- Project Root:
+  - scripts/python/run_tests.py (this script)
+  - hardware/src/
+    - hardware/src/_files_sim.f (lists DUT sources)
+    - hardware/src/utils/timescale.v
+  - hardware/test/ (base for testbenches)
+    - hardware/test/instruction_set/
+    - hardware/test/cpu_control/
+    - hardware/test/modules/
+    - hardware/test/test_utilities_pkg.sv
+  - build/ (for temporary compiled outputs)
+    - build/sim_run_all_temp/ (individual test logs)
+  - test_run_all.log (main log, in project root)
+  - test_report_all.txt (summary report, in project root)
+
+Prerequisites:
+--------------
+- sv2v (in system PATH)
+- iverilog (in system PATH)
+- vvp (in system PATH)
+
+Usage:
+------
+python scripts/python/run_tests.py
+
+The script currently takes no command-line arguments. It discovers tests in:
+- hardware/test/instruction_set/
+- hardware/test/cpu_control/
+- hardware/test/modules/
+Testbench files should end with _tb.sv or _tb.v.
+
+Test Pass/Fail Criteria:
+------------------------
+A test PASSES if:
+1. sv2v completes successfully (exit code 0).
+2. iverilog compilation completes successfully (exit code 0).
+3. vvp simulation completes successfully (exit code 0).
+4. vvp output log does NOT contain "Assertion Failed:" (case-insensitive).
+5. vvp output log does NOT contain "Simulation timed out." (case-insensitive).
+6. vvp output log CONTAINS a success message matching the pattern:
+   "^\s*.* test finished\.===========================\s*$" (multiline).
+
+Output:
+-------
+- Console: Status of each test (e.g., "Running my_test_tb.sv ... PASS").
+- test_run_all.log: Detailed logs for all tests.
+- test_report_all.txt: Formatted report with PASS/FAIL status and summary.
+- build/sim_run_all_temp/: Individual logs:
+  - <test_name_short>_sv2v.log
+  - <test_name_short>_compile.log
+  - <test_name_short>_run.log
+
+The script exits with code 0 if all tests pass, 1 if any fail.
