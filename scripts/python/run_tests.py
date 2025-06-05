@@ -7,7 +7,7 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
-from typing import List, Tuple, Dict
+from typing import List, Tuple, Dict, Set # Added Set for seen_paths
 
 # --- Configuration ---
 SCRIPT_FILE_PATH = Path(__file__).resolve()
@@ -25,7 +25,7 @@ IVERILOG_CMD = "iverilog"
 VVP_CMD = "vvp"
 SV2V_CMD = "sv2v"
 
-IVERILOG_COMPILER_FLAGS = ["-DSIMULATION", "-g2012"] # No -s flag
+IVERILOG_COMPILER_FLAGS = ["-DSIMULATION", "-g2012"]
 IVERILOG_INCLUDE_PATHS_REL = [
     "hardware/src", "hardware/src/constants", "hardware/src/cpu",
     "hardware/src/peripherals", "hardware/src/utils", "hardware/test"
@@ -35,32 +35,26 @@ SV2V_INCLUDE_PATHS_REL = [
     "hardware/src", "hardware/src/constants", "hardware/test"
 ]
 
-# Updated for new directory structure
 TEST_CATEGORIES: Dict[str, Path] = {
     "Instruction_Set_Tests": HARDWARE_DIR / "test" / "instruction_set",
     "CPU_Control_Tests": HARDWARE_DIR / "test" / "cpu_control",
     "Module_Tests": HARDWARE_DIR / "test" / "modules",
 }
-DUT_FILE_LIST_PATH_REL = "hardware/src/_files_sim.f" # Relative to PROJECT_ROOT
-TIMESCALEP_FILE_PATH_REL = "hardware/src/utils/timescale.v" # Relative to PROJECT_ROOT
-TEST_UTILITIES_PKG_PATH_REL = "hardware/test/test_utilities_pkg.sv" # Relative to PROJECT_ROOT
+DUT_FILE_LIST_PATH_REL = "hardware/src/_files_sim.f"
+TIMESCALEP_FILE_PATH_REL = "hardware/src/utils/timescale.v"
+TEST_UTILITIES_PKG_PATH_REL = "hardware/test/test_utilities_pkg.sv"
 
-VVP_DEFAULT_FLAGS = [] # Define this as it was missing
+VVP_DEFAULT_FLAGS = []
 
 # --- Helper Functions ---
 def run_command(cmd: List[str], cwd: Path, log_file_path: Path, specific_log_path: Path) -> Tuple[int, str, str]:
     try:
-        # For debugging the exact command being run
-        # print(f"DEBUG CMD: cd {cwd} && {' '.join(str(c) for c in cmd)}")
-
         process = subprocess.run(cmd, cwd=cwd, capture_output=True, text=True, check=False)
-        # Append to main log
         with open(log_file_path, "a", encoding="utf-8") as main_log:
             main_log.write(f"\n--- CMD: {' '.join(str(c) for c in cmd)} (CWD: {cwd}) ---\n")
             main_log.write(f"--- STDOUT ---\n{process.stdout}\n")
             if process.stderr:
                 main_log.write(f"--- STDERR ---\n{process.stderr}\n")
-        # Write to specific log
         with open(specific_log_path, "w", encoding="utf-8") as specific_log:
             specific_log.write(f"CMD: {' '.join(str(c) for c in cmd)} (CWD: {cwd})\n")
             specific_log.write("--- STDOUT ---\n")
@@ -88,7 +82,6 @@ def check_test_pass(output_log_path: Path, vvp_exit_code: int) -> bool:
     vvp_failed_exit_code = (vvp_exit_code != 0)
     if vvp_failed_exit_code or has_assertion_failed or has_simulation_timeout: return False
     
-    # Check for your specific success message from the template
     success_pattern_regex = re.compile(r"^\s*.* test finished\.===========================\s*$", re.MULTILINE)
     has_test_finished_msg = bool(success_pattern_regex.search(content))
     if not has_test_finished_msg: return False
@@ -96,9 +89,8 @@ def check_test_pass(output_log_path: Path, vvp_exit_code: int) -> bool:
 
 # --- Main Script ---
 def main():
-    # sv2v is now mandatory, so --sv2v flag is removed from argparse
     parser = argparse.ArgumentParser(description="Run Verilog testbenches (sv2v is always used).")
-    args = parser.parse_args()
+    args = parser.parse_args() # args is not used in this version, but keep for future
 
     SIM_TEMP_LOG_DIR.mkdir(parents=True, exist_ok=True)
     if MAIN_LOG_FILE.exists(): MAIN_LOG_FILE.unlink()
@@ -111,7 +103,6 @@ def main():
     summary = {"total": 0, "passed": 0, "failed": 0, "comp_failed": 0, "exec_error": 0, "sv2v_failed": 0}
     overall_report_content = []
 
-    # --- Load DUT files once ---
     all_dut_src_files_abs: List[Path] = []
     dut_file_list_f_abs_path = PROJECT_ROOT / DUT_FILE_LIST_PATH_REL
     if dut_file_list_f_abs_path.is_file():
@@ -133,11 +124,12 @@ def main():
     test_utils_pkg_abs = (PROJECT_ROOT / TEST_UTILITIES_PKG_PATH_REL).resolve()
     if not test_utils_pkg_abs.is_file():
         print(f"WARNING: {test_utils_pkg_abs.name} not found, testbenches may fail.")
-        # This could be a fatal error depending on your setup
-        # sys.exit(f"FATAL: {test_utils_pkg_abs.name} not found.")
 
+    sorted_category_names = sorted(TEST_CATEGORIES.keys())
 
-    for category_name, test_dir_abs_path in TEST_CATEGORIES.items():
+    for category_name in sorted_category_names:
+        test_dir_abs_path = TEST_CATEGORIES[category_name]
+
         if not test_dir_abs_path.is_dir():
             print(f"Warning: Test directory not found for {category_name}: {test_dir_abs_path}")
             continue
@@ -145,13 +137,18 @@ def main():
         cat_report = [f"\n--------------------\nRUNNING TESTS IN: {category_name} ({test_dir_abs_path.relative_to(PROJECT_ROOT)})\n--------------------"]
         print(f"\nProcessing category: {category_name}")
 
-        testbench_files = list(test_dir_abs_path.glob("*_tb.sv")) + list(test_dir_abs_path.glob("*_tb.v"))
-        if not testbench_files:
+        testbench_files_sv = list(test_dir_abs_path.glob("*_tb.sv"))
+        testbench_files_v = list(test_dir_abs_path.glob("*_tb.v"))
+        all_testbench_files_in_category = testbench_files_sv + testbench_files_v
+        
+        sorted_testbench_files = sorted(all_testbench_files_in_category, key=lambda p: p.name)
+
+        if not sorted_testbench_files:
             msg = f"No testbenches (*_tb.sv or *_tb.v) found in {test_dir_abs_path}"
             print(msg); cat_report.append(msg)
             overall_report_content.extend(cat_report); continue
 
-        for tb_path_abs in testbench_files:
+        for tb_path_abs in sorted_testbench_files:
             test_name_full = tb_path_abs.name
             test_name_short = tb_path_abs.stem.replace("_tb", "")
             
@@ -159,55 +156,48 @@ def main():
             specific_sv2v_log = SIM_TEMP_LOG_DIR / f"{test_name_short}_sv2v.log"
             specific_run_log = SIM_TEMP_LOG_DIR / f"{test_name_short}_run.log"
             sim_vvp_file = BUILD_DIR / f"{test_name_short}_sim.vvp"
-            combined_sv_file = BUILD_DIR / f"{test_name_short}_combined_from_sv.v"
+            combined_sv_file = BUILD_DIR / f"{test_name_short}_combined_from_sv.v" # sv2v output
 
             summary["total"] += 1
             msg_prefix = f"Running {test_name_full} ... "
             print(msg_prefix, end="", flush=True)
 
-            # --- Build list of all files for this specific test run ---
-            current_test_all_sources = []
+            current_test_all_sources: List[Path] = []
             current_test_all_sources.extend(all_dut_src_files_abs)
             if test_utils_pkg_abs.is_file(): current_test_all_sources.append(test_utils_pkg_abs)
             current_test_all_sources.append(tb_path_abs)
             
-            # Deduplicate while preserving order (important for compilation)
-            seen_paths = set()
-            unique_current_test_all_sources = []
+            seen_paths: Set[Path] = set()
+            unique_current_test_all_sources: List[Path] = []
             for p in current_test_all_sources:
                 if p not in seen_paths:
                     unique_current_test_all_sources.append(p)
                     seen_paths.add(p)
             current_test_all_sources = unique_current_test_all_sources
 
-
-            # --- sv2v conversion (ALWAYS RUN) ---
             sv_files_to_convert = [f for f in current_test_all_sources if f.suffix == ".sv"]
             original_v_files = [f for f in current_test_all_sources if f.suffix == ".v"]
             
-            iverilog_input_files = []
+            iverilog_input_files: List[Path] = []
 
             if sv_files_to_convert:
                 sv2v_cmd_list = [SV2V_CMD] + SV2V_DEFINE_FLAGS
                 for p_rel in SV2V_INCLUDE_PATHS_REL: sv2v_cmd_list.extend(["-I", str(PROJECT_ROOT / p_rel)])
                 sv2v_cmd_list.extend([str(p) for p in sv_files_to_convert])
                 
-                # print(f"\nDEBUG sv2v CMD: {' '.join(str(c) for c in sv2v_cmd_list + ['-w', str(combined_sv_file)])}\n")
                 ret_code, _, _ = run_command(sv2v_cmd_list + ["-w", str(combined_sv_file)], PROJECT_ROOT, MAIN_LOG_FILE, specific_sv2v_log)
 
                 if ret_code != 0:
                     status = "SV2V FAILED"; print(status); cat_report.append(f"{msg_prefix}{status} (see {specific_sv2v_log.relative_to(PROJECT_ROOT)})")
                     summary["failed"] += 1; summary["sv2v_failed"] += 1
-                    if combined_sv_file.exists(): combined_sv_file.unlink()
+                    if combined_sv_file.exists(): combined_sv_file.unlink(missing_ok=True)
                     continue
-                iverilog_input_files.append(combined_sv_file) # Add the big combined file
-                iverilog_input_files.extend(original_v_files) # Add original .v files
+                iverilog_input_files.append(combined_sv_file)
+                iverilog_input_files.extend(original_v_files)
             else:
-                iverilog_input_files.extend(current_test_all_sources) # Only .v files were present
+                iverilog_input_files.extend(current_test_all_sources)
 
-
-            # --- Order files for iverilog: timescale.v first ---
-            ordered_iverilog_input_files = []
+            ordered_iverilog_input_files: List[Path] = []
             timescale_file_abs = (PROJECT_ROOT / TIMESCALEP_FILE_PATH_REL).resolve()
             
             if timescale_file_abs.is_file():
@@ -216,37 +206,34 @@ def main():
                 print(f"WARNING: Timescale file {timescale_file_abs.name} not found for {test_name_full}!")
 
             for f_path in iverilog_input_files:
-                if f_path != timescale_file_abs: # Avoid duplicating timescale.v
+                if f_path != timescale_file_abs:
                     ordered_iverilog_input_files.append(f_path)
             
-            # --- Compile with iverilog ---
             iverilog_cmd_list = [IVERILOG_CMD]
-            iverilog_cmd_list.extend(IVERILOG_COMPILER_FLAGS) # Has -DSIM, -g2012
+            iverilog_cmd_list.extend(IVERILOG_COMPILER_FLAGS)
             iverilog_cmd_list.extend(["-o", str(sim_vvp_file)])
             for p_rel in IVERILOG_INCLUDE_PATHS_REL: iverilog_cmd_list.extend(["-I", str(PROJECT_ROOT / p_rel)])
             iverilog_cmd_list.extend([str(p) for p in ordered_iverilog_input_files])
 
-            # print(f"\nDEBUG IVERILOG CMD: {' '.join(str(c) for c in iverilog_cmd_list)}\n")
             ret_code, _, _ = run_command(iverilog_cmd_list, PROJECT_ROOT, MAIN_LOG_FILE, specific_compile_log)
 
             if ret_code != 0:
                 status = "IVERILOG COMPILATION FAILED"; print(status); cat_report.append(f"{msg_prefix}{status} (see {specific_compile_log.relative_to(PROJECT_ROOT)})")
                 summary["failed"] += 1; summary["comp_failed"] += 1
-                if sim_vvp_file.exists(): sim_vvp_file.unlink()
+                if sim_vvp_file.exists(): sim_vvp_file.unlink(missing_ok=True)
                 continue
 
-            # --- Run with vvp ---
-            vvp_cmd_list = [VVP_CMD] + VVP_DEFAULT_FLAGS + [sim_vvp_file.name]
+            vvp_cmd_list = [VVP_CMD] + VVP_DEFAULT_FLAGS + [sim_vvp_file.name] # Use .name as vvp runs from BUILD_DIR
             ret_code, _, _ = run_command(vvp_cmd_list, BUILD_DIR, MAIN_LOG_FILE, specific_run_log)
 
             if check_test_pass(specific_run_log, ret_code):
                 status = "PASS"; print(status); cat_report.append(f"{msg_prefix}{status}"); summary["passed"] += 1
             else:
                 status = "FAIL (SIMULATION)"; print(status); cat_report.append(f"{msg_prefix}{status} (see {specific_run_log.relative_to(PROJECT_ROOT)})"); summary["failed"] += 1
-                if ret_code < 0: summary["exec_error"] += 1
+                if ret_code < 0: summary["exec_error"] += 1 # For FileNotFoundError etc. from run_command
             
-            if sim_vvp_file.exists(): sim_vvp_file.unlink()
-            if combined_sv_file.exists(): combined_sv_file.unlink() # Clean up sv2v output
+            if sim_vvp_file.exists(): sim_vvp_file.unlink(missing_ok=True)
+            if combined_sv_file.exists(): combined_sv_file.unlink(missing_ok=True)
         
         overall_report_content.extend(cat_report)
     
