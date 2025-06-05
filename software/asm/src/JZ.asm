@@ -1,12 +1,13 @@
-; op_JZ_pos.asm
-; Tests jumping to new address upon successful jump condition
+; JZ.asm
+; TODO: Add short description
+
 INCLUDE "includes/mmio_defs.inc"
 
 ; ======================================================================
 ; == VECTORS TABLE
 ; ======================================================================
     ORG $FFFC
-    DW START           ; Reset Vector points to START label
+    DW START            ; Reset Vector points to START label
 
 
 ; ======================================================================
@@ -16,12 +17,16 @@ INCLUDE "includes/mmio_defs.inc"
 
 
 START:
-    LDI A, #$FF         ; Ensure Z flag != 0
-    LDI A, #$00         ; LDI sets Z flag
-    JZ JUMP_TO_ADDRESS
-    LDI A, #$11         ; Should NOT reach this line
+    LDI A, #$0F         ; Z=0
+    JZ  HALT            ; Should NOT jump (negative case)
 
-JUMP_TO_ADDRESS:
-    LDI A, #$22         
+    LDI A, #$00         ; Z=1
+    JZ SUCCESS          ; Should jump (positive case)
+    
+    LDI A, #$66         ; A should NEVER equal 66
 
-    HLT                 ; A should equal x22 
+SUCCESS:
+    LDI A, #$88         ; A should equal 88
+
+HALT:
+    HLT

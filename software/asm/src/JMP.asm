@@ -1,13 +1,13 @@
-; op_JZ_neg.asm
-; Tests continuing sequential execution 
-; upon failed jump condition
+; JMP.asm
+; TODO: Add short description
+
 INCLUDE "includes/mmio_defs.inc"
 
 ; ======================================================================
 ; == VECTORS TABLE
 ; ======================================================================
     ORG $FFFC
-    DW START           ; Reset Vector points to START label
+    DW START            ; Reset Vector points to START label
 
 
 ; ======================================================================
@@ -17,14 +17,10 @@ INCLUDE "includes/mmio_defs.inc"
 
 
 START:
-    LDI A, #$00         ; Ensure Z flag == 0
-    LDI A, #$0F         ; LDI sets Z flag
-    JZ JUMP_TO_ADDRESS
-    LDI A, #$11         ; Should reach this line
+    LDI A, #$55
     JMP HALT
 
-JUMP_TO_ADDRESS:
-    LDI A, #$22         ; Should SKIP this line
+    LDI A, #$FF
 
 HALT:
-    HLT                 ; A should == h11
+    HLT
