@@ -1,12 +1,13 @@
-; op_JNZ_neg.asm
-; Tests jumping to new address upon successful jump condition
+; JNZ.asm
+; TODO: Add short description
+
 INCLUDE "includes/mmio_defs.inc"
 
 ; ======================================================================
 ; == VECTORS TABLE
 ; ======================================================================
     ORG $FFFC
-    DW START           ; Reset Vector points to START label
+    DW START            ; Reset Vector points to START label
 
 
 ; ======================================================================
@@ -16,14 +17,15 @@ INCLUDE "includes/mmio_defs.inc"
 
 
 START:
-    LDI_A, #$00     ; Load Reg A with zero value
-    JNZ JUMP_SUCCESS
-    
-    LDI_A, #$11      ; Should reach this line
-    JMP HALT
+    LDI A, #$0F         ; Z=0
+    JNZ SUCCESS         ; Should jump (positive case)
+    JMP HALT            ; error: A = 0F
 
-JUMP_SUCCESS:
-    LDI_A, #$22      ; Should skip this value
+SUCCESS:
+    LDI A, #$00         ; A=0, Z=1
+    JNZ HALT            ; Should NOT jump (negative case)
+
+    LDI A, #$88         ; A=88
 
 HALT:
-    HLT             ; A == x11
+    HLT
