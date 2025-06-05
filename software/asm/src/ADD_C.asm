@@ -7,7 +7,7 @@ INCLUDE "includes/mmio_defs.inc"
 ; == VECTORS TABLE
 ; ======================================================================
     ORG $FFFC
-    DW START           ; Reset Vector points to START label
+    DW START            ; Reset Vector points to START label
 
 
 ; ======================================================================
@@ -19,5 +19,5 @@ INCLUDE "includes/mmio_defs.inc"
 START:
     LDI A, #$0A
     LDI C, #$02
-    ADD C
+    ADD C               ; A becomes $0A + $02 = $0C (Z=0, N=0, C=0)
     HLT

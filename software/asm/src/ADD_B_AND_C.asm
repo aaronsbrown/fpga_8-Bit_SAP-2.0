@@ -7,7 +7,7 @@ INCLUDE "includes/mmio_defs.inc"
 ; == VECTORS TABLE
 ; ======================================================================
     ORG $FFFC
-    DW START           ; Reset Vector points to START label
+    DW START            ; Reset Vector points to START label
 
 
 ; ======================================================================
@@ -26,6 +26,6 @@ START:
     LDI A, #$FF
     LDI B, #$01
     LDI C, #$05
-    ADD B
-    ADD C
+    ADD B               ; A becomes $FF + $01 = $00 (Z=1, N=0, C=1)
+    ADD C               ; A becomes $00 + $05 = $05 (Z=0, N=0, C=0 - assuming ADD doesn't use prior carry)
     HLT

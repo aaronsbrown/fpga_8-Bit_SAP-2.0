@@ -20,7 +20,7 @@ START:
     LDI A, #$E1             ;     1110 0001
     LDI B, #$FE             ;     1111 1110
     ADD B                   ; (1) 1101 1111
-    ANA B                   ;     1101 1110
+    ANA B                   ;     1101 1110 Flags: Z=0, N=1, C=0.
     LDI B, #$00             ;     0000 0000
-    ANA B                   ;     0000 0000
+    ANA B                   ;     0000 0000 Flags: Z=1, N=0, C=0.
     HLT
