@@ -10,9 +10,12 @@ package arch_defs_pkg;
     parameter int MAX_OPCODES = (1 << OPCODE_WIDTH);
     parameter int MAX_MICROSTEPS = 10;
 
+    parameter bit STATIC_RESET = 1'b1;
+
     parameter SP_VECTOR = 16'h01FF;                 // hardcoded sp initialization vector
     parameter RESET_VECTOR_ADDR_LOW = 16'hFFFC;     // hardcoded reset vector
     parameter RESET_VECTOR_ADDR_HIGH = 16'hFFFD;    // hardcoded reset vector
+    parameter STATIC_START_ADDR = 16'hF000;
 
     parameter STATUS_CPU_ZERO = 0;
     parameter STATUS_CPU_NEG = 1;
@@ -95,9 +98,10 @@ package arch_defs_pkg;
 
     typedef enum logic [3:0] {
         S_RESET,
-        S_INIT_RESET_VEC_1,
-        S_INIT_RESET_VEC_2,
-        S_INIT_RESET_VEC_3,
+        S_STATIC_RESET_VEC,
+        S_DYNAMIC_RESET_VEC_1,
+        S_DYNAMIC_RESET_VEC_2,
+        S_DYNAMIC_RESET_VEC_3,
         S_INIT_SP,
         S_LATCH_ADDR, 
         S_READ_BYTE,
@@ -161,6 +165,7 @@ package arch_defs_pkg;
         logic load_mar_sp;
         logic set_carry_flag;
         logic clear_carry_flag;
+        logic load_static_start_addr;
     } control_word_t;
 
     typedef enum logic [3:0] {

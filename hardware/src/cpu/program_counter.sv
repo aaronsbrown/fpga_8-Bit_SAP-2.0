@@ -8,11 +8,14 @@ module program_counter (
     input logic                         output_low_byte,
     input logic                         load_high_byte,
     input logic                         load_low_byte,
+    input logic                         load_static_start_addr,
     input logic     [DATA_WIDTH-1:0]    counter_in,
     output logic    [ADDR_WIDTH-1:0]    counter_out,
-    output logic    [DATA_WIDTH-1:0]    counter_byte_out
+    output logic    [DATA_WIDTH-1:0]    counter_byte_out,
 );
     
+    localparam PC_STATIC_START_ADDR = STATIC_START_ADDR;
+
     always_ff @(posedge clk) begin
         if (reset) begin // No need to wait for clock edge
             counter_out <= {ADDR_WIDTH{1'b0}};
@@ -26,7 +29,10 @@ module program_counter (
             counter_byte_out <= counter_out[ADDR_WIDTH-1:DATA_WIDTH];
         end else if (output_low_byte) begin
             counter_byte_out <= counter_out[DATA_WIDTH-1:0];
-        end    
+        end else if (load_static_start_addr) begin
+            counter_out <= PC_STATIC_START_ADDR;
+        end
+
     end
 
 

@@ -123,6 +123,7 @@ module cpu (
     assign oe_pc_high_byte = control_word.oe_pc_high_byte;
     assign load_pc_low_byte = control_word.load_pc_low_byte;
     assign load_pc_high_byte = control_word.load_pc_high_byte;
+    assign load_static_start_addr = control_word.load_static_start_addr;
     assign load_mar_pc = control_word.load_mar_pc;
     assign load_mar_addr_high = control_word.load_mar_addr_high;
     assign load_mar_addr_low = control_word.load_mar_addr_low;
@@ -153,13 +154,13 @@ module cpu (
     assign oe_status = control_word.oe_status;
     assign status_src_ram = control_word.status_src_ram;
     assign set_carry_flag = control_word.set_carry_flag;
-    assign clear_carry_flag = control_word.clear_carry_flag; 
+    assign clear_carry_flag = control_word.clear_carry_flag;
     
     
     // =========== BUS INTERFACE and 'internal_bus staging' registers ===============
     // ==============================================================================
     logic [DATA_WIDTH-1:0] internal_bus;
-    logic [DATA_WIDTH-1:0] a_out, b_out, c_out, temp_1_out, temp_2_out, alu_out, counter_byte_out, status_out;
+    logic [DATA_WIDTH-1:0] a_out, b_out, c_out, temp_1_out, temp_2_out, alu_out, counter_byte_out;
     logic [ADDR_WIDTH-1:0] counter_out, stack_pointer_out, mar_out;
     
     // Tri-state bus logic modeled using a priority multiplexer
@@ -179,6 +180,7 @@ module cpu (
 
     // ================ REGISTER DECLARATIONS ===========
     // ==================================================
+    logic load_static_start_addr;
     program_counter u_program_counter (
         .clk(clk),
         .reset(reset),
@@ -187,9 +189,10 @@ module cpu (
         .output_low_byte(oe_pc_low_byte),
         .load_high_byte(load_pc_high_byte),
         .load_low_byte(load_pc_low_byte),
+        .load_static_start_addr(load_static_start_addr),
         .counter_in(internal_bus),
         .counter_out(counter_out),
-        .counter_byte_out(counter_byte_out)
+        .counter_byte_out(counter_byte_out),
     );
 
     stack_pointer u_stack_pointer (

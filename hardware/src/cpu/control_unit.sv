@@ -94,30 +94,40 @@ module control_unit (
         case (current_state)
             
             S_RESET: begin
-                next_state = S_INIT_RESET_VEC_1; 
-                next_reset_vec_byte_count = 1'b0;
+                if(STATIC_RESET) begin
+                    next_state = S_STATIC_RESET_VEC;
+                end else begin
+                    next_state = S_DYNAMIC_RESET_VEC_1; 
+                    next_reset_vec_byte_count = 1'b0;
+                end
             end
 
-            S_INIT_RESET_VEC_1: begin
+            S_STATIC_RESET_VEC: begin
+                
+                control_word.load_static_start_addr = 1'b1;
+                next_state = S_INIT_SP;               
+            end
+
+            S_DYNAMIC_RESET_VEC_1: begin
                 if (current_reset_vec_byte_count == 1'b0)
                     control_word.load_mar_reset_vec_addr_low = 1'b1;
                 else
                     control_word.load_mar_reset_vec_addr_high = 1'b1;
                 
-                next_state = S_INIT_RESET_VEC_2;                
+                next_state = S_DYNAMIC_RESET_VEC_2; 
             end
 
-            S_INIT_RESET_VEC_2: begin
+            S_DYNAMIC_RESET_VEC_2: begin
                 control_word.oe_ram = 1'b1;
-                next_state = S_INIT_RESET_VEC_3;                
+                next_state = S_DYNAMIC_RESET_VEC_3;                
             end
             
-            S_INIT_RESET_VEC_3: begin
+            S_DYNAMIC_RESET_VEC_3: begin
                 control_word.oe_ram = 1'b1;
                 if( current_reset_vec_byte_count == 1'b0) begin
                     control_word.load_pc_low_byte = 1'b1;
                     next_reset_vec_byte_count = 1'b1;                
-                    next_state = S_INIT_RESET_VEC_1;
+                    next_state = S_DYNAMIC_RESET_VEC_1;
                 end else begin
                     control_word.load_pc_high_byte = 1'b1;
                     next_state = S_INIT_SP;                
