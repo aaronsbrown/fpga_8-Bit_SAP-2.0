@@ -276,7 +276,7 @@ module cpu (
     // across different program complexities. The root cause appears to be
     // an optimization that misinterprets the usage scope of the flags when
     // conditional jumps aren't the final instructions using them.
-    // (* keep *) logic [DATA_WIDTH-1:0] status_out;
+    (* keep *) logic [DATA_WIDTH-1:0] status_out;
     
     // Flags register to hold the status flags
     // Z: Zero flag, C: Carry flag, N: Negative flag

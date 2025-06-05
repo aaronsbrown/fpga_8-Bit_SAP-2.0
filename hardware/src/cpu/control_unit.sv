@@ -4,7 +4,7 @@ module control_unit (
     input   logic                               clk,
     input   logic                               reset,
     input   opcode_t                            opcode,
-    input   logic           [2:0]               flags,
+    input   logic           [DATA_WIDTH-1:0]    flags,
     output  control_word_t                      control_word,
     output  logic                               last_microstep
 

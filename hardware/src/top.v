@@ -19,10 +19,17 @@ module top (
         .locked(pll_locked)
     );
 
+    wire conditioned_rst_n_btn;
+    button_conditioner u_btn_cond (
+        .clk(clk),
+        .raw_button(rst_n),
+        .conditioned_button(conditioned_rst_n_btn)
+    );
+
     // Generate a system reset that remains active until both rst_n is high and the PLL is locked
     // sys_reset is active-high: asserted if external reset is active (rst_n is low) or PLL is not locked
     wire sys_reset;
-    assign sys_reset = ~rst_n || ~pll_locked;
+    assign sys_reset = ~conditioned_rst_n_btn || ~pll_locked;
 
     wire [7:0] output_value;
     assign io_led[23:16] = output_value;
