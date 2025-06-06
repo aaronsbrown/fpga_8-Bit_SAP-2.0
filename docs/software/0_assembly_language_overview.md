@@ -48,29 +48,61 @@ Each part is optional, but certain combinations are required (e.g., a mnemonic o
 
 ## 2. Numeric Literals and Expressions
 
-Numeric values and expressions can be used as operands or with directives.
+  Numeric values and expressions can be used as operands or with directives, with enhanced
+   parsing capabilities for more complex expressions.
 
-* **Numeric Literals:**
-  * **Decimal:** `20`, `100`
-  * **Hexadecimal:** Prefixed with `$` (e.g., `$F0`, `$12AB`)
-  * **Binary:** Prefixed with `%` (e.g., `%10101010`, `%0011`)
+* Numeric Literals:
+  * Decimal: 20, 100
+  * Hexadecimal: Prefixed with $ (e.g., $F0, $12AB)
+  * Binary: Prefixed with % (e.g., %10101010, %0011)
+* Expressions and Operators:
+  The assembler now supports more complex expressions with the following operators (in
+  order of precedence, from highest to lowest):
 
-* **Immediate Values:**
-  * For instructions taking immediate data (e.g., `LDI`, `ANI`), the value/expression must be prefixed with `#`.
-  * Example: `LDI A, #$C0`, `ANI #CONSTANT_VALUE`, `LDI B, #LOW_BYTE(MY_ADDRESS)`
+    a. Parentheses ( ):
+        - Used for grouping and controlling evaluation order
+  * Example: #(UART_ENABLE | (UART_8_BITS & UART_PARITY_EVEN))
+    b. Unary Operators:
+    * Bitwise NOT ~: Inverts all bits of an expression
+  * Example: #~$0F (bitwise complement of 0x0F)
+    c. Shift Operators:
+    * Left shift <<: Shifts bits to the left
+  * Right shift >>: Shifts bits to the right
+  * Example: #(MY_VALUE << 2), #(BITS >> 1)
+    d. Bitwise Logical Operators:
+    * AND &: Bitwise AND operation
+  * XOR ^: Bitwise exclusive OR operation
+  * OR |: Bitwise OR operation
+  * Example: #(FLAG_A & FLAG_B), #(MASK_1 | MASK_2)
+    e. Arithmetic Operators:
+    * Addition +: Adds two values
+  * Subtraction -: Subtracts one value from another
+  * Example: #(BASE_ADDR + OFFSET), #(COUNTER - 1)
+* Immediate Values:
+  * For instructions taking immediate data (e.g., LDI, ANI), the value/expression must
+  be prefixed with #.
+  * Supports complex expressions with the operators mentioned above
+  * Example:
+    LDI A, #(UART_ENABLE | UART_8_BITS)  ; Bitwise OR of constants
+  ANI #(~MASK)                         ; Bitwise NOT of a mask
+  LDI B, #(CONFIG_REG << 2)            ; Left shift
+* Parentheses and Precedence:
+  * Parentheses can be used to control the order of evaluation
+  * Nested parentheses are supported
+  * Example:
+    ; Complex expression with controlled precedence
+  LDI A, #((STATUS_REG & ENABLE_BIT) | (STATUS_REG & READY_BIT))
+* Existing Label Address Manipulation Techniques Remain:
+  * LOW_BYTE(label_or_16bit_value)
+  * HIGH_BYTE(label_or_16bit_value)
+  * Label arithmetic: label_name + N, label_name - N
 
-* **Label Address Manipulation:**
-  * **Byte Extraction:**
-    * `LOW_BYTE(label_or_16bit_value)`: Extracts the lower 8 bits of the resolved 16-bit address or value of `label_or_16bit_value`.
-    * `HIGH_BYTE(label_or_16bit_value)`: Extracts the upper 8 bits.
-    * Example: `LDI A, #LOW_BYTE(DATA_AREA)`, `LDI B, #HIGH_BYTE(ROUTINE_START + 2)`
-  * **Address Arithmetic (Offsets):**
-    * `label_name + N`: Adds constant integer `N` to the resolved address of `label_name`.
-    * `label_name - N`: Subtracts constant integer `N` from the resolved address of `label_name`.
-    * `N` can be a numeric literal or an `EQU` constant.
-    * Parentheses are not currently supported for grouping within these arithmetic expressions (e.g., `(label + N)` is not distinct from `label + N`). Expressions are generally evaluated with basic left-to-right precedence for operators of the same level, and function calls (`LOW_BYTE`/`HIGH_BYTE`) having higher precedence.
-    * Example: `LDA DATA_TABLE + 2`, `STA SMC_TARGET - 1`, `JMP LOOP_START + OFFSET_CONST`
-    * These expressions can be nested, e.g., `DW LOW_BYTE(MY_TABLE + POINTER_OFFSET) + HIGH_BYTE(OTHER_TABLE)`. (Though such complexity should be used judiciously).
+  Notes and Limitations:
+
+* Expressions are evaluated left-to-right within the same precedence level
+* All expressions must resolve to an 8-bit value (0-255)
+* Complex expressions are fully evaluated during the assembler's second pass
+* Floating-point and division operations are not supported
 
 ## 3. Symbols and Labels
 
@@ -137,7 +169,7 @@ Numeric values and expressions can be used as operands or with directives.
     * Double-quoted string literals (e.g., `"HELLO"`). Each character in the string is converted to its 8-bit ASCII equivalent and emitted sequentially.
       * **String Escape Sequences:** The following escape sequences are supported within string literals:
         * `\n` - Newline (ASCII 10)
-        * `\t` - Tab (ASCII 9) 
+        * `\t` - Tab (ASCII 9)
         * `\r` - Carriage return (ASCII 13)
         * `\0` - Null terminator (ASCII 0)
         * `\\` - Literal backslash (ASCII 92)
