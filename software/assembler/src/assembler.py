@@ -161,22 +161,22 @@ class Assembler:
         if paren_result is not None:
             return paren_result
 
-        # Try arithmetic expression parsing (+ -)
-        arith_result = self._try_parse_arithmetic_expression(expr, current_token)
-        if arith_result is not None:
-            return arith_result
-
-        # Try logical expression parsing (|, ^, &) - lowest precedence among bitwise
+        # Try logical expression parsing (|, ^, &) - lowest precedence
         logical_result = self._try_parse_logical_expression(expr, current_token)
         if logical_result is not None:
             return logical_result
 
-        # Try shift expression parsing - higher precedence than logical
+        # Try arithmetic expression parsing (+ -) - higher than logical
+        arith_result = self._try_parse_arithmetic_expression(expr, current_token)
+        if arith_result is not None:
+            return arith_result
+
+        # Try shift expression parsing - higher precedence than arithmetic  
         shift_result = self._try_parse_shift_expression(expr, current_token)
         if shift_result is not None:
             return shift_result
 
-        # Try unary expression parsing (NOT operator) - highest precedence
+        # Try unary expression parsing (NOT operator) - high precedence
         unary_result = self._try_parse_unary_expression(expr, current_token)
         if unary_result is not None:
             return unary_result
@@ -262,20 +262,7 @@ class Assembler:
         Returns:
             Tuple of (operator_char, position) or (None, -1) if no operator found
         """
-        r_plus_idx = expr.rfind('+')
-        r_minus_idx = expr.rfind('-')
-
-        # Pick the rightmost of + or -
-        if r_plus_idx != -1 and r_plus_idx > r_minus_idx:
-            # Ensure it's not a unary + (requires LHS operand)
-            if r_plus_idx > 0:
-                return '+', r_plus_idx
-        elif r_minus_idx != -1:
-            # Ensure it's not a unary - (requires LHS operand)  
-            if r_minus_idx > 0:
-                return '-', r_minus_idx
-
-        return None, -1
+        return self._find_rightmost_operator_outside_parens(expr, ['+', '-'])
 
     def _try_parse_logical_expression(self, expr: str, current_token: 'Token') -> Optional[int]:
         """
@@ -318,6 +305,44 @@ class Assembler:
             raise AssemblerError(f"Internal error: unknown logical operator '{op_char}'.",
                                  source_file=current_token.source_file, line_no=current_token.line_no)
 
+    def _find_rightmost_operator_outside_parens(self, expr: str, operators: List[str]) -> Tuple[Optional[str], int]:
+        """
+        Find the rightmost occurrence of any operator that is not inside parentheses.
+        
+        Args:
+            expr: Expression string to search
+            operators: List of operators to search for (in order of precedence, lowest first)
+            
+        Returns:
+            Tuple of (operator_string, position) or (None, -1) if no operator found
+        """
+        for op in operators:
+            # Find all occurrences of this operator
+            pos = len(expr)
+            while True:
+                pos = expr.rfind(op, 0, pos)
+                if pos == -1:
+                    break
+                if pos == 0:
+                    break  # Can't have LHS operand at position 0
+                    
+                # Check if this operator is inside parentheses
+                paren_depth = 0
+                for i in range(pos):
+                    if expr[i] == '(':
+                        paren_depth += 1
+                    elif expr[i] == ')':
+                        paren_depth -= 1
+                
+                if paren_depth == 0:  # Not inside parentheses
+                    return op, pos
+                
+                pos -= 1
+                if pos < 0:
+                    break
+                
+        return None, -1
+
     def _find_rightmost_logical_operator(self, expr: str) -> Tuple[Optional[str], int]:
         """
         Find the rightmost logical operator (|, ^, &) with proper precedence.
@@ -329,25 +354,7 @@ class Assembler:
         Returns:
             Tuple of (operator_char, position) or (None, -1) if no operator found
         """
-        # Search for operators in precedence order (lowest to highest precedence)
-        # We want rightmost for left-to-right evaluation of same precedence
-        
-        # Check for OR (|) - lowest precedence
-        r_or_idx = expr.rfind('|')
-        if r_or_idx > 0:  # Must have LHS operand
-            return '|', r_or_idx
-            
-        # Check for XOR (^) - medium precedence  
-        r_xor_idx = expr.rfind('^')
-        if r_xor_idx > 0:  # Must have LHS operand
-            return '^', r_xor_idx
-            
-        # Check for AND (&) - highest precedence
-        r_and_idx = expr.rfind('&')
-        if r_and_idx > 0:  # Must have LHS operand
-            return '&', r_and_idx
-
-        return None, -1
+        return self._find_rightmost_operator_outside_parens(expr, ['|', '^', '&'])
 
     def _try_parse_shift_expression(self, expr: str, current_token: 'Token') -> Optional[int]:
         """
@@ -401,20 +408,7 @@ class Assembler:
         Returns:
             Tuple of (operator_string, position) or (None, -1) if no operator found
         """
-        # Check for left shift (<<)
-        r_lshift_idx = expr.rfind('<<')
-        # Check for right shift (>>)  
-        r_rshift_idx = expr.rfind('>>')
-        
-        # Pick the rightmost shift operator
-        if r_lshift_idx != -1 and r_lshift_idx > r_rshift_idx:
-            if r_lshift_idx > 0:  # Must have LHS operand
-                return '<<', r_lshift_idx
-        elif r_rshift_idx != -1:
-            if r_rshift_idx > 0:  # Must have LHS operand
-                return '>>', r_rshift_idx
-
-        return None, -1
+        return self._find_rightmost_operator_outside_parens(expr, ['<<', '>>'])
 
     def _try_parse_unary_expression(self, expr: str, current_token: 'Token') -> Optional[int]:
         """
@@ -465,28 +459,28 @@ class Assembler:
         if not (expr.startswith('(') and expr.endswith(')')):
             return None
             
+        # Check if the outer parentheses actually wrap the entire expression
+        # by ensuring they are balanced when we ignore the outer pair
+        paren_depth = 0
+        for i, char in enumerate(expr[1:-1]):  # Skip first and last char
+            if char == '(':
+                paren_depth += 1
+            elif char == ')':
+                paren_depth -= 1
+                if paren_depth < 0:
+                    # Found a closing paren that doesn't match an opening one
+                    # This means the outer parens don't wrap the entire expression
+                    return None
+        
+        if paren_depth != 0:
+            # Unbalanced parentheses - outer parens don't wrap entire expression
+            return None
+            
         # Extract content inside parentheses
         inner_expr = expr[1:-1].strip()
         
         if not inner_expr:
             raise AssemblerError(f"Empty parentheses in expression: '{expr}'.",
-                                 source_file=current_token.source_file, line_no=current_token.line_no)
-        
-        # Check for balanced parentheses by counting nesting level
-        paren_count = 0
-        for i, char in enumerate(inner_expr):
-            if char == '(':
-                paren_count += 1
-            elif char == ')':
-                paren_count -= 1
-                if paren_count < 0:
-                    # More closing than opening parentheses
-                    raise AssemblerError(f"Mismatched parentheses in expression: '{expr}'.",
-                                         source_file=current_token.source_file, line_no=current_token.line_no)
-        
-        if paren_count != 0:
-            # Unclosed parentheses
-            raise AssemblerError(f"Mismatched parentheses in expression: '{expr}'.",
                                  source_file=current_token.source_file, line_no=current_token.line_no)
         
         # Recursively evaluate the inner expression

@@ -258,7 +258,7 @@ class TestLogicalExpressions:
             "UART_ENABLE | UART_8_BITS | UART_PARITY_EVEN | UART_STOP_2_BITS | UART_BAUD_9600", 
             self.mock_token
         )
-        assert result == 0x9D  # 0x80 | 0x06 | 0x08 | 0x10 | 0x03
+        assert result == 0x9F  # 0x80 | 0x06 | 0x08 | 0x10 | 0x03
 
     def test_complex_bit_field_extraction(self):
         """Test bit field extraction and manipulation"""
@@ -276,7 +276,7 @@ class TestLogicalExpressions:
         
         # Check if both enable and ready are set
         result = self.assembler._resolve_expression_to_int("(STATUS_REG & ENABLE_BIT) & (STATUS_REG & READY_BIT)", self.mock_token)
-        assert result == 0x80 & 0x01  # Both conditions result in non-zero, AND gives final result
+        assert result == 0x00  # (0xA5 & 0x80) & (0xA5 & 0x01) = 0x80 & 0x01 = 0x00
 
     # ====== Mixed Arithmetic and Logical Tests ======
     def test_arithmetic_and_logical_precedence(self):
@@ -308,11 +308,11 @@ class TestLogicalExpressions:
         self.assembler.symbols = {}
         
         # Missing right operand
-        with pytest.raises(AssemblerError, match="[Mm]alformed.*expression|[Mm]issing operand"):
+        with pytest.raises(AssemblerError, match="[Mm]alformed logical expression|[Mm]issing operand"):
             self.assembler._resolve_expression_to_int("$0F |", self.mock_token)
         
         # Missing left operand  
-        with pytest.raises(AssemblerError, match="[Mm]alformed.*expression|[Mm]issing operand"):
+        with pytest.raises(AssemblerError, match="[Bb]ad.*value.*[Nn]ot a known symbol"):
             self.assembler._resolve_expression_to_int("| $0F", self.mock_token)
 
     def test_malformed_and_expression_errors(self):
@@ -320,10 +320,10 @@ class TestLogicalExpressions:
         self.assembler.symbols = {}
         
         # Missing operands
-        with pytest.raises(AssemblerError, match="[Mm]alformed.*expression|[Mm]issing operand"):
+        with pytest.raises(AssemblerError, match="[Mm]alformed logical expression|[Mm]issing operand"):
             self.assembler._resolve_expression_to_int("$0F &", self.mock_token)
         
-        with pytest.raises(AssemblerError, match="[Mm]alformed.*expression|[Mm]issing operand"):
+        with pytest.raises(AssemblerError, match="[Bb]ad.*value.*[Nn]ot a known symbol"):
             self.assembler._resolve_expression_to_int("& $0F", self.mock_token)
 
     def test_malformed_xor_expression_errors(self):
@@ -331,18 +331,21 @@ class TestLogicalExpressions:
         self.assembler.symbols = {}
         
         # Missing operands
-        with pytest.raises(AssemblerError, match="[Mm]alformed.*expression|[Mm]issing operand"):
+        with pytest.raises(AssemblerError, match="[Mm]alformed logical expression|[Mm]issing operand"):
             self.assembler._resolve_expression_to_int("$0F ^", self.mock_token)
+        
+        with pytest.raises(AssemblerError, match="[Bb]ad.*value.*[Nn]ot a known symbol"):
+            self.assembler._resolve_expression_to_int("^ $0F", self.mock_token)
 
     def test_malformed_shift_expression_errors(self):
         """Test error handling for malformed shift expressions"""
         self.assembler.symbols = {}
         
         # Missing operands
-        with pytest.raises(AssemblerError, match="[Mm]alformed.*expression|[Mm]issing operand"):
+        with pytest.raises(AssemblerError, match="[Mm]alformed shift expression|[Mm]issing operand"):
             self.assembler._resolve_expression_to_int("$0F <<", self.mock_token)
         
-        with pytest.raises(AssemblerError, match="[Mm]alformed.*expression|[Mm]issing operand"):
+        with pytest.raises(AssemblerError, match="[Bb]ad.*value.*[Nn]ot a known symbol"):
             self.assembler._resolve_expression_to_int(">> 2", self.mock_token)
 
     def test_malformed_not_expression_errors(self):
@@ -350,18 +353,18 @@ class TestLogicalExpressions:
         self.assembler.symbols = {}
         
         # Missing operand
-        with pytest.raises(AssemblerError, match="[Mm]alformed.*expression|[Mm]issing operand"):
+        with pytest.raises(AssemblerError, match="[Mm]alformed unary expression|[Mm]issing operand"):
             self.assembler._resolve_expression_to_int("~", self.mock_token)
 
     def test_invalid_operator_errors(self):
         """Test error handling for invalid/unsupported operators"""
         self.assembler.symbols = {}
         
-        # Double operators (should be treated as unknown symbols and fail)
-        with pytest.raises(AssemblerError, match="[Nn]ot a known symbol|[Bb]ad.*value"):
+        # Double operators (should be treated as logical expressions with missing operands)
+        with pytest.raises(AssemblerError, match="[Mm]alformed logical expression|[Mm]issing operand"):
             self.assembler._resolve_expression_to_int("$0F || $30", self.mock_token)
         
-        with pytest.raises(AssemblerError, match="[Nn]ot a known symbol|[Bb]ad.*value"):
+        with pytest.raises(AssemblerError, match="[Mm]alformed logical expression|[Mm]issing operand"):
             self.assembler._resolve_expression_to_int("$0F && $30", self.mock_token)
 
     # ====== Integration with Parser Tests ======
