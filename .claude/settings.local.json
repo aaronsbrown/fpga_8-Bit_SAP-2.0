@@ -1,0 +1,15 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(python3 -m pytest test/test_string_escapes.py::TestStringEscapeSequences::test_basic_strings_still_work -v)",
+      "Bash(python3 -m pytest test/test_string_escapes.py::TestStringEscapeSequences::test_newline_escape_sequence -v)",
+      "Bash(python3 -m pytest test/test_string_escapes.py::TestStringEscapeSequences::test_hex_escape_sequences -v)",
+      "Bash(python3 -m pytest test/test_string_escapes.py::TestStringEscapeSequences::test_invalid_hex_escape_too_short -v)",
+      "Bash(python3 -m pytest test/test_string_escapes.py::TestStringEscapeSequences::test_escape_sequences_in_parser_size_calculation -v)",
+      "Bash(python3 -m pytest test/test_string_escapes.py -v)",
+      "Bash(python3 -m pytest test/ -v)",
+      "Bash(python3:*)"
+    ],
+    "deny": []
+  }
+}

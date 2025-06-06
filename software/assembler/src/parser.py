@@ -131,6 +131,60 @@ class Parser:
         # but basic numeric parsing is done here.
         return val
 
+    def _process_string_escapes(self, string_content: str, source_file: str, line_no: int) -> str:
+        """Process escape sequences in string literals and return processed string"""
+        if not string_content:
+            return string_content
+            
+        result = []
+        i = 0
+        while i < len(string_content):
+            if string_content[i] == '\\' and i + 1 < len(string_content):
+                next_char = string_content[i + 1]
+                if next_char == 'n':
+                    result.append('\n')
+                    i += 2
+                elif next_char == 't':
+                    result.append('\t')
+                    i += 2
+                elif next_char == 'r':
+                    result.append('\r')
+                    i += 2
+                elif next_char == '0':
+                    result.append('\0')
+                    i += 2
+                elif next_char == '\\':
+                    result.append('\\')
+                    i += 2
+                elif next_char == '"':
+                    result.append('"')
+                    i += 2
+                elif next_char == 'x':
+                    # Hex escape sequence \xHH
+                    if i + 3 >= len(string_content):
+                        raise ParserError(f"Incomplete hex escape sequence at end of string", source_file, line_no)
+                    hex_digits = string_content[i + 2:i + 4]
+                    if len(hex_digits) != 2:
+                        raise ParserError(f"Incomplete hex escape sequence '\\x{hex_digits}' - expected 2 hex digits", source_file, line_no)
+                    try:
+                        hex_value = int(hex_digits, 16)
+                        result.append(chr(hex_value))
+                        i += 4
+                    except ValueError:
+                        raise ParserError(f"Invalid hex escape sequence '\\x{hex_digits}' - invalid hex digits", source_file, line_no)
+                else:
+                    raise ParserError(f"Unknown escape sequence '\\{next_char}' in string literal", source_file, line_no)
+            else:
+                result.append(string_content[i])
+                i += 1
+                
+        return ''.join(result)
+
+    def _calculate_string_processed_length(self, string_content: str, source_file: str, line_no: int) -> int:
+        """Calculate the byte length of a string after escape sequence processing"""
+        processed_string = self._process_string_escapes(string_content, source_file, line_no)
+        return len(processed_string)
+
     def _parse_line_components(self, raw_line_text: str, source_file: str, line_no: int) -> Optional[Tuple[Optional[str], Optional[str], Optional[str]]]:
         text = raw_line_text.strip()
         if not text or text.startswith(';'):
@@ -242,10 +296,8 @@ class Parser:
                     if len(item_text) < 2:
                         raise ParserError(f"Malformed string literal in DB: {item_text}", source_file, line_no)
                     string_content = item_text[1:-1]
-                    # Basic ASCII conversion, no escape sequences handled here for size calculation
-                    # Escape sequences like \", \n would alter length. For now, direct length.
-                    # TODO: If escape sequences are added, this length calculation needs to be smarter.
-                    total_bytes += len(string_content)
+                    # Calculate string length after escape sequence processing
+                    total_bytes += self._calculate_string_processed_length(string_content, source_file, line_no)
                 else: # Assumed numeric or symbol
                     total_bytes += item_size # 1 byte for this item
         elif mnemonic_upper == "DW":

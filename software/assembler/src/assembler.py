@@ -215,6 +215,54 @@ class Assembler:
             raise AssemblerError(f"Unexpected error resolving {context_description} '{value_str}': {e}",
                                  source_file=current_token.source_file, line_no=current_token.line_no)
 
+    def _process_string_escapes(self, string_content: str, source_file: str, line_no: int) -> str:
+        """Process escape sequences in string literals and return processed string"""
+        if not string_content:
+            return string_content
+            
+        result = []
+        i = 0
+        while i < len(string_content):
+            if string_content[i] == '\\' and i + 1 < len(string_content):
+                next_char = string_content[i + 1]
+                if next_char == 'n':
+                    result.append('\n')
+                    i += 2
+                elif next_char == 't':
+                    result.append('\t')
+                    i += 2
+                elif next_char == 'r':
+                    result.append('\r')
+                    i += 2
+                elif next_char == '0':
+                    result.append('\0')
+                    i += 2
+                elif next_char == '\\':
+                    result.append('\\')
+                    i += 2
+                elif next_char == '"':
+                    result.append('"')
+                    i += 2
+                elif next_char == 'x':
+                    # Hex escape sequence \xHH
+                    if i + 3 >= len(string_content):
+                        raise AssemblerError(f"Incomplete hex escape sequence at end of string", source_file=source_file, line_no=line_no)
+                    hex_digits = string_content[i + 2:i + 4]
+                    if len(hex_digits) != 2:
+                        raise AssemblerError(f"Incomplete hex escape sequence '\\x{hex_digits}' - expected 2 hex digits", source_file=source_file, line_no=line_no)
+                    try:
+                        hex_value = int(hex_digits, 16)
+                        result.append(chr(hex_value))
+                        i += 4
+                    except ValueError:
+                        raise AssemblerError(f"Invalid hex escape sequence '\\x{hex_digits}' - invalid hex digits", source_file=source_file, line_no=line_no)
+                else:
+                    raise AssemblerError(f"Unknown escape sequence '\\{next_char}' in string literal", source_file=source_file, line_no=line_no)
+            else:
+                result.append(string_content[i])
+                i += 1
+                
+        return ''.join(result)
 
     def _emit_address_directive_to_region(self, region: MemoryRegion, global_addr: int) -> None:
         relative_addr = global_addr - region.start_addr
@@ -265,7 +313,9 @@ class Assembler:
                     if len(item_text) < 2:
                         raise AssemblerError(f"Malformed string literal in DB: {item_text}", source_file=current_token.source_file, line_no=current_token.line_no)
                     string_content = item_text[1:-1]
-                    for char_in_string in string_content:
+                    # Process escape sequences in string content
+                    processed_string = self._process_string_escapes(string_content, current_token.source_file, current_token.line_no)
+                    for char_in_string in processed_string:
                         byte_val = ord(char_in_string)
                         if not (0x00 <= byte_val <= 0xFF): 
                             raise AssemblerError(f"Character '{char_in_string}' in string for DB has value {byte_val} out of 8-bit range.",

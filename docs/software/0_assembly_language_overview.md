@@ -135,13 +135,23 @@ Numeric values and expressions can be used as operands or with directives.
   * Operands can be:
     * Numeric literals or expressions resolving to an 8-bit value (0-255).
     * Double-quoted string literals (e.g., `"HELLO"`). Each character in the string is converted to its 8-bit ASCII equivalent and emitted sequentially.
-      * *Note: Special escape sequences like `\n`, `\0`, `\\`, `\"` inside strings are not currently supported. They will be treated as literal characters (e.g., `\` followed by `n`).*
+      * **String Escape Sequences:** The following escape sequences are supported within string literals:
+        * `\n` - Newline (ASCII 10)
+        * `\t` - Tab (ASCII 9) 
+        * `\r` - Carriage return (ASCII 13)
+        * `\0` - Null terminator (ASCII 0)
+        * `\\` - Literal backslash (ASCII 92)
+        * `\"` - Literal double quote (ASCII 34)
+        * `\xHH` - Hexadecimal escape sequence where HH are two hex digits (e.g., `\x41` for 'A', `\x0A` for newline)
   * Example:
 
         ```assembly
-        message:    DB "Hello, world!", $0A, 0 ; String, newline, null terminator
+        message:    DB "Hello, world!\n", 0    ; String with newline and null terminator
+        prompt:     DB "Enter value: \x22", 0  ; String with embedded quote character
         byte_data:  DB $01, MY_CONST, COUNT + 2, %11000011
-        empty_str:  DB ""                     ; Emits zero bytes
+        empty_str:  DB ""                      ; Emits zero bytes
+        greeting:   DB "Say \"Hello\"\n"       ; Demonstrates quote escaping
+        control:    DB "Line1\nLine2\tTabbed\x00" ; Mixed escape sequences
         ```
 
 * **`DW <value_expression>` (Define Word)**
