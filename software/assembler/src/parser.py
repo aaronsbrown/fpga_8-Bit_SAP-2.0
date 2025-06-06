@@ -295,16 +295,21 @@ class Parser:
             if not final_operand: 
                 raise ParserError(f"EQU for '{label_name_for_symbol_table}' missing value.", normalized_filepath, line_no_in_file)
             
-            # EQU value resolution (as before, simple literals or existing symbols for parser)
+            # EQU value resolution - try expression parsing if simple lookup fails
             equ_value: int
             if final_operand in self.symbol_table:
                 equ_value = self.symbol_table[final_operand]
             else:
                 try:
+                    # First try simple numeric literal
                     equ_value = self._parse_numeric_literal(final_operand, f"value for EQU '{label_name_for_symbol_table}'", normalized_filepath, line_no_in_file)
-                except ParserError as e:
-                     raise ParserError(f"EQU value '{final_operand}' for '{label_name_for_symbol_table}' must be a numeric literal or a pre-defined symbol in parser's pass. Error: {e}",
-                                       normalized_filepath, line_no_in_file)
+                except ParserError:
+                    # If that fails, try basic expression parsing with currently defined symbols
+                    try:
+                        equ_value = self._parse_simple_expression(final_operand, normalized_filepath, line_no_in_file)
+                    except ParserError as e:
+                        raise ParserError(f"EQU value '{final_operand}' for '{label_name_for_symbol_table}' must be a numeric literal or a pre-defined symbol in parser's pass. Error: {e}",
+                                          normalized_filepath, line_no_in_file)
             self._add_symbol_to_table(label_name_for_symbol_table, equ_value, normalized_filepath, line_no_in_file)
         
         elif mnem_upper not in ['ORG', 'EQU']: # Regular instruction or DB/DW
@@ -533,4 +538,50 @@ class Parser:
         # Clean up and return
         self._files_in_recursion_stack.pop()
         logger.debug(f"Finished processing of file: {normalized_filepath}. Returning address: 0x{effective_address:04X}, final active_global_scope for caller: {active_global_label}")
-        return effective_address, active_global_label 
+        return effective_address, active_global_label
+
+    def _parse_simple_expression(self, expression_str: str, source_file: str, line_no: int) -> int:
+        """
+        Parse simple logical/arithmetic expressions for EQU statements in the parser.
+        Only supports expressions using symbols already defined in the symbol table.
+        
+        Args:
+            expression_str: Expression string to parse
+            source_file: Source file for error reporting
+            line_no: Line number for error reporting
+            
+        Returns:
+            Integer value of the resolved expression
+            
+        Raises:
+            ParserError: If expression cannot be resolved with current symbols
+        """
+        # Import assembler functionality temporarily for expression parsing
+        # This creates a minimal assembler-like environment just for expression resolution
+        try:
+            from .assembler import Assembler, AssemblerError
+        except ImportError:
+            # Fallback for direct execution
+            import sys
+            import os
+            sys.path.append(os.path.dirname(__file__))
+            from assembler import Assembler, AssemblerError
+        
+        try:
+            # Create a temporary assembler instance for expression parsing
+            temp_assembler = Assembler.__new__(Assembler)
+            temp_assembler.symbols = self.symbol_table.copy()  # Use current parser symbols
+            
+            # Create a mock token for error context
+            mock_token = Token(line_no=line_no, source_file=source_file, label=None, mnemonic="EQU", operand=expression_str)
+            
+            # Use assembler's expression parsing
+            result = temp_assembler._resolve_expression_to_int(expression_str, mock_token)
+            return result
+            
+        except AssemblerError as e:
+            # Convert assembler error to parser error
+            raise ParserError(f"Cannot resolve expression '{expression_str}': {e.base_message}", source_file, line_no)
+        except Exception as e:
+            # Handle any other unexpected errors
+            raise ParserError(f"Unexpected error parsing expression '{expression_str}': {e}", source_file, line_no) 
