@@ -23,6 +23,7 @@ except ImportError:
 logger = logging.getLogger(__name__) 
 
 class AssemblerError(Exception): 
+    """Custom exception for assembly errors, includes source file context."""
     def __init__(self, message: str, source_file: Optional[str] = None, line_no: Optional[int] = None) -> None:
         self.source_file = source_file
         self.line_no = line_no
@@ -45,6 +46,7 @@ class AssemblerError(Exception):
 
 @dataclass
 class MemoryRegion: 
+    """Represents a memory region for output file generation with address tracking."""
     name: str
     start_addr: int
     end_addr: int
@@ -55,6 +57,16 @@ class MemoryRegion:
 
 
 class Assembler:
+    """
+    Two-pass assembler for 8-bit SAP2 CPU that converts assembly language into machine code.
+    
+    The assembler performs two passes:
+    1. Parsing pass: Tokenizes input, resolves symbols, handles includes and labels
+    2. Assembly pass: Generates machine code and emits bytes to configured memory regions
+    
+    Supports memory-mapped regions, string literals with escape sequences, arithmetic expressions,
+    and functions like LOW_BYTE/HIGH_BYTE for advanced address manipulation.
+    """
     def __init__(self, input_filepath: str, output_specifier: str, region_configs: Optional[List[Tuple[str, str, str]]]) -> None:
         self.input_filepath = input_filepath 
         self.output_specifier = output_specifier 
@@ -104,7 +116,6 @@ class Assembler:
         # err_src_file_basename and err_line_no are available from current_token if needed for errors
 
         if s in self.symbols:
-            # print(f"DEBUG RAW_SYMBOL: symbol='{s}' -> {self.symbols[s]}") # Optional debug
             return self.symbols[s]
         
         base_to_use = 10
@@ -118,8 +129,6 @@ class Assembler:
         
         try:
             val = int(num_str, base_to_use)
-            # Your existing debug print was here, I'll keep it as you had it:
-            print(f"DEBUG RAW_LITERAL: num_str='{num_str}', base={base_to_use} -> {val}") 
             return val
         except ValueError:
             type_str = "hexadecimal" if base_to_use == 16 else "binary" if base_to_use == 2 else "decimal"
@@ -127,76 +136,126 @@ class Assembler:
                                  source_file=current_token.source_file, line_no=current_token.line_no)
 
     def _resolve_expression_to_int(self, expression_str: str, current_token: 'Token') -> int:
-        """Recursively resolves an expression string (symbol, literal, arithmetic, functions) to an integer."""
-        expr = expression_str.strip()
-        # err_src_file_basename, err_line_no available from current_token
-
-        # ---- MODIFICATION START ----
-        # Attempt to parse as a complete function call first (e.g. "LOW_BYTE(ARG)")
-        # This gives functions higher precedence if the entire expression is a function call.
-        full_func_match = re.fullmatch(r"(LOW_BYTE|HIGH_BYTE)\s*\(\s*(.+)\s*\)", expr, re.IGNORECASE)
-        if full_func_match: 
-            func_name = full_func_match.group(1).upper()
-            inner_expr_str = full_func_match.group(2).strip() # Argument string
+        """
+        Recursively resolves an expression string (symbol, literal, arithmetic, functions) to an integer.
+        
+        Args:
+            expression_str: Expression string to resolve (e.g., "LOW_BYTE(SYMBOL)", "A + B")
+            current_token: Token context for error reporting
             
-            # Recursively resolve the argument of the function
-            value = self._resolve_expression_to_int(inner_expr_str, current_token) 
+        Returns:
+            Integer value of the resolved expression
+            
+        Raises:
+            AssemblerError: If expression cannot be resolved
+        """
+        expr = expression_str.strip()
 
-            if not (0x0000 <= value <= 0xFFFF):
-                raise AssemblerError(f"Value for {func_name} argument '{inner_expr_str}' (resolved to 0x{value:X}) is out of 16-bit range (0x0000-0xFFFF).",
-                                     source_file=current_token.source_file, line_no=current_token.line_no)
-            if func_name == "LOW_BYTE":
-                # print(f"DEBUG FUNC: LOW_BYTE({inner_expr_str}={value}) -> {value & 0xFF}") # Optional debug
-                return value & 0xFF
-            else: # HIGH_BYTE
-                # print(f"DEBUG FUNC: HIGH_BYTE({inner_expr_str}={value}) -> {(value >> 8) & 0xFF}") # Optional debug
-                return (value >> 8) & 0xFF
-        # ---- MODIFICATION END ----
+        # Try function call parsing first (highest precedence)
+        func_result = self._try_parse_function_call(expr, current_token)
+        if func_result is not None:
+            return func_result
 
-        # If not a standalone function call, try arithmetic (e.g. "FUNC(X) + 1" or "A + B")
-        op_char = None
-        split_pos = -1
+        # Try arithmetic expression parsing  
+        arith_result = self._try_parse_arithmetic_expression(expr, current_token)
+        if arith_result is not None:
+            return arith_result
 
-        # Find the rightmost + or - to handle left-to-right evaluation for operators of same precedence.
-        # This simple rfind doesn't handle operator precedence (e.g. * / before + -) or parentheses for grouping arithmetic.
-        # For now, it's a basic left-to-right for + and - by finding the rightmost.
+        # Fall back to raw symbol/literal parsing
+        return self._resolve_raw_symbol_or_literal(expr, "expression component", current_token)
+
+    def _try_parse_function_call(self, expr: str, current_token: 'Token') -> Optional[int]:
+        """
+        Try to parse expression as a function call (LOW_BYTE/HIGH_BYTE).
+        
+        Args:
+            expr: Expression string to check for function call pattern
+            current_token: Token context for error reporting
+            
+        Returns:
+            Function result if expression is a function call, None otherwise
+            
+        Raises:
+            AssemblerError: If function call is malformed or argument is invalid
+        """
+        full_func_match = re.fullmatch(r"(LOW_BYTE|HIGH_BYTE)\s*\(\s*(.+)\s*\)", expr, re.IGNORECASE)
+        if not full_func_match:
+            return None
+            
+        func_name = full_func_match.group(1).upper()
+        inner_expr_str = full_func_match.group(2).strip()
+        
+        # Recursively resolve the function argument
+        value = self._resolve_expression_to_int(inner_expr_str, current_token)
+
+        if not (0x0000 <= value <= 0xFFFF):
+            raise AssemblerError(f"Value for {func_name} argument '{inner_expr_str}' (resolved to 0x{value:X}) is out of 16-bit range (0x0000-0xFFFF).",
+                                 source_file=current_token.source_file, line_no=current_token.line_no)
+
+        if func_name == "LOW_BYTE":
+            return value & 0xFF
+        else:  # HIGH_BYTE
+            return (value >> 8) & 0xFF
+
+    def _try_parse_arithmetic_expression(self, expr: str, current_token: 'Token') -> Optional[int]:
+        """
+        Try to parse expression as arithmetic (addition/subtraction).
+        
+        Args:
+            expr: Expression string to check for arithmetic pattern
+            current_token: Token context for error reporting
+            
+        Returns:
+            Arithmetic result if expression contains operators, None otherwise
+            
+        Raises:
+            AssemblerError: If arithmetic expression is malformed
+        """
+        # Find the rightmost + or - operator for left-to-right evaluation
+        op_char, split_pos = self._find_rightmost_arithmetic_operator(expr)
+        
+        if not op_char or split_pos <= 0:
+            return None
+
+        lhs_str = expr[:split_pos].strip()
+        rhs_str = expr[split_pos+1:].strip()
+
+        if not lhs_str or not rhs_str:
+            raise AssemblerError(f"Malformed arithmetic expression: '{expr}'. Missing operand around '{op_char}'.",
+                                 source_file=current_token.source_file, line_no=current_token.line_no)
+
+        lhs_val = self._resolve_expression_to_int(lhs_str, current_token)
+        rhs_val = self._resolve_expression_to_int(rhs_str, current_token)
+        
+        if op_char == '+':
+            return lhs_val + rhs_val
+        else:  # op_char == '-'
+            return lhs_val - rhs_val
+
+    def _find_rightmost_arithmetic_operator(self, expr: str) -> Tuple[Optional[str], int]:
+        """
+        Find the rightmost arithmetic operator (+ or -) in an expression.
+        
+        Args:
+            expr: Expression string to search
+            
+        Returns:
+            Tuple of (operator_char, position) or (None, -1) if no operator found
+        """
         r_plus_idx = expr.rfind('+')
         r_minus_idx = expr.rfind('-')
 
         # Pick the rightmost of + or -
-        if r_plus_idx != -1 and r_plus_idx > r_minus_idx: # If '+' exists and is to the right of last '-' (or if no '-')
-            # Ensure it's not a unary + if we wanted to support that differently (e.g. "+5")
-            # For binary operators, split_pos > 0 is a good check to ensure there's a LHS.
-            if r_plus_idx > 0: 
-                op_char = '+'
-                split_pos = r_plus_idx
-        elif r_minus_idx != -1: # If '-' exists (and wasn't superseded by a rightmost '+')
+        if r_plus_idx != -1 and r_plus_idx > r_minus_idx:
+            # Ensure it's not a unary + (requires LHS operand)
+            if r_plus_idx > 0:
+                return '+', r_plus_idx
+        elif r_minus_idx != -1:
+            # Ensure it's not a unary - (requires LHS operand)  
             if r_minus_idx > 0:
-                op_char = '-'
-                split_pos = r_minus_idx
-        
-        if op_char and split_pos > 0: 
-            lhs_str = expr[:split_pos].strip()
-            rhs_str = expr[split_pos+1:].strip()
+                return '-', r_minus_idx
 
-            if not lhs_str or not rhs_str: # Check for missing operands around the operator
-                 raise AssemblerError(f"Malformed arithmetic expression: '{expr}'. Missing operand around '{op_char}'.",
-                                     source_file=current_token.source_file, line_no=current_token.line_no)
-
-            lhs_val = self._resolve_expression_to_int(lhs_str, current_token) 
-            rhs_val = self._resolve_expression_to_int(rhs_str, current_token) 
-            
-            # Your existing debug print was here
-            print(f"DEBUG ARITH: expr='{expr}', lhs_str='{lhs_str}' -> {lhs_val}, op='{op_char}', rhs_str='{rhs_str}' -> {rhs_val}")
-            
-            if op_char == '+':
-                result = lhs_val + rhs_val
-            else: # op_char == '-'
-                result = lhs_val - rhs_val
-            return result
-
-        # If not a function (as a whole expr) and not arithmetic, assume it's a raw symbol or literal
-        return self._resolve_raw_symbol_or_literal(expr, "expression component", current_token)
+        return None, -1
 
 
     def _parse_value_or_symbol(self, value_str: Optional[str], context_description: str, current_token: 'Token') -> int:
@@ -564,6 +623,15 @@ class Assembler:
         logger.info("Code generation (second pass) complete.")
 
     def write_output_files(self) -> None:
+        """
+        Write assembled output to files for each configured memory region.
+        
+        Creates output directories as needed and writes hex format files containing
+        the assembled machine code for each memory region that has content.
+        
+        Raises:
+            AssemblerError: If output directory creation or file writing fails
+        """
         if not self.regions:
             logger.warning("No output regions defined. Nothing to write.")
             return
@@ -593,6 +661,19 @@ class Assembler:
                 raise AssemblerError(f"IOError writing to {region.output_filename}: {e}")
                 
 def main(input_filepath: str, output_specifier: str, region_definitions: Optional[List[Tuple[str,str,str]]]) -> None:
+    """
+    Main assembly function that orchestrates the complete assembly process.
+    
+    Args:
+        input_filepath: Path to the input assembly file
+        output_specifier: Output file path or directory for assembled output
+        region_definitions: Optional list of memory region definitions (name, start_hex, end_hex)
+        
+    Raises:
+        ParserError: If parsing the assembly file fails
+        AssemblerError: If assembly or output writing fails  
+        ValueError: If unexpected value errors occur during processing
+    """
     try:
         asm = Assembler(input_filepath, output_specifier, region_definitions)
         asm.assemble()
