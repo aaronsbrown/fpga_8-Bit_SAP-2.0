@@ -185,6 +185,144 @@ class Parser:
         processed_string = self._process_string_escapes(string_content, source_file, line_no)
         return len(processed_string)
 
+    def _load_and_validate_file(self, filepath_to_process: str) -> Tuple[str, List[str]]:
+        """
+        Load and validate a file for parsing, handling recursion detection.
+        
+        Args:
+            filepath_to_process: Path to the file to load and validate
+            
+        Returns:
+            Tuple of (normalized_filepath, lines_from_file)
+            
+        Raises:
+            ParserError: If circular include detected or file cannot be loaded
+        """
+        normalized_filepath = os.path.normpath(filepath_to_process)
+
+        if normalized_filepath in self._files_in_recursion_stack:
+            raise ParserError(f"Circular INCLUDE detected: '{normalized_filepath}'",
+                              source_file=self._files_in_recursion_stack[-1] if self._files_in_recursion_stack else None)
+        
+        self._files_in_recursion_stack.append(normalized_filepath)
+        logger.debug(f"Starting processing of file: {normalized_filepath}")
+
+        try:
+            lines = self._load_lines_from_physical_file(normalized_filepath, 
+                                                        requesting_file=self._files_in_recursion_stack[-2] if len(self._files_in_recursion_stack) > 1 else self.main_input_filepath, 
+                                                        requesting_line_no=0)
+            return normalized_filepath, lines
+        except ParserError as e: 
+            self._files_in_recursion_stack.pop()
+            raise e
+
+    def _process_include_directive(self, operand_candidate: str, normalized_filepath: str, line_no_in_file: int, 
+                                   effective_address: int, active_global_label: Optional[str]) -> Tuple[int, Optional[str]]:
+        """
+        Process an INCLUDE directive by recursively parsing the included file.
+        
+        Args:
+            operand_candidate: The filename operand from the INCLUDE directive
+            normalized_filepath: Current file being processed
+            line_no_in_file: Line number of the INCLUDE directive
+            effective_address: Current assembly address
+            active_global_label: Current global label scope
+            
+        Returns:
+            Tuple of (updated_address, updated_global_label_scope)
+            
+        Raises:
+            ParserError: If INCLUDE directive is malformed or file cannot be found
+        """
+        if not operand_candidate:
+            raise ParserError("INCLUDE directive missing filename.", normalized_filepath, line_no_in_file)
+        
+        include_filename_rel = operand_candidate.strip('"')
+        base_dir_of_current_file = os.path.dirname(normalized_filepath)
+        abs_path_to_include_file = os.path.normpath(os.path.join(base_dir_of_current_file, include_filename_rel))
+        
+        logger.info(f"Including: '{abs_path_to_include_file}' (from '{normalized_filepath}' line {line_no_in_file})")
+        # Pass current effective_address and current active_global_label to the included file
+        return self._parse_and_process_file(abs_path_to_include_file, effective_address, active_global_label)
+
+    def _update_symbol_table_and_address(self, label_name_for_symbol_table: Optional[str], 
+                                         final_mnemonic: str, final_operand: Optional[str],
+                                         effective_address: int, normalized_filepath: str, line_no_in_file: int) -> int:
+        """
+        Update symbol table and calculate new address after processing a line.
+        
+        Args:
+            label_name_for_symbol_table: Label name to add to symbol table (if any)
+            final_mnemonic: Processed mnemonic
+            final_operand: Processed operand
+            effective_address: Current assembly address
+            normalized_filepath: Current file being processed
+            line_no_in_file: Current line number
+            
+        Returns:
+            Updated effective address after processing this line
+            
+        Raises:
+            ParserError: If directive is malformed or symbol conflicts occur
+        """
+        # Add label to symbol table (if it's for an addressable instruction/data, not an EQU's own label)
+        # EQU handles its own label addition separately.
+        if label_name_for_symbol_table and final_mnemonic.upper() != 'EQU':
+            self._add_symbol_to_table(label_name_for_symbol_table, effective_address, normalized_filepath, line_no_in_file)
+
+        # Handle ORG, EQU, or advance address for instructions/data
+        mnem_upper = final_mnemonic.upper()
+        if mnem_upper == 'ORG':
+            if not final_operand: 
+                raise ParserError("ORG directive missing address.", normalized_filepath, line_no_in_file)
+            # Simplified ORG value resolution for parser pass (as before)
+            org_val: int
+            if final_operand in self.symbol_table:
+                org_val = self.symbol_table[final_operand]
+            else:
+                try:
+                    org_val = self._parse_numeric_literal(final_operand, "ORG directive", normalized_filepath, line_no_in_file)
+                except ParserError as e:
+                    raise ParserError(f"ORG operand '{final_operand}' must be a pre-defined symbol or numeric literal for parser's current pass. Error: {e}",
+                                      normalized_filepath, line_no_in_file)
+            effective_address = org_val
+            logger.debug(f"Origin set to 0x{effective_address:04X} by ORG.", extra={'source_file': normalized_filepath, 'line_no': line_no_in_file})
+
+        elif mnem_upper == 'EQU':
+            # The label for EQU is 'label_name_for_symbol_table'
+            if not label_name_for_symbol_table: 
+                raise ParserError(f"EQU directive requires a label.", normalized_filepath, line_no_in_file)
+            if not final_operand: 
+                raise ParserError(f"EQU for '{label_name_for_symbol_table}' missing value.", normalized_filepath, line_no_in_file)
+            
+            # EQU value resolution (as before, simple literals or existing symbols for parser)
+            equ_value: int
+            if final_operand in self.symbol_table:
+                equ_value = self.symbol_table[final_operand]
+            else:
+                try:
+                    equ_value = self._parse_numeric_literal(final_operand, f"value for EQU '{label_name_for_symbol_table}'", normalized_filepath, line_no_in_file)
+                except ParserError as e:
+                     raise ParserError(f"EQU value '{final_operand}' for '{label_name_for_symbol_table}' must be a numeric literal or a pre-defined symbol in parser's pass. Error: {e}",
+                                       normalized_filepath, line_no_in_file)
+            self._add_symbol_to_table(label_name_for_symbol_table, equ_value, normalized_filepath, line_no_in_file)
+        
+        elif mnem_upper not in ['ORG', 'EQU']: # Regular instruction or DB/DW
+            instr_info = INSTRUCTION_SET.get(mnem_upper)
+            if instr_info is None:
+                raise ParserError(f"Unknown mnemonic or directive: '{mnem_upper}'.", normalized_filepath, line_no_in_file)
+            
+            num_bytes_for_line = 0
+            if mnem_upper in ["DB", "DW"]:
+                num_bytes_for_line = self._calculate_db_dw_size(mnem_upper, final_operand, normalized_filepath, line_no_in_file)
+            else:
+                num_bytes_for_line = instr_info.size
+            
+            effective_address += num_bytes_for_line
+            logger.debug(f"Address after '{final_mnemonic}': 0x{effective_address:04X} (+{num_bytes_for_line})", extra={'source_file': normalized_filepath, 'line_no': line_no_in_file})
+
+        return effective_address
+
     def _parse_line_components(self, raw_line_text: str, source_file: str, line_no: int) -> Optional[Tuple[Optional[str], Optional[str], Optional[str]]]:
         text = raw_line_text.strip()
         if not text or text.startswith(';'):
@@ -319,27 +457,29 @@ class Parser:
 
     def _parse_and_process_file(self, filepath_to_process: str, current_address: int, 
                                 current_global_label_scope: Optional[str]) -> Tuple[int, Optional[str]]:
-        normalized_filepath = os.path.normpath(filepath_to_process)
-
-        if normalized_filepath in self._files_in_recursion_stack:
-            raise ParserError(f"Circular INCLUDE detected: '{normalized_filepath}'",
-                              source_file=self._files_in_recursion_stack[-1] if self._files_in_recursion_stack else None)
+        """
+        Main file processing orchestrator that parses assembly files and handles includes.
         
-        self._files_in_recursion_stack.append(normalized_filepath)
-        # Use current_global_label_scope for the active_global_label within this file initially
+        Args:
+            filepath_to_process: Path to the assembly file to process
+            current_address: Starting address for assembly
+            current_global_label_scope: Current global label scope for local label resolution
+            
+        Returns:
+            Tuple of (final_address, final_global_label_scope)
+            
+        Raises:
+            ParserError: If file parsing fails or circular includes detected
+        """
+        # Load and validate file
+        normalized_filepath, lines = self._load_and_validate_file(filepath_to_process)
+        
+        # Initialize processing state
         active_global_label = current_global_label_scope 
+        effective_address = current_address
         logger.debug(f"Starting processing of file: {normalized_filepath} (initial active_global_scope: {active_global_label})")
 
-        try:
-            lines = self._load_lines_from_physical_file(normalized_filepath, 
-                                                        requesting_file=self._files_in_recursion_stack[-2] if len(self._files_in_recursion_stack) > 1 else self.main_input_filepath, 
-                                                        requesting_line_no=0)
-        except ParserError as e: 
-            self._files_in_recursion_stack.pop()
-            raise e
-
-        effective_address = current_address
-
+        # Process each line in the file
         for line_no_in_file, raw_line in enumerate(lines, start=1):
             parsed_comps = self._parse_line_components(raw_line, normalized_filepath, line_no_in_file)
             if not parsed_comps:
@@ -347,112 +487,50 @@ class Parser:
             
             original_label_str, mnemonic_candidate, operand_candidate = parsed_comps
 
+            # Handle INCLUDE directive
             if mnemonic_candidate and mnemonic_candidate.upper() == "INCLUDE":
-                if not operand_candidate:
-                    raise ParserError("INCLUDE directive missing filename.", normalized_filepath, line_no_in_file)
-                
-                include_filename_rel = operand_candidate.strip('"')
-                base_dir_of_current_file = os.path.dirname(normalized_filepath)
-                abs_path_to_include_file = os.path.normpath(os.path.join(base_dir_of_current_file, include_filename_rel))
-                
-                logger.info(f"Including: '{abs_path_to_include_file}' (from '{normalized_filepath}' line {line_no_in_file})")
-                # Pass current effective_address and current active_global_label to the included file
-                effective_address, active_global_label = self._parse_and_process_file(abs_path_to_include_file, effective_address, active_global_label)
+                effective_address, active_global_label = self._process_include_directive(
+                    operand_candidate, normalized_filepath, line_no_in_file, 
+                    effective_address, active_global_label)
                 continue
 
-            # Normalize components. Operands are mangled using the 'active_global_label' which is the scope
-            # active *before* this line's own global label (if any) takes effect for subsequent lines.
+            # Normalize components with current scope
             _, final_mnemonic, final_operand = self._normalize_token_components(
                 original_label_str, mnemonic_candidate, operand_candidate, 
-                active_global_label, # This is the scope for mangling operands ON THIS LINE
-                normalized_filepath, line_no_in_file
+                active_global_label, normalized_filepath, line_no_in_file
             )
             
-            # Determine the label name for the symbol table and update active_global_label for *subsequent* lines
+            # Determine label name for symbol table and update global scope
             label_name_for_symbol_table: Optional[str] = None
             
             if original_label_str:
                 if original_label_str.startswith('.'): # Local label
-                    if not active_global_label: # Must have a current global scope
+                    if not active_global_label:
                         raise ParserError(f"Local label '{original_label_str}' defined without a preceding global label.", normalized_filepath, line_no_in_file)
                     label_name_for_symbol_table = f"{active_global_label}{original_label_str}"
                 else: # Global label
                     label_name_for_symbol_table = original_label_str
-                    # If this global label is NOT for an EQU directive, it updates the active scope for subsequent lines.
-                    # We check final_mnemonic because _parse_line_components might turn "L: M EQU V" into (L, M, "EQU V")
-                    # and _normalize_token_components would then fix M to be the label and EQU to be the mnemonic.
-                    # Or, _parse_line_components directly returns (L, "EQU", V).
-                    # So, final_mnemonic is the most reliable indicator of an EQU directive.
+                    # Update active scope for subsequent lines (unless EQU)
                     if not (final_mnemonic and final_mnemonic.upper() == 'EQU'):
-                        active_global_label = original_label_str # Update scope for next lines
+                        active_global_label = original_label_str
             
-            # If after normalization, there's no mnemonic (e.g., label-only line)
+            # Handle label-only lines
             if not final_mnemonic:
-                if label_name_for_symbol_table: # It's a label-only line
+                if label_name_for_symbol_table:
                     self._add_symbol_to_table(label_name_for_symbol_table, effective_address, normalized_filepath, line_no_in_file)
-                # active_global_label would have been updated above if it was a non-EQU global label.
                 continue 
-
-            # Add label to symbol table (if it's for an addressable instruction/data, not an EQU's own label)
-            # EQU handles its own label addition separately.
-            if label_name_for_symbol_table and final_mnemonic.upper() != 'EQU':
-                self._add_symbol_to_table(label_name_for_symbol_table, effective_address, normalized_filepath, line_no_in_file)
 
             # Create and add token
             token = Token(line_no_in_file, normalized_filepath, original_label_str, final_mnemonic, final_operand)
             self.tokens.append(token)
             logger.debug(f"Token created: {token} (current effective_address: 0x{effective_address:04X}, next active_global_label for subsequent lines: {active_global_label})")
 
-            # Handle ORG, EQU, or advance address for instructions/data
-            mnem_upper = final_mnemonic.upper()
-            if mnem_upper == 'ORG':
-                if not final_operand: raise ParserError("ORG directive missing address.", token.source_file, token.line_no)
-                # Simplified ORG value resolution for parser pass (as before)
-                org_val: int
-                if final_operand in self.symbol_table:
-                    org_val = self.symbol_table[final_operand]
-                else:
-                    try:
-                        org_val = self._parse_numeric_literal(final_operand, "ORG directive", token.source_file, token.line_no)
-                    except ParserError as e:
-                        raise ParserError(f"ORG operand '{final_operand}' must be a pre-defined symbol or numeric literal for parser's current pass. Error: {e}",
-                                          token.source_file, token.line_no)
-                effective_address = org_val
-                logger.debug(f"Origin set to 0x{effective_address:04X} by ORG.", extra={'source_file': token.source_file, 'line_no': token.line_no})
+            # Update symbol table and calculate new address
+            effective_address = self._update_symbol_table_and_address(
+                label_name_for_symbol_table, final_mnemonic, final_operand,
+                effective_address, normalized_filepath, line_no_in_file)
 
-            elif mnem_upper == 'EQU':
-                # The label for EQU is 'label_name_for_symbol_table'
-                if not label_name_for_symbol_table: 
-                    raise ParserError(f"EQU directive requires a label (parsed components: label='{original_label_str}', mnem='{final_mnemonic}').", token.source_file, token.line_no)
-                if not final_operand: 
-                    raise ParserError(f"EQU for '{label_name_for_symbol_table}' missing value.", token.source_file, token.line_no)
-                
-                # EQU value resolution (as before, simple literals or existing symbols for parser)
-                equ_value: int
-                if final_operand in self.symbol_table:
-                    equ_value = self.symbol_table[final_operand]
-                else:
-                    try:
-                        equ_value = self._parse_numeric_literal(final_operand, f"value for EQU '{label_name_for_symbol_table}'", token.source_file, token.line_no)
-                    except ParserError as e:
-                         raise ParserError(f"EQU value '{final_operand}' for '{label_name_for_symbol_table}' must be a numeric literal or a pre-defined symbol in parser's pass. Error: {e}",
-                                           token.source_file, token.line_no)
-                self._add_symbol_to_table(label_name_for_symbol_table, equ_value, token.source_file, token.line_no)
-            
-            elif mnem_upper not in ['ORG', 'EQU']: # Regular instruction or DB/DW
-                instr_info = INSTRUCTION_SET.get(mnem_upper)
-                if instr_info is None:
-                    raise ParserError(f"Unknown mnemonic or directive: '{mnem_upper}'.", token.source_file, token.line_no)
-                
-                num_bytes_for_line = 0
-                if mnem_upper in ["DB", "DW"]:
-                    num_bytes_for_line = self._calculate_db_dw_size(mnem_upper, final_operand, token.source_file, token.line_no)
-                else:
-                    num_bytes_for_line = instr_info.size
-                
-                effective_address += num_bytes_for_line
-                logger.debug(f"Address after '{final_mnemonic}': 0x{effective_address:04X} (+{num_bytes_for_line})", extra={'source_file': token.source_file, 'line_no': token.line_no})
-
+        # Clean up and return
         self._files_in_recursion_stack.pop()
         logger.debug(f"Finished processing of file: {normalized_filepath}. Returning address: 0x{effective_address:04X}, final active_global_scope for caller: {active_global_label}")
         return effective_address, active_global_label 

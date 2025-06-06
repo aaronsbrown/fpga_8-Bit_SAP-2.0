@@ -264,6 +264,121 @@ class Assembler:
                 
         return ''.join(result)
 
+    def _process_token(self, token: 'Token', current_global_address: int) -> int:
+        """
+        Process a single token during assembly, handling ORG directives and regular instructions.
+        
+        Args:
+            token: The token to process
+            current_global_address: Current assembly address
+            
+        Returns:
+            Updated global address after processing this token
+            
+        Raises:
+            AssemblerError: If token processing fails
+        """
+        # Skip EQU tokens (already processed by parser)
+        if not token.mnemonic or token.mnemonic.upper() == 'EQU':
+            return current_global_address
+
+        # Handle ORG directive
+        if token.mnemonic.upper() == 'ORG':
+            return self._handle_org_directive(token)
+
+        # Handle regular instructions and data directives
+        return self._emit_instruction(token, current_global_address)
+
+    def _handle_org_directive(self, token: 'Token') -> int:
+        """
+        Handle ORG directive processing.
+        
+        Args:
+            token: Token containing the ORG directive
+            
+        Returns:
+            New global address set by ORG
+            
+        Raises:
+            AssemblerError: If ORG directive is malformed or invalid
+        """
+        if not token.operand: 
+            raise AssemblerError(f"ORG directive missing operand in assembler pass.", source_file=token.source_file, line_no=token.line_no)
+        
+        try:
+            resolved_org_address = self._parse_value_or_symbol(token.operand, "ORG address", token)
+        except AssemblerError as e_org: 
+            raise AssemblerError(f"Could not resolve ORG operand '{token.operand}': {e_org.base_message}",
+                                 source_file=token.source_file, line_no=token.line_no) from e_org
+        
+        if not (0x0000 <= resolved_org_address <= 0xFFFF):
+            raise AssemblerError(f"ORG address 0x{resolved_org_address:04X} is out of 16-bit range.",
+                                 source_file=token.source_file, line_no=token.line_no)
+
+        # Reset region tracking for new origin
+        for region in self.regions:
+            region.next_expected_relative_addr = -1 
+            
+        logger.debug(f"ORG encountered. Global address set to 0x{resolved_org_address:04X}", extra={'source_file': os.path.basename(token.source_file), 'line_no': token.line_no})
+        return resolved_org_address
+
+    def _emit_instruction(self, token: 'Token', current_global_address: int) -> int:
+        """
+        Emit instruction opcode and operand bytes for a regular instruction or data directive.
+        
+        Args:
+            token: Token containing the instruction/directive
+            current_global_address: Current assembly address
+            
+        Returns:
+            Updated global address after emitting instruction
+            
+        Raises:
+            AssemblerError: If instruction emission fails
+        """
+        instr_info = INSTRUCTION_SET.get(token.mnemonic.upper())
+        if instr_info is None: 
+            raise AssemblerError(f"Unknown mnemonic '{token.mnemonic}' in assembler pass (should have been caught by parser).",
+                                 source_file=token.source_file, line_no=token.line_no)
+
+        # Emit opcode if instruction has one
+        if instr_info.opcode is not None:
+            target_region_for_opcode = self._find_region_for_address(current_global_address)
+            if target_region_for_opcode:
+                self._emit_byte_to_region(target_region_for_opcode, instr_info.opcode, current_global_address, token)
+            elif self.regions: 
+                logger.warning(f"Opcode for '{token.mnemonic}' at global address 0x{current_global_address:04X} is outside all defined memory regions. Opcode not emitted.",
+                               extra={'source_file': os.path.basename(token.source_file), 'line_no': token.line_no})
+            current_global_address += 1
+
+        # Emit operand bytes
+        operand_bytes = self._encode_operand(token.operand, instr_info, token)
+        for byte_val in operand_bytes:
+            target_region_for_byte = self._find_region_for_address(current_global_address)
+            if target_region_for_byte:
+                self._emit_byte_to_region(target_region_for_byte, byte_val, current_global_address, token)
+            elif self.regions: 
+                 logger.warning(f"Operand/data byte for '{token.mnemonic}' (value 0x{byte_val:02X}) at global address 0x{current_global_address:04X} is outside all defined memory regions. Byte not emitted.",
+                                extra={'source_file': os.path.basename(token.source_file), 'line_no': token.line_no})
+            current_global_address += 1
+            
+        return current_global_address
+
+    def _find_region_for_address(self, global_address: int) -> Optional[MemoryRegion]:
+        """
+        Find the memory region that contains the given global address.
+        
+        Args:
+            global_address: Address to find region for
+            
+        Returns:
+            MemoryRegion containing the address, or None if not found
+        """
+        for region in self.regions:
+            if region.start_addr <= global_address <= region.end_addr:
+                return region
+        return None
+
     def _emit_address_directive_to_region(self, region: MemoryRegion, global_addr: int) -> None:
         relative_addr = global_addr - region.start_addr
         if not (0 <= relative_addr <= (region.end_addr - region.start_addr)):
@@ -292,68 +407,111 @@ class Assembler:
         region.has_emitted_any_content = True
 
     def _encode_operand(self, operand_str: Optional[str], instr_info: 'InstrInfo', current_token: 'Token') -> List[int]:
-        # These are defined in case the logger.warning is ever re-enabled or for other debugging.
-        # Not strictly necessary if only raising exceptions.
-        err_src_file_basename = os.path.basename(current_token.source_file)
-        err_line_no = current_token.line_no
+        """
+        Encode operand into byte list for instructions and data directives.
+        
+        Args:
+            operand_str: Operand string from token (may be None)
+            instr_info: Instruction information from constants
+            current_token: Token context for error reporting
+            
+        Returns:
+            List of bytes representing the encoded operand
+            
+        Raises:
+            AssemblerError: If operand encoding fails
+        """
         mnemonic_for_error = current_token.mnemonic or "directive"
         
         # Handle DB directive separately
         if mnemonic_for_error.upper() == 'DB':
-            if not operand_str:
-                raise AssemblerError(f"DB directive requires operand(s).", source_file=current_token.source_file, line_no=current_token.line_no)
+            return self._encode_db_operand(operand_str, current_token)
+        
+        # Handle standard operand encoding for other instructions/directives
+        return self._encode_standard_operand(operand_str, instr_info, current_token)
+
+    def _encode_db_operand(self, operand_str: Optional[str], current_token: 'Token') -> List[int]:
+        """
+        Encode DB directive operand into byte list, handling strings and numeric values.
+        
+        Args:
+            operand_str: DB operand string containing comma-separated values/strings
+            current_token: Token context for error reporting
             
-            output_bytes: List[int] = []
-            items = CSV_SPLIT_REGEX.split(operand_str)
-            for item_text_raw in items:
-                item_text = item_text_raw.strip()
-                if not item_text: continue
+        Returns:
+            List of bytes from DB operand
+            
+        Raises:
+            AssemblerError: If DB operand encoding fails
+        """
+        if not operand_str:
+            raise AssemblerError(f"DB directive requires operand(s).", source_file=current_token.source_file, line_no=current_token.line_no)
+        
+        output_bytes: List[int] = []
+        items = CSV_SPLIT_REGEX.split(operand_str)
+        
+        for item_text_raw in items:
+            item_text = item_text_raw.strip()
+            if not item_text: 
+                continue
 
-                if item_text.startswith('"') and item_text.endswith('"'): 
-                    if len(item_text) < 2:
-                        raise AssemblerError(f"Malformed string literal in DB: {item_text}", source_file=current_token.source_file, line_no=current_token.line_no)
-                    string_content = item_text[1:-1]
-                    # Process escape sequences in string content
-                    processed_string = self._process_string_escapes(string_content, current_token.source_file, current_token.line_no)
-                    for char_in_string in processed_string:
-                        byte_val = ord(char_in_string)
-                        if not (0x00 <= byte_val <= 0xFF): 
-                            raise AssemblerError(f"Character '{char_in_string}' in string for DB has value {byte_val} out of 8-bit range.",
-                                                 source_file=current_token.source_file, line_no=current_token.line_no)
-                        output_bytes.append(byte_val)
-                else: 
-                    val_to_parse = item_text.lstrip('#').strip()
-                    byte_val = self._parse_value_or_symbol(val_to_parse, f"DB item '{item_text}'", current_token)
-                    if not (0x00 <= byte_val <= 0xFF):
-                        raise AssemblerError(f"Value 0x{byte_val:X} ('{item_text}') for DB is out of 8-bit range (0x00-0xFF).",
+            if item_text.startswith('"') and item_text.endswith('"'): 
+                # String literal processing
+                if len(item_text) < 2:
+                    raise AssemblerError(f"Malformed string literal in DB: {item_text}", source_file=current_token.source_file, line_no=current_token.line_no)
+                string_content = item_text[1:-1]
+                processed_string = self._process_string_escapes(string_content, current_token.source_file, current_token.line_no)
+                
+                for char_in_string in processed_string:
+                    byte_val = ord(char_in_string)
+                    if not (0x00 <= byte_val <= 0xFF): 
+                        raise AssemblerError(f"Character '{char_in_string}' in string for DB has value {byte_val} out of 8-bit range.",
                                              source_file=current_token.source_file, line_no=current_token.line_no)
-                    output_bytes.append(byte_val & 0xFF)
-            return output_bytes
+                    output_bytes.append(byte_val)
+            else: 
+                # Numeric value processing
+                val_to_parse = item_text.lstrip('#').strip()
+                byte_val = self._parse_value_or_symbol(val_to_parse, f"DB item '{item_text}'", current_token)
+                if not (0x00 <= byte_val <= 0xFF):
+                    raise AssemblerError(f"Value 0x{byte_val:X} ('{item_text}') for DB is out of 8-bit range (0x00-0xFF).",
+                                         source_file=current_token.source_file, line_no=current_token.line_no)
+                output_bytes.append(byte_val & 0xFF)
+                
+        return output_bytes
 
-        # Standard operand encoding for other instructions/directives (like DW)
+    def _encode_standard_operand(self, operand_str: Optional[str], instr_info: 'InstrInfo', current_token: 'Token') -> List[int]:
+        """
+        Encode standard instruction operand into byte list.
+        
+        Args:
+            operand_str: Operand string from token (may be None)
+            instr_info: Instruction information from constants
+            current_token: Token context for error reporting
+            
+        Returns:
+            List of bytes representing the encoded operand
+            
+        Raises:
+            AssemblerError: If operand encoding fails
+        """
+        mnemonic_for_error = current_token.mnemonic or "directive"
         expected_operand_bytes = instr_info.size - (1 if instr_info.opcode is not None else 0)
 
-        # CASE 1: No operand string was provided
+        # No operand string provided
         if not operand_str:
-            if expected_operand_bytes > 0: # Error: Mnemonic expects an operand, but none given.
+            if expected_operand_bytes > 0:
                 raise AssemblerError(f"Mnemonic '{mnemonic_for_error}' expects an operand, but none given.",
                                      source_file=current_token.source_file, line_no=current_token.line_no)
-            return [] # OK: No operand string, and none expected (e.g., NOP called without anything after it)
-        
-        # --- If we reach here, operand_str IS present ---
+            return []
 
-        # CASE 2: Operand string IS present, but NO operand bytes are expected (e.g., NOP HLT)
-        # This check is now correctly placed BEFORE attempting to parse the operand.
+        # Operand string provided but none expected
         if expected_operand_bytes == 0: 
             raise AssemblerError(f"Operand '{operand_str}' provided for {mnemonic_for_error} which takes no operand.",
                                  source_file=current_token.source_file, line_no=current_token.line_no)
 
-        # CASE 3: Operand string IS present, AND operand bytes ARE expected.
-        # Now it's safe to parse the operand string.
+        # Parse and encode operand value
         cleaned_operand_str = operand_str.lstrip('#').strip()
         val = self._parse_value_or_symbol(cleaned_operand_str, f"operand for '{mnemonic_for_error}'", current_token)
-        
-        # The code below assumes expected_operand_bytes is > 0 because of the check above.
         
         if expected_operand_bytes == 1: 
             if not (0x00 <= val <= 0xFF): 
@@ -366,14 +524,19 @@ class Assembler:
                                      source_file=current_token.source_file, line_no=current_token.line_no)
             return [val & 0xFF, (val >> 8) & 0xFF] # Little-endian: LSB first
         else:
-            # This case should ideally not be reached if instr_info.size is always opcode_size + 0, 1, or 2
-            # for non-DB/DW instructions.
             raise AssemblerError(f"Internal error or unsupported operand size ({expected_operand_bytes} bytes) for {mnemonic_for_error}.",
                                  source_file=current_token.source_file, line_no=current_token.line_no) 
 
     def assemble(self) -> None:
+        """
+        Main assembly orchestrator: parses input, generates code, and emits bytes.
+        
+        Raises:
+            AssemblerError: If parsing or assembly fails
+        """
         logger.info(f"Starting assembly process for main file: {self.input_filepath}")
         
+        # Parse input file and build symbol table
         try:
             parser_instance = Parser(self.input_filepath)
             self.symbols = parser_instance.symbol_table
@@ -388,69 +551,15 @@ class Assembler:
         logger.info(f"Parsing phase complete. Symbols defined: {len(self.symbols)}, Tokens generated: {len(self.parsed_tokens)}")
         if DEBUG:
             logger.debug("Symbol Table from Parser:")
-            for s, v in sorted(self.symbols.items()): logger.debug(f"  {s}: 0x{v:04X}")
+            for s, v in sorted(self.symbols.items()): 
+                logger.debug(f"  {s}: 0x{v:04X}")
 
+        # Generate code (second pass)
         logger.info("Starting code generation (second pass)...")
         current_global_address = 0 
 
         for token in self.parsed_tokens:
-            # err_src_file_basename and err_line_no are available from token if needed for errors
-            if not token.mnemonic or token.mnemonic.upper() == 'EQU':
-                continue
-
-            if token.mnemonic.upper() == 'ORG':
-                if not token.operand: 
-                    raise AssemblerError(f"ORG directive missing operand in assembler pass.", source_file=token.source_file, line_no=token.line_no)
-                try:
-                    resolved_org_address = self._parse_value_or_symbol(token.operand, "ORG address", token)
-                except AssemblerError as e_org: 
-                    raise AssemblerError(f"Could not resolve ORG operand '{token.operand}': {e_org.base_message}",
-                                         source_file=token.source_file, line_no=token.line_no) from e_org
-                
-                if not (0x0000 <= resolved_org_address <= 0xFFFF):
-                    raise AssemblerError(f"ORG address 0x{resolved_org_address:04X} is out of 16-bit range.",
-                                         source_file=token.source_file, line_no=token.line_no)
-
-                current_global_address = resolved_org_address
-                logger.debug(f"ORG encountered. Global address set to 0x{current_global_address:04X}", extra={'source_file': os.path.basename(token.source_file), 'line_no': token.line_no})
-                
-                for region in self.regions:
-                    region.next_expected_relative_addr = -1 
-                continue 
-
-            instr_info = INSTRUCTION_SET.get(token.mnemonic.upper())
-            if instr_info is None: 
-                raise AssemblerError(f"Unknown mnemonic '{token.mnemonic}' in assembler pass (should have been caught by parser).",
-                                     source_file=token.source_file, line_no=token.line_no)
-
-            if instr_info.opcode is not None:
-                target_region_for_opcode = None
-                for r in self.regions:
-                    if r.start_addr <= current_global_address <= r.end_addr:
-                        target_region_for_opcode = r
-                        break
-                
-                if target_region_for_opcode:
-                    self._emit_byte_to_region(target_region_for_opcode, instr_info.opcode, current_global_address, token)
-                elif self.regions: 
-                    logger.warning(f"Opcode for '{token.mnemonic}' at global address 0x{current_global_address:04X} is outside all defined memory regions. Opcode not emitted.",
-                                   extra={'source_file': os.path.basename(token.source_file), 'line_no': token.line_no})
-                current_global_address += 1
-
-            operand_bytes = self._encode_operand(token.operand, instr_info, token)
-            for byte_val in operand_bytes:
-                target_region_for_byte = None
-                for r in self.regions:
-                    if r.start_addr <= current_global_address <= r.end_addr:
-                        target_region_for_byte = r
-                        break
-                
-                if target_region_for_byte:
-                    self._emit_byte_to_region(target_region_for_byte, byte_val, current_global_address, token)
-                elif self.regions: 
-                     logger.warning(f"Operand/data byte for '{token.mnemonic}' (value 0x{byte_val:02X}) at global address 0x{current_global_address:04X} is outside all defined memory regions. Byte not emitted.",
-                                    extra={'source_file': os.path.basename(token.source_file), 'line_no': token.line_no})
-                current_global_address += 1
+            current_global_address = self._process_token(token, current_global_address)
         
         logger.info("Code generation (second pass) complete.")
 
