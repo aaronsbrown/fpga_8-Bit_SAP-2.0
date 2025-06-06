@@ -1,4 +1,4 @@
-name: Verilog CI Tests
+name: Verilog and Assembler CI Tests
 
 on:
   push:
@@ -18,16 +18,15 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Set up Python
+      - name: Set up Python for Verilog Scripts
         uses: actions/setup-python@v4
         with:
-          python-version: '3.10'
+          python-version: '3.10' 
 
       - name: Install Icarus Verilog, sv2v, and unzip
         run: |
           sudo apt-get update -y
           sudo apt-get install -y iverilog curl unzip
-          # sv2v installation (corrected path)
           SV2V_VERSION="v0.0.13"
           SV2V_ZIP_NAME="sv2v-Linux.zip"
           SV2V_ASSET_URL="https://github.com/zachjs/sv2v/releases/download/${SV2V_VERSION}/${SV2V_ZIP_NAME}"
@@ -47,24 +46,18 @@ jobs:
           fi
           rm /tmp/sv2v.zip; rm -rf /tmp/sv2v_extracted
 
-      - name: Make scripts executable
+      - name: Make Verilog test scripts executable
         run: |
           chmod +x scripts/python/run_tests.py
           chmod +x scripts/python/assemble_test.py
-          chmod +x software/assembler/src/assembler.py # If assemble_test calls it
 
-      # NEW STEP: Generate .hex fixtures for all tests
-      - name: Generate Test Fixtures (.hex files)
+      - name: Generate .hex fixtures for Verilog tests
         run: |
           echo "Generating .hex files for ISA tests..."
           find hardware/test/instruction_set -name '*_tb.sv' -print0 | while IFS= read -r -d $'\0' tb_file; do
             test_name=$(basename "${tb_file}" _tb.sv)
             echo "Assembling for: ${test_name}"
             python3 scripts/python/assemble_test.py --test-name "${test_name}" --sub-dir instruction_set 
-            # No --init needed here if .asm files are already in software/asm/src/
-            # If .asm files are also generated from template by assemble_test.py, 
-            # you might need --init for the *first ever run* or if they are not in git.
-            # For CI, typically .asm files are committed, and we just assemble them.
           done
           
           echo "Generating .hex files for CPU Control tests..."
@@ -75,10 +68,8 @@ jobs:
           done
 
           echo "Generating .hex files for Module tests (if any need .asm fixtures)..."
-          # Many module tests might not use .asm fixtures, but if some do:
           find hardware/test/modules -name '*_tb.sv' -print0 | while IFS= read -r -d $'\0' tb_file; do
             test_name=$(basename "${tb_file}" _tb.sv)
-            # Check if an ASM file exists for this module test
             if [ -f "software/asm/src/${test_name}.asm" ]; then
               echo "Assembling for: ${test_name}"
               python3 scripts/python/assemble_test.py --test-name "${test_name}" --sub-dir modules
@@ -93,15 +84,59 @@ jobs:
       - name: Execute all Verilog tests
         run: |
           python3 scripts/python/run_tests.py
-          # sv2v is handled internally by run_tests.py or by the iverilog step if not sv module
 
-      - name: Upload test reports and logs
+      - name: Upload Verilog test artifacts
         if: always() 
         uses: actions/upload-artifact@v4
         with:
-          name: test-artifacts-${{ github.run_id }}
+          name: verilog-test-artifacts-${{ github.run_id }}
           path: |
             test_report_all.txt
             test_run_all.log
             build/sim_run_all_temp/
+          retention-days: 7
+
+  run-assembler-tests:
+    name: Run Python Assembler Tests
+    runs-on: ubuntu-latest
+    # This job is independent of run-verilog-tests
+
+    defaults:
+      run:
+        working-directory: software/assembler # Default for run steps in this job
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python for Assembler Tests
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.12' # Or your preferred Python version for the assembler
+
+      - name: Install Python dependencies
+        # This step runs from the project root to find requirements.txt
+        working-directory: ${{ github.workspace }} 
+        run: |
+          python -m pip install --upgrade pip
+          if [ -f "requirements.txt" ]; then
+            echo "Found requirements.txt in project root. Installing..."
+            pip install -r requirements.txt
+          else
+            echo "requirements.txt not found in project root. Installing pytest and pytest-cov directly."
+            pip install pytest pytest-cov
+          fi
+
+      - name: Run Assembler Pytests with Coverage
+        # This step runs from software/assembler (due to job default working-directory)
+        run: |
+          pytest --cov=src --cov-report=xml --cov-report=term 
+
+      - name: Upload Assembler Test Coverage Report
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: assembler-coverage-report-${{ github.run_id }}
+          # Path is relative to GITHUB_WORKSPACE (repository root)
+          path: software/assembler/coverage.xml 
           retention-days: 7
