@@ -1,0 +1,1 @@
+.first: NOP ; Error: local label before any global label

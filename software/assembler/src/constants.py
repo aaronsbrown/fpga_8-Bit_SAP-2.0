@@ -1,22 +1,22 @@
+# software/assembler/src/constants.py
 from dataclasses import dataclass
 from typing import Optional
 
 DEBUG = True
 
-# TODO implement conventions for assembly and generated files?
-ASM_FILE_PATH = ""
-OUTPUT_PATH = ""
+# ASM_FILE_PATH and OUTPUT_PATH removed as they are handled by argparse defaults
 
 @dataclass(frozen=True)
 class InstrInfo:
     opcode: Optional[int]  # None for data directives like DB/DW
     size:   int            # total bytes (opcode + operands)
+                           # For DB/DW, this is size PER ITEM if multiple items allowed by parser.
 
 # Single source of truth for pass 1 & pass 2
 INSTRUCTION_SET: dict[str, InstrInfo] = {
     # — Data directives — no opcode, just define bytes
-    "DB":   InstrInfo(opcode=None, size=1),
-    "DW":   InstrInfo(opcode=None, size=2),
+    "DB":   InstrInfo(opcode=None, size=1), # Size is per item
+    "DW":   InstrInfo(opcode=None, size=2), # Size is per item
 
     # — Zero‑operand instructions (1 byte total) —
     "NOP":   InstrInfo(opcode=0x00, size=1),
@@ -80,4 +80,3 @@ INSTRUCTION_SET: dict[str, InstrInfo] = {
     "LDA":   InstrInfo(opcode=0xA0, size=3),
     "STA":   InstrInfo(opcode=0xA1, size=3),
 }
-

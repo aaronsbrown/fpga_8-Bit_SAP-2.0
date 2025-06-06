@@ -1,0 +1,1 @@
+        ORG $10000 ; Out of 16-bit range

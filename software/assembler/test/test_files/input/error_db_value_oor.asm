@@ -1,0 +1,1 @@
+        DB $100 ; Value too large for a byte

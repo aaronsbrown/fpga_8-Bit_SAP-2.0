@@ -14,129 +14,158 @@ Each part is optional, but certain combinations are required (e.g., a mnemonic o
   * A symbolic name for the memory address of the current line.
   * Must start in the first column or after leading whitespace.
   * Must end with a colon (`:`).
-  * Consists of alphanumeric characters and underscores (`_`), starting with a letter or underscore (e.g., `my_label:`, `loop_start:`, `DATA_VALUE_1:`).
-  * Labels are case-sensitive.
+  * **Global Labels:** Consist of alphanumeric characters and underscores (`_`), starting with a letter or underscore (e.g., `my_label:`, `loop_start:`, `DATA_VALUE_1:`). Global labels are case-sensitive.
+  * **Local Labels:** Start with a dot (`.`) followed by alphanumeric characters and underscores (e.g., `.loop:`, `.data_handler:`). Local labels are scoped to the last defined global label. See "Local Labels" section for details.
   * A label can be on a line by itself, applying to the next instruction or data directive.
 
         ```assembly
         my_label_on_own_line:
                     NOP
+        .local_label_on_own_line:
+                    HLT
         ```
 
 * **Mnemonic (Optional):**
   * The instruction name (e.g., `LDA`, `ADD`) or an assembler directive (e.g., `ORG`, `DB`).
   * Mnemonics are case-insensitive (the assembler typically converts them to uppercase internally).
 
-        ```assembly
-        start:      LDA data_value  ; LDA is the mnemonic
-                    ORG $F000       ; ORG is the mnemonic (a directive)
-        ```
-
 * **Operand(s) (If required by mnemonic):**
-  * Values, registers, addresses, or symbols that the mnemonic operates on.
-  * If an instruction or directive takes multiple "parts" for its operand (e.g., `LDI reg, value` or `MOV dest, src`), these parts are separated by a comma (`,`). Whitespace around the comma is optional.
+  * Values, registers, addresses, symbols, or expressions that the mnemonic operates on.
+  * If an instruction or directive takes multiple "parts" for its operand (e.g., `LDI reg, value`), these parts are separated by a comma (`,`). Whitespace around the comma is optional.
+  * For the `MOV` instruction, the syntax is `MOV <SourceRegister>, <DestinationRegister>` (e.g., `MOV A, B` copies the content of register A to register B).
+  * For the `DB` directive, multiple comma-separated byte values or string literals can be provided.
 
         ```assembly
-        LDI A, #$10     ; Operands are A and #$10
-        MOV B, C        ; Operands are B and C
-        ADD B           ; Operand is B
-        DB  MY_VALUE    ; Operand is MY_VALUE
+        LDI A, #$10             ; Operands are A and expression #$10
+        MOV A, B                ; Operands are A (source) and B (destination)
+        DB  "HELLO", $0A, COUNT ; Operands are "HELLO", $0A, and COUNT
         ```
 
 * **Comment (Optional):**
-  * Anything following a semicolon (`;`) on a line is treated as a comment and ignored by the assembler.
-  * A line can also be entirely a comment if it starts with a semicolon (after optional leading whitespace).
+  * Anything following a semicolon (`;`) on a line is treated as a comment.
 
-        ```assembly
-        LDA value   ; This is a trailing comment
-        ; This entire line is a comment
-        ```
+* **Blank Lines:** Ignored by the assembler.
 
-* **Blank Lines:**
-  * Lines containing only whitespace are ignored by the assembler.
+## 2. Numeric Literals and Expressions
 
-## 2. Numeric Literals
+Numeric values and expressions can be used as operands or with directives.
 
-Numeric values provided as operands or to directives can be expressed in several bases:
+* **Numeric Literals:**
+  * **Decimal:** `20`, `100`
+  * **Hexadecimal:** Prefixed with `$` (e.g., `$F0`, `$12AB`)
+  * **Binary:** Prefixed with `%` (e.g., `%10101010`, `%0011`)
 
-* **Decimal:** Standard base-10 numbers.
-  * Example: `LDI A, #20`, `EQU 100`
-* **Hexadecimal:** Prefixed with a dollar sign (`$`). Case-insensitive for hex digits A-F.
-  * Example: `LDI B, #$F0`, `ORG $F000`, `DB $0A`
-* **Binary:** Prefixed with a percent sign (`%`).
-  * Example: `XRI #%10101010`, `DB %00001111`
+* **Immediate Values:**
+  * For instructions taking immediate data (e.g., `LDI`, `ANI`), the value/expression must be prefixed with `#`.
+  * Example: `LDI A, #$C0`, `ANI #CONSTANT_VALUE`, `LDI B, #LOW_BYTE(MY_ADDRESS)`
 
-**Immediate Values:**
-For instructions that take an immediate data value as an operand (e.g., `LDI`, `ANI`, `ORI`, `XRI`), the value should be prefixed with a hash symbol (`#`). The `#` indicates that the following value is to be used directly, not as a memory address.
-
-* Example: `LDI A, #$C0`, `ANI #128`, `ORI #MY_CONSTANT`
+* **Label Address Manipulation:**
+  * **Byte Extraction:**
+    * `LOW_BYTE(label_or_16bit_value)`: Extracts the lower 8 bits of the resolved 16-bit address or value of `label_or_16bit_value`.
+    * `HIGH_BYTE(label_or_16bit_value)`: Extracts the upper 8 bits.
+    * Example: `LDI A, #LOW_BYTE(DATA_AREA)`, `LDI B, #HIGH_BYTE(ROUTINE_START + 2)`
+  * **Address Arithmetic (Offsets):**
+    * `label_name + N`: Adds constant integer `N` to the resolved address of `label_name`.
+    * `label_name - N`: Subtracts constant integer `N` from the resolved address of `label_name`.
+    * `N` can be a numeric literal or an `EQU` constant.
+    * Parentheses are not currently supported for grouping within these arithmetic expressions (e.g., `(label + N)` is not distinct from `label + N`). Expressions are generally evaluated with basic left-to-right precedence for operators of the same level, and function calls (`LOW_BYTE`/`HIGH_BYTE`) having higher precedence.
+    * Example: `LDA DATA_TABLE + 2`, `STA SMC_TARGET - 1`, `JMP LOOP_START + OFFSET_CONST`
+    * These expressions can be nested, e.g., `DW LOW_BYTE(MY_TABLE + POINTER_OFFSET) + HIGH_BYTE(OTHER_TABLE)`. (Though such complexity should be used judiciously).
 
 ## 3. Symbols and Labels
 
-* **Labels:** As described in section 1, labels define a symbolic name for a memory address. The assembler calculates and assigns the actual address during its first pass.
-  * Example: `main_loop: JMP main_loop` (Here, `main_loop` is a label representing an address).
+* **Global Labels:** As described in section 1, these define a symbolic name for a memory address and are accessible throughout the entire assembly code, including all included files.
+  * Example: `main_loop: JMP main_loop`
 
-* **EQU Constants:** Constants defined with the `EQU` directive (see below) also create symbols. These symbols represent fixed numeric values, not necessarily memory addresses (though they can hold address values).
-
-* **Symbol Usage:** Symbols (whether labels or `EQU` constants) can generally be used wherever a numeric value is expected in an operand field.
-  * For addresses (e.g., in `LDA`, `STA`, `JMP`): `LDA my_variable`, `JMP target_label`
-  * For data values (e.g., in `DB`, `DW`): `DB CONST_VALUE`
-  * For immediate values (must be prefixed with `#`): `LDI A, #MY_IMMEDIATE_CONST`
-
-## 4. Assembler Directives
-
-Assembler directives instruct the assembler to perform certain actions during the assembly process. They do not typically translate directly into machine code instructions executed by the CPU.
-
-* **`ORG <address>` (Originate)**
-  * Sets the current assembly address (location counter) to `<address>`. Subsequent instructions or data will be placed starting at this address.
-  * `<address>` can be a numeric literal (decimal, `$hex`, `%bin`) or a pre-defined `EQU` symbol representing an address.
-  * Range: `0x0000` to `0xFFFF`.
+* **Local Labels:**
+  * **Syntax:** Labels starting with a dot (`.`), e.g., `.loop`, `.error_handler`.
+  * **Scope:** A local label is associated with the most recently defined global label that appeared before it in the source code (excluding labels for `EQU` directives). This means the same local label name (e.g., `.loop`) can be reused under different global labels without conflict.
+  * **Resolution:** When a local label is referenced (e.g., `JNZ .loop`), the assembler resolves it to the instance of `.loop` that falls under the current global label's scope.
   * Example:
 
         ```assembly
-        ROM_START EQU $F000
-                    ORG ROM_START
+        FIRST_ROUTINE:
+            LDI A, #5
+        .loop:      ; This is FIRST_ROUTINE.loop
+            DCR A
+            JNZ .loop ; Jumps to FIRST_ROUTINE.loop
+            RET
+
+        SECOND_ROUTINE:
+            LDI B, #10
+        .loop:      ; This is SECOND_ROUTINE.loop
+            DCR B
+            JNZ .loop ; Jumps to SECOND_ROUTINE.loop
+            RET
         ```
 
-* **`<label>: EQU <value>` (Equate)**
-  * Assigns the constant numeric `<value>` to `<label>`. The label becomes a symbolic constant.
-  * `<value>` can be a numeric literal or the value of another symbol that has already been defined (either another `EQU` or a label representing an address).
+  * A local label must be defined after at least one global label (not an `EQU` label) has been established in the current file or an included file processed up to that point.
+
+* **EQU Constants:** Constants defined with `EQU` also create symbols representing fixed numeric values.
+
+* **Symbol Usage:** Symbols (global labels, local labels, `EQU` constants) and expressions involving them can be used wherever a numeric value is expected, respecting context (e.g., 8-bit or 16-bit values).
+
+## 4. Assembler Directives
+
+* **`ORG <address_expression>` (Originate)**
+  * Sets the current assembly address to the result of `<address_expression>`.
+  * `<address_expression>` can be a numeric literal, symbol, or an address arithmetic expression.
+  * Range: `0x0000` to `0xFFFF`.
+  * Example: `ORG ROM_START + $100`
+
+* **`<label>: EQU <value_expression>` (Equate)**
+  * Assigns the result of constant numeric `<value_expression>` to `<label>`. The label becomes a symbolic constant.
+  * **Parser Limitation:** During the parser's first pass, `<value_expression>` must resolve to a simple numeric literal (decimal, `$hex`, `%bin`) or a symbol whose value is already numerically defined (e.g., another `EQU` that resolved to a number, or an address label). The parser does not evaluate complex expressions like `LOW_BYTE(...)` or arithmetic directly as the value for an `EQU` at definition time.
+  * However, once an `EQU` symbol is defined with a numeric value, that symbol can then be freely used in more complex expressions as an operand for instructions or other directives (like `DB`, `DW`, `ORG`), where the assembler's second pass will perform the full expression evaluation.
   * Example:
 
         ```assembly
         SCREEN_WIDTH: EQU 80
         MAX_RETRIES:  EQU 5
         LED_PORT_ADDR:EQU $E000
-        CODE_START:   EQU main_program_label ; Assigns address of main_program_label
+        CODE_START:   EQU main_program_label ; Assigns address of main_program_label (if main_program_label is already known)
+        
+        ; Valid usage in operands:
+        ; LDI A, #LOW_BYTE(LED_PORT_ADDR)
+        ; DB SCREEN_WIDTH / 2 ; This expression would be evaluated by the assembler.
         ```
 
-* **`DB <value>` (Define Byte)**
-  * Allocates one byte of memory and initializes it with `<value>`.
-  * `<value>` must resolve to an 8-bit number (0 to 255, or 0x00 to 0xFF). It can be a numeric literal or an 8-bit `EQU` symbol/label.
-  * **Limitation:** Only one value per `DB` directive is currently supported. For multiple bytes, use multiple `DB` lines.
+* **`DB <item1> [, <item2>, ...]` (Define Byte)**
+  * Allocates one or more bytes of memory, initialized with the specified 8-bit values.
+  * Operands can be:
+    * Numeric literals or expressions resolving to an 8-bit value (0-255).
+    * Double-quoted string literals (e.g., `"HELLO"`). Each character in the string is converted to its 8-bit ASCII equivalent and emitted sequentially.
+      * *Note: Special escape sequences like `\n`, `\0`, `\\`, `\"` inside strings are not currently supported. They will be treated as literal characters (e.g., `\` followed by `n`).*
   * Example:
 
         ```assembly
-        my_byte:    DB $41          ; Stores ASCII 'A'
-        count:      DB 10
-        flags:      DB %00001001
+        message:    DB "Hello, world!", $0A, 0 ; String, newline, null terminator
+        byte_data:  DB $01, MY_CONST, COUNT + 2, %11000011
+        empty_str:  DB ""                     ; Emits zero bytes
         ```
 
-* **`DW <value>` (Define Word)**
-  * Allocates two bytes of memory and initializes them with the 16-bit `<value>`.
-  * The value is stored in **little-endian** format (the low byte is stored at the lower address, and the high byte at the next higher address).
-  * `<value>` must resolve to a 16-bit number (0 to 65535, or 0x0000 to 0xFFFF). It can be a numeric literal or a 16-bit `EQU` symbol/label (often used for storing addresses).
-  * **Limitation:** Only one value per `DW` directive is currently supported.
+* **`DW <value_expression>` (Define Word)**
+  * Allocates two bytes of memory, initialized with the 16-bit `<value_expression>`.
+  * Stored in **little-endian** format (low byte at lower address, high byte at next).
+  * `<value_expression>` must resolve to a 16-bit number (0-65535).
+  * **Limitation:** Only one value per `DW` directive is currently supported. For multiple words, use multiple `DW` lines.
   * Example:
 
         ```assembly
-        word_value: DW $1234        ; Stores $34 at word_value, $12 at word_value+1
-        jump_table: DW routine1_addr  ; Stores the 16-bit address of routine1_addr
+        address_pointer: DW TARGET_LABEL
+        config_word:     DW $1234          ; Stores $34 then $12
+        table_entry:     DW DATA_START + OFFSET
         ```
+
+* **`INCLUDE "<filename>"` (Include File)**
+  * Includes and assembles the content of another assembly file at the current location.
+  * `<filename>` is a string, typically relative to the directory of the current file.
+  * Included files inherit the current address and global label scope from the point of inclusion.
+  * Example: `INCLUDE "macros.asm"`
 
 ## 5. Instruction Mnemonics and Operands
 
-This section provides a general overview. For the complete list of supported CPU instructions, their opcodes, byte sizes, and precise operand requirements, refer to the **`docs/0_ISA.md`** document.
+This section provides a general overview. For the complete list of supported CPU instructions, their opcodes, byte sizes, and precise operand requirements, refer to the **`docs/0_ISA.md`** document. Operands can be complex expressions as described in Section 2.
 
 **Common Operand Patterns:**
 
@@ -148,28 +177,27 @@ This section provides a general overview. For the complete list of supported CPU
     * `INR reg` (Increment register: `A`, `B`, or `C`)
     * `DCR reg` (Decrement register: `A`, `B`, or `C`)
     * `ADD reg` (Add register `B` or `C` to Accumulator `A`)
-    * `SUB reg` (Subtract register `B` or `C` from `A`)
-    * `ADC reg`, `SBC reg`, `ANA reg`, `ORA reg`, `XRA reg`, `CMP reg` (all operate with `A` and register `B` or `C`)
   * Syntax: `ADD B`, `INR A`, `CMP C`
 
 * **Immediate Operand (Accumulator `A` is implied destination/source):**
-  * The operand is an 8-bit immediate value, prefixed with `#`.
+  * The operand is an 8-bit immediate value or expression, prefixed with `#`.
   * Examples: `ANI #value`, `ORI #value`, `XRI #value`
-  * Syntax: `ANI #$F0`, `ORI #%00001111`
+  * Syntax: `ANI #$F0`, `ORI #%00001111`, `XRI #(CONST_A | CONST_B)`
 
 * **Register and Immediate Operand:**
-  * The first operand is a destination register (`A`, `B`, or `C`), and the second is an 8-bit immediate value prefixed with `#`.
-  * Example: `LDI reg, #value`
-  * Syntax: `LDI A, #$10`, `LDI B, #MY_INIT_VALUE`
+  * The first operand is a destination register (`A`, `B`, or `C`), and the second is an 8-bit immediate value or expression prefixed with `#`.
+  * Example: `LDI reg, #expression`
+  * Syntax: `LDI A, #$10`, `LDI B, #MY_INIT_VALUE`, `LDI C, #LOW_BYTE(TABLE_START)`
 
-* **Register and Register Operand:**
-  * The first operand is the destination register, the second is the source register. Both can be `A`, `B`, or `C`.
-  * Example: `MOV dest_reg, src_reg`
-  * Syntax: `MOV A, B`, `MOV C, A`
+* **Register and Register Operand (MOV):**
+  * Syntax: `MOV <source_register>, <destination_register>`
+  * The first operand is the source register, the second is the destination register. Both can be `A`, `B`, or `C`.
+  * Example: `MOV A, B` (Copies content of register A to register B; `B = A`)
+  * Example: `MOV C, A` (Copies content of register C to register A; `A = C`)
 
 * **16-bit Address Operand:**
-  * The operand is a 16-bit memory address (can be a numeric literal, a label, or an `EQU` constant representing an address).
-  * Examples: `LDA address`, `STA address`, `JMP address`, `JZ address`, `JNZ address`, `JN address`
-  * Syntax: `LDA my_data_location`, `JMP main_loop`, `STA $E000`
+  * The operand is a 16-bit memory address or an expression resolving to one.
+  * Examples: `LDA address_expression`, `STA address_expression`, `JMP address_expression`
+  * Syntax: `LDA my_data_location`, `JMP main_loop`, `STA $E000 + OFFSET`
 
 ---
