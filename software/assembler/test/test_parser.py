@@ -319,3 +319,39 @@ class TestParserUnit:
         assert mock_tracker["called_for_file"] == dummy_filepath # Ensure mock was hit before error
         assert excinfo.value.source_file == dummy_filepath
         assert excinfo.value.line_no == 1 # .noluck: NOP is on the first line of asm_content
+        
+    def test_parser_standalone_global_label(self, monkeypatch):
+        asm_content = """
+        ROUTINE_START:      ; This is a standalone global label
+                    NOP         ; Next instruction
+        .local_standalone:  ; Standalone local label
+                    HLT
+        """
+        dummy_filepath = "/dummy/test_standalone_labels.asm"
+        mock_tracker = {"called_for_file": None}
+
+        def mock_load(instance_self, filepath_to_load, requesting_file, requesting_line_no):
+            mock_tracker["called_for_file"] = filepath_to_load
+            if filepath_to_load == dummy_filepath:
+                return asm_content.splitlines()
+            raise FileNotFoundError(f"[Mock] File not found: {filepath_to_load}")
+
+        monkeypatch.setattr(Parser, "_load_lines_from_physical_file", mock_load)
+        parser = Parser(main_input_filepath=dummy_filepath)
+        assert mock_tracker["called_for_file"] == dummy_filepath
+
+        expected_symbols = {
+            "ROUTINE_START": 0x0000,             # Points to NOP
+            "ROUTINE_START.local_standalone": 0x0001 # NOP is 1 byte, HLT is at addr 1
+        }
+        assert parser.symbol_table == expected_symbols
+
+        # Ensure no tokens were created for the standalone label lines themselves,
+        # only for NOP and HLT.
+        mnemonics_in_tokens = [token.mnemonic for token in parser.tokens]
+        assert mnemonics_in_tokens == ["NOP", "HLT"]
+        assert len(parser.tokens) == 2
+        assert parser.tokens[0].label is None # NOP line has no label directly on it
+        assert parser.tokens[0].line_no == 3   # "NOP" is on line 3 of asm_content
+        assert parser.tokens[1].label is None # HLT line has no label directly on it
+        assert parser.tokens[1].line_no == 5   # "HLT" is on line 5

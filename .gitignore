@@ -54,6 +54,7 @@ __pycache__/
 # Pytest specific
 .pytest_cache/
 .coverage # Coverage reports
+software/assembler/.coverage
 htmlcov/  # HTML coverage report
 
 # Assembler specific log file (from your Python script's logging config)
