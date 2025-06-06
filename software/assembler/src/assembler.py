@@ -137,10 +137,10 @@ class Assembler:
 
     def _resolve_expression_to_int(self, expression_str: str, current_token: 'Token') -> int:
         """
-        Recursively resolves an expression string (symbol, literal, arithmetic, functions) to an integer.
+        Recursively resolves an expression string (symbol, literal, arithmetic, logical, functions) to an integer.
         
         Args:
-            expression_str: Expression string to resolve (e.g., "LOW_BYTE(SYMBOL)", "A + B")
+            expression_str: Expression string to resolve (e.g., "LOW_BYTE(SYMBOL)", "A + B", "MASK_A | MASK_B")
             current_token: Token context for error reporting
             
         Returns:
@@ -156,10 +156,30 @@ class Assembler:
         if func_result is not None:
             return func_result
 
-        # Try arithmetic expression parsing  
+        # Try parentheses parsing (grouping)
+        paren_result = self._try_parse_parentheses(expr, current_token)
+        if paren_result is not None:
+            return paren_result
+
+        # Try arithmetic expression parsing (+ -)
         arith_result = self._try_parse_arithmetic_expression(expr, current_token)
         if arith_result is not None:
             return arith_result
+
+        # Try logical expression parsing (|, ^, &) - lowest precedence among bitwise
+        logical_result = self._try_parse_logical_expression(expr, current_token)
+        if logical_result is not None:
+            return logical_result
+
+        # Try shift expression parsing - higher precedence than logical
+        shift_result = self._try_parse_shift_expression(expr, current_token)
+        if shift_result is not None:
+            return shift_result
+
+        # Try unary expression parsing (NOT operator) - highest precedence
+        unary_result = self._try_parse_unary_expression(expr, current_token)
+        if unary_result is not None:
+            return unary_result
 
         # Fall back to raw symbol/literal parsing
         return self._resolve_raw_symbol_or_literal(expr, "expression component", current_token)
@@ -257,6 +277,220 @@ class Assembler:
 
         return None, -1
 
+    def _try_parse_logical_expression(self, expr: str, current_token: 'Token') -> Optional[int]:
+        """
+        Try to parse expression as logical operations (|, ^, &) with proper precedence.
+        
+        Args:
+            expr: Expression string to check for logical pattern
+            current_token: Token context for error reporting
+            
+        Returns:
+            Logical result if expression contains logical operators, None otherwise
+            
+        Raises:
+            AssemblerError: If logical expression is malformed
+        """
+        # Find the rightmost logical operator with proper precedence (| lowest, & highest)
+        op_char, split_pos = self._find_rightmost_logical_operator(expr)
+        
+        if not op_char or split_pos <= 0:
+            return None
+
+        lhs_str = expr[:split_pos].strip()
+        rhs_str = expr[split_pos+len(op_char):].strip()
+
+        if not lhs_str or not rhs_str:
+            raise AssemblerError(f"Malformed logical expression: '{expr}'. Missing operand around '{op_char}'.",
+                                 source_file=current_token.source_file, line_no=current_token.line_no)
+
+        lhs_val = self._resolve_expression_to_int(lhs_str, current_token)
+        rhs_val = self._resolve_expression_to_int(rhs_str, current_token)
+        
+        if op_char == '|':
+            return lhs_val | rhs_val
+        elif op_char == '^':
+            return lhs_val ^ rhs_val
+        elif op_char == '&':
+            return lhs_val & rhs_val
+        else:
+            # Should not reach here
+            raise AssemblerError(f"Internal error: unknown logical operator '{op_char}'.",
+                                 source_file=current_token.source_file, line_no=current_token.line_no)
+
+    def _find_rightmost_logical_operator(self, expr: str) -> Tuple[Optional[str], int]:
+        """
+        Find the rightmost logical operator (|, ^, &) with proper precedence.
+        Precedence: | (lowest) > ^ > & (highest)
+        
+        Args:
+            expr: Expression string to search
+            
+        Returns:
+            Tuple of (operator_char, position) or (None, -1) if no operator found
+        """
+        # Search for operators in precedence order (lowest to highest precedence)
+        # We want rightmost for left-to-right evaluation of same precedence
+        
+        # Check for OR (|) - lowest precedence
+        r_or_idx = expr.rfind('|')
+        if r_or_idx > 0:  # Must have LHS operand
+            return '|', r_or_idx
+            
+        # Check for XOR (^) - medium precedence  
+        r_xor_idx = expr.rfind('^')
+        if r_xor_idx > 0:  # Must have LHS operand
+            return '^', r_xor_idx
+            
+        # Check for AND (&) - highest precedence
+        r_and_idx = expr.rfind('&')
+        if r_and_idx > 0:  # Must have LHS operand
+            return '&', r_and_idx
+
+        return None, -1
+
+    def _try_parse_shift_expression(self, expr: str, current_token: 'Token') -> Optional[int]:
+        """
+        Try to parse expression as shift operations (<<, >>).
+        
+        Args:
+            expr: Expression string to check for shift pattern
+            current_token: Token context for error reporting
+            
+        Returns:
+            Shift result if expression contains shift operators, None otherwise
+            
+        Raises:
+            AssemblerError: If shift expression is malformed
+        """
+        # Find the rightmost shift operator
+        op_str, split_pos = self._find_rightmost_shift_operator(expr)
+        
+        if not op_str or split_pos <= 0:
+            return None
+
+        lhs_str = expr[:split_pos].strip()
+        rhs_str = expr[split_pos+len(op_str):].strip()
+
+        if not lhs_str or not rhs_str:
+            raise AssemblerError(f"Malformed shift expression: '{expr}'. Missing operand around '{op_str}'.",
+                                 source_file=current_token.source_file, line_no=current_token.line_no)
+
+        lhs_val = self._resolve_expression_to_int(lhs_str, current_token)
+        rhs_val = self._resolve_expression_to_int(rhs_str, current_token)
+        
+        if op_str == '<<':
+            # Left shift - limit result to 8-bit for assembler context
+            result = lhs_val << rhs_val
+            return result & 0xFF  # Keep in 8-bit range
+        elif op_str == '>>':
+            # Right shift
+            return lhs_val >> rhs_val
+        else:
+            # Should not reach here
+            raise AssemblerError(f"Internal error: unknown shift operator '{op_str}'.",
+                                 source_file=current_token.source_file, line_no=current_token.line_no)
+
+    def _find_rightmost_shift_operator(self, expr: str) -> Tuple[Optional[str], int]:
+        """
+        Find the rightmost shift operator (<<, >>) in an expression.
+        
+        Args:
+            expr: Expression string to search
+            
+        Returns:
+            Tuple of (operator_string, position) or (None, -1) if no operator found
+        """
+        # Check for left shift (<<)
+        r_lshift_idx = expr.rfind('<<')
+        # Check for right shift (>>)  
+        r_rshift_idx = expr.rfind('>>')
+        
+        # Pick the rightmost shift operator
+        if r_lshift_idx != -1 and r_lshift_idx > r_rshift_idx:
+            if r_lshift_idx > 0:  # Must have LHS operand
+                return '<<', r_lshift_idx
+        elif r_rshift_idx != -1:
+            if r_rshift_idx > 0:  # Must have LHS operand
+                return '>>', r_rshift_idx
+
+        return None, -1
+
+    def _try_parse_unary_expression(self, expr: str, current_token: 'Token') -> Optional[int]:
+        """
+        Try to parse expression as unary operation (~).
+        
+        Args:
+            expr: Expression string to check for unary pattern
+            current_token: Token context for error reporting
+            
+        Returns:
+            Unary result if expression starts with unary operator, None otherwise
+            
+        Raises:
+            AssemblerError: If unary expression is malformed
+        """
+        if not expr.startswith('~'):
+            return None
+            
+        # Extract operand after the ~ operator
+        operand_str = expr[1:].strip()
+        
+        if not operand_str:
+            raise AssemblerError(f"Malformed unary expression: '{expr}'. Missing operand after '~'.",
+                                 source_file=current_token.source_file, line_no=current_token.line_no)
+
+        operand_val = self._resolve_expression_to_int(operand_str, current_token)
+        
+        # Bitwise NOT - limit to 8-bit result for assembler context
+        return (~operand_val) & 0xFF
+
+    def _try_parse_parentheses(self, expr: str, current_token: 'Token') -> Optional[int]:
+        """
+        Try to parse expression with parentheses for grouping.
+        
+        Args:
+            expr: Expression string to check for parentheses pattern
+            current_token: Token context for error reporting
+            
+        Returns:
+            Result of parenthesized expression, None if no parentheses found
+            
+        Raises:
+            AssemblerError: If parentheses are malformed or mismatched
+        """
+        expr = expr.strip()
+        
+        # Check if expression is fully wrapped in parentheses
+        if not (expr.startswith('(') and expr.endswith(')')):
+            return None
+            
+        # Extract content inside parentheses
+        inner_expr = expr[1:-1].strip()
+        
+        if not inner_expr:
+            raise AssemblerError(f"Empty parentheses in expression: '{expr}'.",
+                                 source_file=current_token.source_file, line_no=current_token.line_no)
+        
+        # Check for balanced parentheses by counting nesting level
+        paren_count = 0
+        for i, char in enumerate(inner_expr):
+            if char == '(':
+                paren_count += 1
+            elif char == ')':
+                paren_count -= 1
+                if paren_count < 0:
+                    # More closing than opening parentheses
+                    raise AssemblerError(f"Mismatched parentheses in expression: '{expr}'.",
+                                         source_file=current_token.source_file, line_no=current_token.line_no)
+        
+        if paren_count != 0:
+            # Unclosed parentheses
+            raise AssemblerError(f"Mismatched parentheses in expression: '{expr}'.",
+                                 source_file=current_token.source_file, line_no=current_token.line_no)
+        
+        # Recursively evaluate the inner expression
+        return self._resolve_expression_to_int(inner_expr, current_token)
 
     def _parse_value_or_symbol(self, value_str: Optional[str], context_description: str, current_token: 'Token') -> int:
         """Wrapper to resolve an expression string from an operand to an integer value."""
