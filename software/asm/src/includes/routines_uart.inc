@@ -1,4 +1,58 @@
 ; ======================================================================
+; SUBROUTINE: READ_LINE
+; Purpose: Reads a character-by-character input from UART until Enter
+;          is pressed, storing it in a buffer with basic editing.
+; (Keep your detailed Doxygen-style block here from before, it's good)
+; ======================================================================
+READ_LINE:
+    ; --- Phase 1: Initialization ---
+    ; Set up your starting buffer pointer (e.g., using B and C for address parts).
+    ; Initialize your character count (likely in a RAM location) to zero.
+
+.INPUT_LOOP_START:
+    ; --- Phase 2: Get Character ---
+    ; Wait for and receive a single character from the UART into Accumulator A.
+
+    ; --- Phase 3: Decode Character Type ---
+    ; Based on the character in A, decide what it is:
+    ;   - Is it the 'End of Line' character (e.g., Carriage Return)?
+    ;   - Is it the 'Backspace' character?
+    ;   - Or is it a 'Regular Printable Character'?
+
+    ; --- Phase 4A: Handle 'End of Line' ---
+    ; If CR:
+    ;   Echo appropriate new line sequence to terminal (e.g., CR then LF).
+    ;   Store a 'null terminator' (0) at the current buffer position.
+    ;   Consume any trailing LF from the terminal.
+    ;   This line is complete: Return from READ_LINE subroutine.
+
+    ; --- Phase 4B: Handle 'Backspace' ---
+    ; If Backspace:
+    ;   Check if there are any characters in the buffer to delete (is count > 0?).
+    ;   If yes:
+    ;     Decrement the character count.
+    ;     Move the buffer pointer back one position.
+    ;     Send the "erase character" sequence (BS, Space, BS) to the terminal.
+    ;   If no characters to delete, do nothing.
+    ;   Go back to .INPUT_LOOP_START to get the next character.
+
+    ; --- Phase 4C: Handle 'Regular Printable Character' ---
+    ; If it's a regular character:
+    ;   Check if the buffer has space for this character (is count < max_buffer_size - 1?).
+    ;   If yes (space available):
+    ;     Increment the character count.
+    ;     Echo the character to the terminal.
+    ;     Store the character at the current buffer position.
+    ;     Advance the buffer pointer to the next position.
+    ;   If no (buffer full):
+    ;     Ignore the character (optional: provide user feedback like a 'bell').
+    ;   Go back to .INPUT_LOOP_START to get the next character.
+
+    ; Should always loop back or return from EOL, so a RET here is likely an error path or unreachable.
+    JMP .INPUT_LOOP_START ; Or RET if structured differently
+
+
+; ======================================================================
 ; == SUBROUTINE: PRINT_STRING
 ; == Purpose: Prints a null-terminated string pointed to by BC,
 ; ==          with an inter-character delay.
