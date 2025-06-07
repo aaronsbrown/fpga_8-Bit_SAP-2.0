@@ -111,9 +111,18 @@ class Assembler:
 
 
     def _resolve_raw_symbol_or_literal(self, value_str: str, context_description: str, current_token: 'Token') -> int:
-        """Resolves a plain symbol or a numeric literal to an integer."""
+        """Resolves a plain symbol, numeric literal, or character literal to an integer."""
         s = value_str.strip()
         # err_src_file_basename and err_line_no are available from current_token if needed for errors
+
+        # Check for character literal first (single quotes)
+        if s.startswith("'") and s.endswith("'"):
+            return self._parse_character_literal(s, current_token)
+        
+        # Check for unterminated character literal
+        if s.startswith("'") and not s.endswith("'"):
+            raise AssemblerError(f"Unterminated character literal: '{s}'",
+                                 source_file=current_token.source_file, line_no=current_token.line_no)
 
         if s in self.symbols:
             return self.symbols[s]
@@ -134,6 +143,67 @@ class Assembler:
             type_str = "hexadecimal" if base_to_use == 16 else "binary" if base_to_use == 2 else "decimal"
             raise AssemblerError(f"Bad {type_str} value for {context_description}: '{value_str}'. Not a known symbol.",
                                  source_file=current_token.source_file, line_no=current_token.line_no)
+
+    def _parse_character_literal(self, char_literal_str: str, current_token: 'Token') -> int:
+        """
+        Parse a character literal (e.g., 'A', '\\n') and return its ASCII value.
+        
+        Args:
+            char_literal_str: Character literal string including quotes (e.g., "'A'")
+            current_token: Token context for error reporting
+            
+        Returns:
+            ASCII value of the character
+            
+        Raises:
+            AssemblerError: If character literal is malformed
+        """
+        # Remove outer quotes
+        if len(char_literal_str) < 2 or not (char_literal_str.startswith("'") and char_literal_str.endswith("'")):
+            raise AssemblerError(f"Malformed character literal: '{char_literal_str}'",
+                                 source_file=current_token.source_file, line_no=current_token.line_no)
+        
+        char_content = char_literal_str[1:-1]
+        
+        # Check for empty character literal
+        if not char_content:
+            raise AssemblerError(f"Empty character literal: '{char_literal_str}'",
+                                 source_file=current_token.source_file, line_no=current_token.line_no)
+        
+        # Check for unterminated character literal (this case should not occur with our check above, but being thorough)
+        if len(char_literal_str) < 3:
+            raise AssemblerError(f"Unterminated character literal: '{char_literal_str}'",
+                                 source_file=current_token.source_file, line_no=current_token.line_no)
+        
+        # Process escape sequences
+        if char_content.startswith('\\'):
+            if len(char_content) < 2:
+                raise AssemblerError(f"Incomplete escape sequence in character literal: '{char_literal_str}'",
+                                     source_file=current_token.source_file, line_no=current_token.line_no)
+            
+            escape_char = char_content[1]
+            if escape_char == 'n':
+                return ord('\n')  # 10
+            elif escape_char == 't':
+                return ord('\t')  # 9
+            elif escape_char == 'r':
+                return ord('\r')  # 13
+            elif escape_char == '0':
+                return ord('\0')  # 0
+            elif escape_char == '\\':
+                return ord('\\')  # 92
+            elif escape_char == "'":
+                return ord("'")   # 39
+            else:
+                raise AssemblerError(f"Unknown escape sequence '\\{escape_char}' in character literal: '{char_literal_str}'",
+                                     source_file=current_token.source_file, line_no=current_token.line_no)
+        
+        # Regular character - must be exactly one character
+        if len(char_content) != 1:
+            raise AssemblerError(f"Character literal must contain exactly one character: '{char_literal_str}' (contains {len(char_content)} characters)",
+                                 source_file=current_token.source_file, line_no=current_token.line_no)
+        
+        return ord(char_content[0])
 
     def _resolve_expression_to_int(self, expression_str: str, current_token: 'Token') -> int:
         """

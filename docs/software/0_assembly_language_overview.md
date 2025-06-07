@@ -55,6 +55,10 @@ Each part is optional, but certain combinations are required (e.g., a mnemonic o
   * Decimal: 20, 100
   * Hexadecimal: Prefixed with $ (e.g., $F0, $12AB)
   * Binary: Prefixed with % (e.g., %10101010, %0011)
+  * Character Literals: Single characters enclosed in single quotes, evaluated to their ASCII values
+    * Basic characters: 'A' (65), 'a' (97), '0' (48), ' ' (32), '!' (33)
+    * Escape sequences: '\n' (10), '\r' (13), '\t' (9), '\0' (0), '\\' (92), '\'' (39)
+    * Example: `LDI A, #'H'` loads 72 (ASCII 'H') into register A
 * Expressions and Operators:
   The assembler now supports more complex expressions with the following operators (in
   order of precedence, from highest to lowest):
@@ -82,10 +86,14 @@ Each part is optional, but certain combinations are required (e.g., a mnemonic o
   * For instructions taking immediate data (e.g., LDI, ANI), the value/expression must
   be prefixed with #.
   * Supports complex expressions with the operators mentioned above
+  * Character literals can be used directly in expressions
   * Example:
     LDI A, #(UART_ENABLE | UART_8_BITS)  ; Bitwise OR of constants
   ANI #(~MASK)                         ; Bitwise NOT of a mask
   LDI B, #(CONFIG_REG << 2)            ; Left shift
+  LDI A, #'A'                          ; Load ASCII value of 'A' (65)
+  LDI B, #'A' + 1                      ; Load ASCII value of 'B' (66)
+  ANI #'\n'                            ; AND with newline character (10)
 * Parentheses and Precedence:
   * Parentheses can be used to control the order of evaluation
   * Nested parentheses are supported
@@ -166,6 +174,7 @@ Each part is optional, but certain combinations are required (e.g., a mnemonic o
   * Allocates one or more bytes of memory, initialized with the specified 8-bit values.
   * Operands can be:
     * Numeric literals or expressions resolving to an 8-bit value (0-255).
+    * Character literals (e.g., `'A'`, `'\n'`) for individual characters.
     * Double-quoted string literals (e.g., `"HELLO"`). Each character in the string is converted to its 8-bit ASCII equivalent and emitted sequentially.
       * **String Escape Sequences:** The following escape sequences are supported within string literals:
         * `\n` - Newline (ASCII 10)
@@ -181,6 +190,8 @@ Each part is optional, but certain combinations are required (e.g., a mnemonic o
         message:    DB "Hello, world!\n", 0    ; String with newline and null terminator
         prompt:     DB "Enter value: \x22", 0  ; String with embedded quote character
         byte_data:  DB $01, MY_CONST, COUNT + 2, %11000011
+        char_data:  DB 'H', 'e', 'l', 'l', 'o', '\0'  ; Individual character literals
+        mixed:      DB 'A', $20, "BC", '\n'   ; Mix of character literals, numbers, and strings
         empty_str:  DB ""                      ; Emits zero bytes
         greeting:   DB "Say \"Hello\"\n"       ; Demonstrates quote escaping
         control:    DB "Line1\nLine2\tTabbed\x00" ; Mixed escape sequences
@@ -223,13 +234,15 @@ This section provides a general overview. For the complete list of supported CPU
 
 * **Immediate Operand (Accumulator `A` is implied destination/source):**
   * The operand is an 8-bit immediate value or expression, prefixed with `#`.
+  * Can include character literals with their ASCII values.
   * Examples: `ANI #value`, `ORI #value`, `XRI #value`
-  * Syntax: `ANI #$F0`, `ORI #%00001111`, `XRI #(CONST_A | CONST_B)`
+  * Syntax: `ANI #$F0`, `ORI #%00001111`, `XRI #(CONST_A | CONST_B)`, `ANI #'A'`, `ORI #'\n'`
 
 * **Register and Immediate Operand:**
   * The first operand is a destination register (`A`, `B`, or `C`), and the second is an 8-bit immediate value or expression prefixed with `#`.
+  * Character literals can be used for readable character loading.
   * Example: `LDI reg, #expression`
-  * Syntax: `LDI A, #$10`, `LDI B, #MY_INIT_VALUE`, `LDI C, #LOW_BYTE(TABLE_START)`
+  * Syntax: `LDI A, #$10`, `LDI B, #MY_INIT_VALUE`, `LDI C, #LOW_BYTE(TABLE_START)`, `LDI A, #'H'`, `LDI B, #'A' + 1`
 
 * **Register and Register Operand (MOV):**
   * Syntax: `MOV <source_register>, <destination_register>`
