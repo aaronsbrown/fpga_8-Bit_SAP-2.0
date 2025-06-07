@@ -2,7 +2,7 @@
 import logging
 import os
 import re
-from typing import List, Dict, Optional, Tuple
+from typing import List, Dict, Optional, Tuple, NamedTuple
 from dataclasses import dataclass
 
 # Assuming constants.py is in the same directory or accessible via PYTHONPATH
@@ -15,6 +15,18 @@ except ImportError:
 
 
 logger = logging.getLogger(__name__)
+
+
+class ConditionalBlock(NamedTuple):
+    """Represents a conditional assembly block state."""
+    directive_type: str  # 'IFDEF' or 'IFNDEF'
+    symbol_name: str     # Symbol being tested
+    condition_met: bool  # Whether the condition was initially true
+    in_else_block: bool  # Whether we're currently in the ELSE part
+    should_assemble: bool  # Whether lines in current block should be assembled
+    source_file: str     # File where directive was defined
+    line_no: int         # Line number where directive was defined
+
 
 @dataclass(frozen=True)
 class Token:
@@ -83,6 +95,7 @@ class Parser:
         self.symbol_table: Dict[str, int] = {}
         self.tokens: List[Token] = []
         self._files_in_recursion_stack: List[str] = []
+        self._conditional_stack: List[ConditionalBlock] = []
 
         logger.info(f"Parser initialized for main file: {self.main_input_filepath}")
         # Initial call, no current global label scope, start address 0
@@ -92,6 +105,108 @@ class Parser:
         for sym, val in sorted(self.symbol_table.items()): # Sort for consistent logging
             logger.info(f"  {sym!r} -> 0x{val:04X}")
         logger.info(f"Total tokens collected for assembler: {len(self.tokens)}")
+        
+        # Check for unmatched conditional directives at end of parsing
+        if self._conditional_stack:
+            unmatched_block = self._conditional_stack[-1]
+            raise ParserError(f"Unmatched {unmatched_block.directive_type} directive - missing ENDIF", 
+                              unmatched_block.source_file, unmatched_block.line_no)
+
+    def _should_assemble_line(self) -> bool:
+        """Determine if the current line should be assembled based on conditional stack."""
+        if not self._conditional_stack:
+            return True
+        
+        # If any level in the stack says don't assemble, then don't assemble
+        for block in self._conditional_stack:
+            if not block.should_assemble:
+                return False
+        return True
+
+    def _handle_conditional_directive(self, mnemonic: str, operand: Optional[str], 
+                                      source_file: str, line_no: int) -> bool:
+        """
+        Handle conditional assembly directives (IFDEF, IFNDEF, ELSE, ENDIF).
+        
+        Returns:
+            True if the directive was handled (and caller should continue to next line)
+            False if this is not a conditional directive
+        """
+        mnemonic_upper = mnemonic.upper()
+        
+        if mnemonic_upper in ('IFDEF', 'IFNDEF'):
+            if not operand:
+                raise ParserError(f"{mnemonic_upper} directive requires a symbol name", source_file, line_no)
+            
+            symbol_name = operand.strip()
+            is_defined = symbol_name in self.symbol_table
+            
+            # Determine if condition is met
+            if mnemonic_upper == 'IFDEF':
+                condition_met = is_defined
+            else:  # IFNDEF
+                condition_met = not is_defined
+            
+            # Determine if this block should be assembled
+            # Consider parent blocks - if any parent says don't assemble, we inherit that
+            parent_should_assemble = self._should_assemble_line()
+            should_assemble = parent_should_assemble and condition_met
+            
+            # Push new conditional block
+            new_block = ConditionalBlock(
+                directive_type=mnemonic_upper,
+                symbol_name=symbol_name,
+                condition_met=condition_met,
+                in_else_block=False,
+                should_assemble=should_assemble,
+                source_file=source_file,
+                line_no=line_no
+            )
+            self._conditional_stack.append(new_block)
+            
+            logger.debug(f"{mnemonic_upper} {symbol_name}: symbol_defined={is_defined}, "
+                        f"condition_met={condition_met}, should_assemble={should_assemble}")
+            return True
+            
+        elif mnemonic_upper == 'ELSE':
+            if not self._conditional_stack:
+                raise ParserError("ELSE directive without matching IFDEF or IFNDEF", source_file, line_no)
+            
+            current_block = self._conditional_stack[-1]
+            if current_block.in_else_block:
+                raise ParserError("Multiple ELSE directives in same conditional block", source_file, line_no)
+            
+            # Switch to else block - invert the assembly condition
+            parent_should_assemble = True
+            if len(self._conditional_stack) > 1:
+                # Check if parent blocks allow assembly
+                for block in self._conditional_stack[:-1]:
+                    if not block.should_assemble:
+                        parent_should_assemble = False
+                        break
+            
+            # In ELSE block, assemble if parent allows AND original condition was NOT met
+            should_assemble = parent_should_assemble and not current_block.condition_met
+            
+            # Replace top of stack with updated block
+            updated_block = current_block._replace(
+                in_else_block=True,
+                should_assemble=should_assemble
+            )
+            self._conditional_stack[-1] = updated_block
+            
+            logger.debug(f"ELSE: switching to else block, should_assemble={should_assemble}")
+            return True
+            
+        elif mnemonic_upper == 'ENDIF':
+            if not self._conditional_stack:
+                raise ParserError("ENDIF directive without matching IFDEF or IFNDEF", source_file, line_no)
+            
+            closed_block = self._conditional_stack.pop()
+            logger.debug(f"ENDIF: closed {closed_block.directive_type} block for '{closed_block.symbol_name}'")
+            return True
+            
+        return False
 
     def _load_lines_from_physical_file(self, filepath: str, requesting_file: str, requesting_line_no: int) -> List[str]:
         try:
@@ -491,6 +606,15 @@ class Parser:
                 continue
             
             original_label_str, mnemonic_candidate, operand_candidate = parsed_comps
+
+            # Handle conditional assembly directives first
+            if mnemonic_candidate and self._handle_conditional_directive(
+                mnemonic_candidate, operand_candidate, normalized_filepath, line_no_in_file):
+                continue
+
+            # Skip processing if we're in a conditional block that shouldn't be assembled
+            if not self._should_assemble_line():
+                continue
 
             # Handle INCLUDE directive
             if mnemonic_candidate and mnemonic_candidate.upper() == "INCLUDE":
