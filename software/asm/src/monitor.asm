@@ -51,16 +51,30 @@ INCLUDE "includes/mmio_defs.inc"
 ; CONSTANTS
 ; ======================================================================
 
-; -- self modifying code setup --
-SMC_LDA_ADDR    EQU $0200                       ; beginning of general RAM 
-SMC_LDA_OPCODE  EQU $A0                         ; opcode for LDA (load A with Mem contents) instruction
-SMC_RET_OPCODE  EQU $19                         ; opcode for RET (return) instruction
+OPCODE_RET  EQU $19                         ; opcode for RET (return) instruction
+OPCODE_LDA  EQU $A0                         ; opcode for LDA (load A with Mem contents) instruction
+OPCODE_STA  EQU $A1
 
-; -- 'delayed typing effect' set up
-CHAR_PRINT_DELAY_COUNT_LOW_ADDR    EQU $0204    ; address for delay counter, low 
-CHAR_PRINT_DELAY_COUNT_HIGH_ADDR   EQU $0205    ; address for delay counter, high
-CHAR_PRINT_DELAY_COUNT_LOW_VAL     EQU $00      ; counter init value, low
-CHAR_PRINT_DELAY_COUNT_HIGH_VAL    EQU $30      ; counter init value, high
+; --- self-modifying code zones ---
+SMC_LDA_ADDR    EQU $0200                       ; beginning of general RAM 
+SMC_LDA_SIZE    EQU 4
+
+SMC_STA_ADDR    EQU (SMC_LDA_ADDR + SMC_LDA_SIZE)   
+SMC_STA_SIZE    EQU 4
+
+; --- read line sub-routine data ---
+RL_BUF_ADDR   EQU (SMC_STA_ADDR + SMC_STA_SIZE)
+RL_BUF_SIZE   EQU 64
+
+RL_CHAR_COUNT_ADDR       EQU (RL_BUF_ADDR + RL_BUF_SIZE)
+RL_CHAR_COUNT_SIZE       EQU 1
+
+; --- character print delay --- 
+DELAY_LOW_ADDR    EQU (RL_CHAR_COUNT_ADDR + RL_CHAR_COUNT_SIZE)    ; address for delay counter, low 
+DELAY_HIGH_ADDR   EQU DELAY_LOW_ADDR + 1    ; address for delay counter, high
+
+DELAY_INIT_LOW     EQU $00                              ; counter init value, low
+DELAY_INIT_HIGH    EQU $30                              ; counter init value, high
 
 ; ======================================================================
 ; == PROGRAM START AND MAIN CODE

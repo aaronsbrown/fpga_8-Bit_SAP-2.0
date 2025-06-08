@@ -23,7 +23,7 @@ module uart_peripheral (
 
 );
 
-    localparam STATUS_TX_BUFFER_EMPTY_BIT  = 0;
+    localparam STATUS_TX_BUF_EMPTY_BIT  = 0;
     localparam STATUS_RX_DATA_READY_BIT  = 1;
     localparam STATUS_ERROR_FRAME_BIT      = 2;
     localparam STATUS_ERROR_OVERSHOOT_BIT  = 3;
@@ -64,7 +64,7 @@ module uart_peripheral (
     // pass through level signals from TX and RX
     logic rx_data_ready_i;
     logic tx_busy_i;
-    assign status_reg_i[STATUS_TX_BUFFER_EMPTY_BIT] = ~tx_busy_i;
+    assign status_reg_i[STATUS_TX_BUF_EMPTY_BIT] = ~tx_busy_i;
     assign status_reg_i[STATUS_RX_DATA_READY_BIT] = rx_data_ready_i;
 
     // Internal FFs to capture RX error pulses

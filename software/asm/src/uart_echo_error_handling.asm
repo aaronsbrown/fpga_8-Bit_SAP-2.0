@@ -66,7 +66,7 @@ RX_POLL_LOOP:
 
 TX_POLL_LOOP:
     LDA UART_STATUS_REG         ; Load status register
-    ANI #MASK_TX_BUFFER_EMPTY   ; bit test for empty send buffer
+    ANI #MASK_TX_BUF_EMPTY   ; bit test for empty send buffer
     JZ TX_POLL_LOOP             ; if buffer full, loop
 
     MOV C, A                    ; move C => A

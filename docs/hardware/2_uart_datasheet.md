@@ -53,7 +53,7 @@ The UART peripheral is mapped into the system's I/O address space.
 
 | Bit | Name                    | Description                                                                                                                               |
 |-----|-------------------------|-------------------------------------------------------------------------------------------------------------------------------------------|
-| 0   | `TX_BUFFER_EMPTY`       | **1 (Set):** Transmitter is ready to accept a new byte. (`~tx_busy_i`)<br>**0 (Clear):** Transmitter is busy.                               |
+| 0   | `TX_BUF_EMPTY`       | **1 (Set):** Transmitter is ready to accept a new byte. (`~tx_busy_i`)<br>**0 (Clear):** Transmitter is busy.                               |
 | 1   | `RX_DATA_READY`         | **1 (Set):** A complete byte has been received and is available in the Data Register. This flag remains set until the CPU reads the Data Register (`$E002`).<br>**0 (Clear):** No new data is available, or data has been read by the CPU. |
 | 2   | `ERROR_FRAME`           | **1 (Set):** A framing error (e.g., stop bit not detected correctly) occurred during a reception. Cleared by Command Register or reset.<br>**0 (Clear):** No uncleared framing error. |
 | 3   | `ERROR_OVERSHOOT`       | **1 (Set):** An overshoot/overrun error occurred. A new byte was fully received while the previous byte in the Data Register had not yet been read by the CPU. The previous byte is lost. Cleared by Command Register or reset.<br>**0 (Clear):** No uncleared overshoot error. |
@@ -63,7 +63,7 @@ The UART peripheral is mapped into the system's I/O address space.
 
 * **Type:** Read/Write (behavior depends on operation)
 * **Write Operation (CPU `STA $E002`): Transmit Data Register (TXDR)**
-  * Writing an 8-bit value loads the byte into the UART transmitter. Transmission begins if `TX_BUFFER_EMPTY` is 1.
+  * Writing an 8-bit value loads the byte into the UART transmitter. Transmission begins if `TX_BUF_EMPTY` is 1.
 * **Read Operation (CPU `LDA $E002`): Receive Data Register (RXDR)**
   * Reading retrieves the 8-bit byte from the receiver buffer.
   * **This action also acknowledges receipt to the UART, causing the `RX_DATA_READY` flag in the Status Register to be cleared.**
@@ -92,7 +92,7 @@ The UART peripheral is mapped into the system's I/O address space.
 ; UART_DATA_REG            EQU $E002
 ; UART_COMMAND_REG         EQU $E003
 
-; MASK_TX_BUFFER_EMPTY     EQU %00000001 ; Or $01
+; MASK_TX_BUF_EMPTY     EQU %00000001 ; Or $01
 ; MASK_RX_DATA_READY       EQU %00000010 ; Or $02
 ; MASK_ERROR_FRAME         EQU %00000100 ; Or $04
 ; MASK_ERROR_OVERSHOOT     EQU %00001000 ; Or $08
@@ -104,7 +104,7 @@ The UART peripheral is mapped into the system's I/O address space.
 SEND_UART_BYTE:
 TX_POLL_SEND:
     LDA UART_STATUS_REG
-    ANI #MASK_TX_BUFFER_EMPTY
+    ANI #MASK_TX_BUF_EMPTY
     JZ TX_POLL_SEND
     STA UART_DATA_REG      ; (Assumes A holds byte to send)
     ; RTS                    ; (If using subroutines)

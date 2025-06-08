@@ -8,6 +8,11 @@ READ_LINE:
     ; --- Phase 1: Initialization ---
     ; Set up your starting buffer pointer (e.g., using B and C for address parts).
     ; Initialize your character count (likely in a RAM location) to zero.
+    LDI B, HIGH_BYTE(RL_BUF_ADDR)
+    LDI C, LOW_BYTE(RL_BUF_ADDR)
+    LDI A, #0
+    STA RL_CHAR_COUNT_ADDR
+
 
 .INPUT_LOOP_START:
     ; --- Phase 2: Get Character ---
@@ -57,7 +62,7 @@ READ_LINE:
 ; == Purpose: Prints a null-terminated string pointed to by BC,
 ; ==          with an inter-character delay.
 ; == Input:   BC = 16-bit start address of the string.
-; ==          CHAR_PRINT_DELAY_COUNT_LOW_ADDR, CHAR_PRINT_DELAY_COUNT_HIGH_ADDR (RAM locations) should be
+; ==          DELAY_LOW_ADDR, DELAY_HIGH_ADDR (RAM locations) should be
 ; ==          pre-set by this routine or its caller to control the
 ; ==          delay between characters. A value of $0000 or $0001 in
 ; ==          DELAY_COUNT_HIGH:DELAY_COUNT_LOW will result in minimal delay.
@@ -83,10 +88,10 @@ PRINT_STRING:
     ; ==== END A_SAFE ====
 
     ; -- set timer
-    LDI A, #CHAR_PRINT_DELAY_COUNT_LOW_VAL
-    STA CHAR_PRINT_DELAY_COUNT_LOW_ADDR
-    LDI A, #CHAR_PRINT_DELAY_COUNT_HIGH_VAL
-    STA CHAR_PRINT_DELAY_COUNT_HIGH_ADDR
+    LDI A, #DELAY_INIT_LOW
+    STA DELAY_LOW_ADDR
+    LDI A, #DELAY_INIT_HIGH
+    STA DELAY_HIGH_ADDR
 
     JSR DELAY_16BIT                     ; delay for aesthetics
 
@@ -126,7 +131,7 @@ RECEIVE_BYTE:
 ; == Output:  None (byte is sent via UART).
 ; == Clobbers: Accumulator A (temporarily, restored from stack), Flags.
 ; ==          Uses stack space (PHA/PLA).
-; == Assumes: UART_STATUS_REG, UART_DATA_REG, MASK_TX_BUFFER_EMPTY are
+; == Assumes: UART_STATUS_REG, UART_DATA_REG, MASK_TX_BUF_EMPTY are
 ; ==          correctly defined EQUates pointing to MMIO.
 ; ==          Stack Pointer (SP) is initialized and valid.
 ; ======================================================================
@@ -136,7 +141,7 @@ SEND_BYTE:
 .poll_tx_buffer:
 
     LDA UART_STATUS_REG                     ; load uart status reg
-    ANI #MASK_TX_BUFFER_EMPTY               ; isolate buffer_empty bit
+    ANI #MASK_TX_BUF_EMPTY               ; isolate buffer_empty bit
     JZ .poll_tx_buffer                      ; buffer_empty == 0 ? poll : send_BYTE
     
     PLA                                     ; reload A from stack
