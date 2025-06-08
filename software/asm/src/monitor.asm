@@ -132,13 +132,13 @@ MAIN_LOOP:
     ; --- TODO: parse and execute command
 
     ; --- debug: echo received string
-    ;LDI C, #LOW_BYTE(RL_BUF_ADDR)
-    ;LDI B, #HIGH_BYTE(RL_BUF_ADDR)
-    ;JSR PRINT_STRING
-    ;LDI A, #ASCII_CR
-    ;JSR SEND_BYTE
-    ;LDI A, #ASCII_LF
-    ;JSR SEND_BYTE
+    LDI C, #LOW_BYTE(RL_BUF_ADDR)
+    LDI B, #HIGH_BYTE(RL_BUF_ADDR)
+    JSR PRINT_STRING
+    LDI A, #ASCII_CR
+    JSR SEND_BYTE
+    LDI A, #ASCII_LF
+    JSR SEND_BYTE
 
 
     JMP MAIN_LOOP               ; infinite loop
@@ -175,4 +175,4 @@ INCLUDE "includes/routines_delay.inc"
 ; == CONSTANT DATA
 ; ======================================================================
 welcome_message: DB "ASB Monitor v0.1\n", 0           
-wargame_message: DB "Shall we play a game?\n>", 0
+wargame_message: DB "Shall we play a game?\n", 0

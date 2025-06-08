@@ -20,14 +20,14 @@ READ_LINE:
 
     ; receive and decode byte
     JSR RECEIVE_BYTE                            ; A = received UART byte
-    PHA                                         ; save received byte
+    PHA                                         ; push new_char
     
-    XRI #ASCII_CR                               ; Test for carriage return (CR)
+    XRI #ASCII_CR                               ; Test for carriage return (CR); A is clobbered
     JZ .HANDLE_EOL
     
-    PLA
-    PHA
-    XRI #ASCII_BACKSPACE                        ; Test for backspace
+    PLA                                         ; pop new_char
+    PHA                                         ; push new_char
+    XRI #ASCII_BACKSPACE                        ; Test for backspace, A is clobbered
     JZ .HANDLE_BACKSPACE
 
 
@@ -35,7 +35,7 @@ READ_LINE:
     ; --- regular char ---
     ; --------------------
 .HANDLE_REG_CHAR:
-
+    PLA                                         ; pop new_char
     PHA                                         ; push new_char
 
     ; check buffer vacancy
