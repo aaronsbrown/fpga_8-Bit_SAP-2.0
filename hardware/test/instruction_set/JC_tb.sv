@@ -409,7 +409,7 @@ module computer_tb;
     $display("✓ Register preservation during JC execution");
     $display("✓ Edge case address handling");
     $display("✓ Comprehensive flag state verification");
-    $display("=== JC test finished successfully ===\n\n");
+    $display("JC test finished.===========================\n\n");
     $finish;
     // ============================ END TEST ==============================
   

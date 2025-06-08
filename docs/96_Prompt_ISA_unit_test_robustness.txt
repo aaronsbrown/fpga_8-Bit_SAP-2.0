@@ -30,6 +30,9 @@
   - Verify all relevant CPU flags (Zero, Negative, Carry)
   - Confirm register preservation for uninvolved registers
   - Provide clear pass/fail feedback with explanatory messages
+  - When updating a testbench, to support correct function of 'run_tests.py', the final log statement *must* be: 
+    $display("LDA_I test finished.===========================\n\n");
+  
 
   Please first analyze the current implementation, then enhance both files and regenerate the test
   fixtures. Run the test to verify all improvements work correctly.

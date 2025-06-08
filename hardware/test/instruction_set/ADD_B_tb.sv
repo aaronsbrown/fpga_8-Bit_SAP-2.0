@@ -319,7 +319,7 @@ module computer_tb;
     // Visual buffer for waveform inspection
     repeat(5) @(posedge clk);
 
-    $display("\n=== ADD_B Comprehensive Test Suite COMPLETED ===");
+    $display("ADD_B test finished.===========================\n\n");
     $display("All 11 test cases passed successfully!");
     $finish;
     // ============================ END TEST ==============================
