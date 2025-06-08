@@ -27,7 +27,7 @@ DELAY_16BIT:
     XRI #$FF                                    ; Z = 0 if A = $FF, means we wrapped from $00 -> $FF
     JNZ .check_if_delay_finished                ; if we didn't wrap, jump to 'check if finished'
 
-    LDA DELAY_HIGH_ADDR                   ; if we did wrap, possibly decrement HIGH byte
+    LDA DELAY_HIGH_ADDR                         ; if we did wrap, possibly decrement HIGH byte
     ORI #$00                                    ; check if HIGH BYTE already zero
     JZ .check_if_delay_finished 
     

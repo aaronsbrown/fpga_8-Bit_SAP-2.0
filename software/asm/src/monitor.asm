@@ -51,6 +51,13 @@ INCLUDE "includes/mmio_defs.inc"
 ; CONSTANTS
 ; ======================================================================
 
+ASCII_NULL      EQU $00
+ASCII_BELL      EQU $07
+ASCII_BACKSPACE EQU $08
+ASCII_LF        EQU $0A
+ASCII_CR        EQU $0D
+ASCII_SPACE     EQU $20
+
 OPCODE_RET  EQU $19                         ; opcode for RET (return) instruction
 OPCODE_LDA  EQU $A0                         ; opcode for LDA (load A with Mem contents) instruction
 OPCODE_STA  EQU $A1
@@ -68,6 +75,7 @@ RL_BUF_SIZE   EQU 64
 
 RL_CHAR_COUNT_ADDR       EQU (RL_BUF_ADDR + RL_BUF_SIZE)
 RL_CHAR_COUNT_SIZE       EQU 1
+RL_MAX_CHAR_COUNT        EQU (RL_BUF_SIZE - 1)
 
 ; --- character print delay --- 
 DELAY_LOW_ADDR    EQU (RL_CHAR_COUNT_ADDR + RL_CHAR_COUNT_SIZE)    ; address for delay counter, low 
@@ -93,11 +101,17 @@ START:
 ; ======================================================================
 INIT:
     
-    LDI A, #SMC_LDA_OPCODE                      ; load LDA op code to self-modifying code RAM block
+    LDI A, #OPCODE_LDA                      ; load LDA op code to self-modifying code RAM block
     STA SMC_LDA_ADDR
     
-    LDI A, #SMC_RET_OPCODE                      ; load RET op code to self-modifying code RAM block
+    LDI A, #OPCODE_RET                      ; load RET op code to self-modifying code RAM block
     STA SMC_LDA_ADDR + 3 
+
+    LDI A, #OPCODE_STA
+    STA SMC_STA_ADDR
+
+    LDI A, #OPCODE_RET
+    STA SMC_STA_ADDR + 3
 
     RET
       
@@ -105,8 +119,28 @@ INIT:
 ; == SUBROUTINE:MAIN_LOOP
 ; ======================================================================
 MAIN_LOOP:
-    JSR RECEIVE_BYTE
+
+    ; --- send prompt ---
+    LDI A, '>'
     JSR SEND_BYTE
+    LDI A, ASCII_SPACE
+    JSR SEND_BYTE
+
+    ; --- read line of user input ---
+    JSR READ_LINE
+
+    ; --- TODO: parse and execute command
+
+    ; --- debug: echo received string
+    ;LDI C, #LOW_BYTE(RL_BUF_ADDR)
+    ;LDI B, #HIGH_BYTE(RL_BUF_ADDR)
+    ;JSR PRINT_STRING
+    ;LDI A, #ASCII_CR
+    ;JSR SEND_BYTE
+    ;LDI A, #ASCII_LF
+    ;JSR SEND_BYTE
+
+
     JMP MAIN_LOOP               ; infinite loop
 
 ; ======================================================================

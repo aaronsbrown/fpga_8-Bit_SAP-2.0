@@ -5,56 +5,144 @@
 ; (Keep your detailed Doxygen-style block here from before, it's good)
 ; ======================================================================
 READ_LINE:
-    ; --- Phase 1: Initialization ---
-    ; Set up your starting buffer pointer (e.g., using B and C for address parts).
-    ; Initialize your character count (likely in a RAM location) to zero.
-    LDI B, HIGH_BYTE(RL_BUF_ADDR)
-    LDI C, LOW_BYTE(RL_BUF_ADDR)
+    
+    ; ----------------------
+    ; --- initialization ---
+    ; ----------------------
+    LDI C, #LOW_BYTE(RL_BUF_ADDR)
+    LDI B, #HIGH_BYTE(RL_BUF_ADDR)
+    
     LDI A, #0
-    STA RL_CHAR_COUNT_ADDR
+    STA RL_CHAR_COUNT_ADDR                      ; init character count = 0
 
 
 .INPUT_LOOP_START:
-    ; --- Phase 2: Get Character ---
-    ; Wait for and receive a single character from the UART into Accumulator A.
 
-    ; --- Phase 3: Decode Character Type ---
-    ; Based on the character in A, decide what it is:
-    ;   - Is it the 'End of Line' character (e.g., Carriage Return)?
-    ;   - Is it the 'Backspace' character?
-    ;   - Or is it a 'Regular Printable Character'?
+    ; receive and decode byte
+    JSR RECEIVE_BYTE                            ; A = received UART byte
+    PHA                                         ; save received byte
+    
+    XRI #ASCII_CR                               ; Test for carriage return (CR)
+    JZ .HANDLE_EOL
+    
+    PLA
+    PHA
+    XRI #ASCII_BACKSPACE                        ; Test for backspace
+    JZ .HANDLE_BACKSPACE
 
-    ; --- Phase 4A: Handle 'End of Line' ---
-    ; If CR:
-    ;   Echo appropriate new line sequence to terminal (e.g., CR then LF).
-    ;   Store a 'null terminator' (0) at the current buffer position.
-    ;   Consume any trailing LF from the terminal.
-    ;   This line is complete: Return from READ_LINE subroutine.
 
-    ; --- Phase 4B: Handle 'Backspace' ---
-    ; If Backspace:
-    ;   Check if there are any characters in the buffer to delete (is count > 0?).
-    ;   If yes:
-    ;     Decrement the character count.
-    ;     Move the buffer pointer back one position.
-    ;     Send the "erase character" sequence (BS, Space, BS) to the terminal.
-    ;   If no characters to delete, do nothing.
-    ;   Go back to .INPUT_LOOP_START to get the next character.
+    ; --------------------
+    ; --- regular char ---
+    ; --------------------
+.HANDLE_REG_CHAR:
 
-    ; --- Phase 4C: Handle 'Regular Printable Character' ---
-    ; If it's a regular character:
-    ;   Check if the buffer has space for this character (is count < max_buffer_size - 1?).
-    ;   If yes (space available):
-    ;     Increment the character count.
-    ;     Echo the character to the terminal.
-    ;     Store the character at the current buffer position.
-    ;     Advance the buffer pointer to the next position.
-    ;   If no (buffer full):
-    ;     Ignore the character (optional: provide user feedback like a 'bell').
-    ;   Go back to .INPUT_LOOP_START to get the next character.
+    PHA                                         ; push new_char
 
-    ; Should always loop back or return from EOL, so a RET here is likely an error path or unreachable.
-    JMP .INPUT_LOOP_START ; Or RET if structured differently
+    ; check buffer vacancy
+    LDA RL_CHAR_COUNT_ADDR                      ; A = char_count
+    PHA                                         ; push char_count
+    XRI #RL_MAX_CHAR_COUNT                      ; char_count == max_count
+    JZ .BUFFER_FULL                             ; if string_buff full, ring bell
+
+.BUFFER_HAS_SPACE:
+    PLA                                         ; pop char_count
+    INR A                                       ; increment char_count
+    STA RL_CHAR_COUNT_ADDR                      ; save char_count
+
+    PLA                                         ; pop new_char
+    JSR SEND_BYTE                               ; echo char
+    PHA                                         ; push new_char
+    
+    ; set up self-modifying code
+    MOV C, A
+    STA (SMC_STA_ADDR + 1)
+
+    MOV B, A
+    STA (SMC_STA_ADDR + 2)
+    
+    ; execute SMC code
+    PLA                                         ; pop new_char
+    JSR SMC_STA_ADDR                            ; execute STA instruction                          
+
+    ; increment string_buff
+    INR C                                       ; increment string_buff low byte
+    JNZ .INPUT_LOOP_START                       ; check for rollover
+    INR B                                       ; if rollover, increment high byte
+    JMP .INPUT_LOOP_START                       ; wait for next byte
+
+.BUFFER_FULL:
+    PLA                                         ; Pop char_count
+    PLA                                         ; Pop new_char
+    LDI A, #ASCII_BELL  
+    JSR SEND_BYTE
+    JMP .INPUT_LOOP_START                        ; buffer full, ignore character and loop
+
+
+    ; -------------------
+    ; --- 'Backspace' ---
+    ; -------------------
+.HANDLE_BACKSPACE:
+
+    PLA                                         ; ensure received byte in A
+
+    ; -- is buffer empty?
+    LDA RL_CHAR_COUNT_ADDR                      ; load char_count
+    ORI #0                                      ; char_count = 0?
+    JNZ .delete_char                            ; if no, handle deletion, 
+    JMP .INPUT_LOOP_START                       ; if yes, return to main_loop
+    
+.delete_char:
+    
+    ; -- decrement character count
+    DCR A                                       ; decrement char_count
+    STA RL_CHAR_COUNT_ADDR                      ; save char_count
+
+    ; decrement string_buff 
+    DCR C                                       ; decrement string_buff low byte
+    MOV C, A                                    ; move C => A
+    XRI #$FF                                    ; check for rollunder
+    JNZ .send_erase_sequence                    ; if NO rollunder, jump to erase_sequence
+    DCR B                                       ; if rollunder, decrement high byte
+    
+.send_erase_sequence:
+    LDI A, #ASCII_BACKSPACE
+    JSR SEND_BYTE
+    LDI A, #ASCII_SPACE
+    JSR SEND_BYTE
+    LDI A, #ASCII_BACKSPACE
+    JSR SEND_BYTE
+
+    JMP .INPUT_LOOP_START
+
+    ; ------------------
+    ; --- end of line ---
+    ; ------------------
+.HANDLE_EOL:
+    
+    PLA                                         ; ensure received byte in A
+
+    ; read LF byte
+    JSR RECEIVE_BYTE                            ; consume LF from terminal and ignore
+    
+    ; send EOL sequence
+    LDI A, #ASCII_CR                            ; echo new line sequence CR, LF
+    JSR SEND_BYTE
+    LDI A, #ASCII_LF
+    JSR SEND_BYTE
+
+    ; setup self-modifying code   
+    MOV C, A                                    ; store string_buff low at STA addr + 1
+    STA (SMC_STA_ADDR + 1)
+
+    MOV B, A                                    ; store string_buff high at STA addr + 2
+    STA (SMC_STA_ADDR + 2)
+
+    ; store null terminator
+    LDI A, #ASCII_NULL                          ; A = null terminator
+    JSR SMC_STA_ADDR                            ; execute STA instruction: M[BC] = A
+    
+    ; we're done
+    RET
 
 
 ; ======================================================================
@@ -79,7 +167,7 @@ PRINT_STRING:
     STA (SMC_LDA_ADDR + 2)              ; Store high byte at self-modifying code operand address + 2
 
     ; ====== BEG A_SAFE ====== 
-    JSR SMC_LDA_ADDR                    ; ***SETS A*** execute self-modifying code op: A = LDA[BC]
+    JSR SMC_LDA_ADDR                    ; execute LDA instruction: A = M[BC]
     
     ORI #0                              ; A | 0 = 0? 
     JZ .finished                        ; if Z = 1, we're finished
@@ -96,8 +184,8 @@ PRINT_STRING:
     JSR DELAY_16BIT                     ; delay for aesthetics
 
     INR C                               ; increment LOW BYTE of string pointer
-    JNZ .loop                           ; if not, loop
-    INR B                               ; if so, increment B
+    JNZ .loop                           ; if not = 0 (no rollover), so loop
+    INR B                               ; if = 0 (rolled over), increment B
     JMP .loop                           ; loop
 
 .finished:
