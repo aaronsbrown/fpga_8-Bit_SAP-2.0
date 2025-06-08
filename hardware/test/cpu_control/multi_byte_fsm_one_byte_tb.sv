@@ -41,23 +41,32 @@ module computer_tb;
     reset_and_wait(0); 
 
     // --- Execute the HLT instruction ---
-    $display("Running HLT instruction");
+    $display("Running 1-byte instruction: HLT");
 
-    repeat (3) @(posedge clk); // Wait for 20 clock cycles
+    // Advance through 3 FSM states:
+    // STATIC_RESET_VECTOR
+    // INIT_STACK_POINTER
+    // LATCH_ADDRESS
+    repeat (3) @(posedge clk); 
     #0.1;
     pretty_print_assert_vec(uut.u_cpu.mem_read, 1'b1, "Memory read signal active during S_READ_BYTE");
 
-    repeat (2) @(posedge clk); // Wait for 10 clock cycles
+    // Advance through 2 FSM states:
+    // READ_BYTE
+    // LATCH_BYTE
+    repeat (2) @(posedge clk); 
     #0.1; 
     pretty_print_assert_vec(uut.u_cpu.u_register_instr.latched_data, HLT, "OPCODE == HLT during S_READ_BYTE");
     
-
-    repeat (1) @(posedge clk); // Wait for 50 clock cycles
+    // Advance through 1 FSM state:
+    // CHECK_MORE_BYTES
+    repeat (1) @(posedge clk); 
     #0.1;
     pretty_print_assert_vec(uut.cpu_halt, 1'b1, "Halt signal active during S_EXECUTE");
     
-    repeat (10) @(posedge clk); // Wait for 10 more clock cycles
-
+    // Finish Instruction
+    wait(uut.cpu_instr_complete); @(posedge clk); #0.1;
+    
     inspect_register(uut.u_cpu.u_program_counter.counter_out, 16'hF001, "PC after HLT", ADDR_WIDTH);
     inspect_register(uut.u_cpu.u_control_unit.current_state, S_HALT, "S_HALT after HLT", 3);
     $display("HLT test finished.===========================\n\n");
