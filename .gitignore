@@ -6,6 +6,9 @@ build/
 build/*.log
 build/*.json
 
+# TEMP
+hardware/test/instruction_set/to_convert/*.sv
+
 merged_constraints.*
 # *.hex # Still keeping this generic for now, review as needed
 
