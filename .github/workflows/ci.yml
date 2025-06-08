@@ -1,4 +1,4 @@
-name: Verilog and Assembler CI Tests
+name: Verilog and Assembler CI Test Suite
 
 on:
   push:
