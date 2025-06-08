@@ -108,3 +108,6 @@ Access UART via memory-mapped registers at E000-E003. Status register indicates 
 - Use `--verbose` flag with build/simulation scripts for detailed output
 - GTKWave sessions auto-load when available for testbench
 - CPU debug signals exposed: PC, IR, registers, flags
+
+## Project Memories
+- Remember the unconventional operand ordering of this ISA's MOV instructon: MOV Src, Dest
