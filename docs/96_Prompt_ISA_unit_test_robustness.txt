@@ -1,0 +1,47 @@
+ I'd like to make a testbench for a CPU microinstruction more robust.
+
+ ISA documentation: docs/hardware/0_ISA.md
+
+ INSTRUCTION_NAME: JC
+ TESTBENCH_FILE: hardware/test/instruction_set/JC_tb.sv
+ ASM_FILE: software/asm/src/JC.asm
+
+  Please enhance both the assembly program and testbench following these patterns:
+
+  **Assembly Program Enhancements:**
+  - Add comprehensive test cases covering edge cases and boundary conditions
+  - Include bit pattern variations (all zeros, all ones, alternating patterns, single bits)
+  - Test flag behavior scenarios (zero results, negative results, carry interactions)
+  - Add register preservation tests to ensure uninvolved registers aren't corrupted
+  - Include detailed comments explaining the expected results for each test case
+
+  **Testbench Improvements:**
+  - Remove irrelevant signals (like UART) that aren't needed for microinstruction testing
+  - Organize tests into clear, numbered sections with descriptive headers
+  - Add systematic verification of register values and flag states after each operation
+  - Include bit-level explanations in test output (e.g., "$AA & $55 = $00")
+  - Use descriptive assertion messages that explain what each check validates
+  - Increase timeout values appropriately for the expanded test suite
+  - Ensure proper halt verification at the end
+
+  **Key Requirements:**
+  - Focus purely on the microinstruction functionality
+  - Test both normal operation and edge cases
+  - Verify all relevant CPU flags (Zero, Negative, Carry)
+  - Confirm register preservation for uninvolved registers
+  - Provide clear pass/fail feedback with explanatory messages
+
+  Please first analyze the current implementation, then enhance both files and regenerate the test
+  fixtures. Run the test to verify all improvements work correctly.
+
+  **Implementation Steps:**
+  1. After enhancing the assembly file, regenerate test fixtures with:
+     ```bash
+     python3 software/assembler/src/assembler.py software/asm/src/[ASM_FILE].asm
+  hardware/test/fixtures_generated/[INSTRUCTION_NAME]/ --region ROM 0xF000 0xFFFF
+
+  2. Run the enhanced testbench with:
+  ./scripts/simulate.sh --tb hardware/test/instruction_set/[TESTBENCH_FILE].sv --verbose --no-viz
+
+  Please first analyze the current implementation, then enhance both files, regenerate the test
+  fixtures, and run the test to verify all improvements work correctly.
