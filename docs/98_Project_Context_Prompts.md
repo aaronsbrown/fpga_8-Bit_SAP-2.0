@@ -6,7 +6,7 @@ Project State & Toolchain:
 — DevEnv: Macbook Pro, OSX 15.5, iTerm2, VSCode.
 
 - Key Parameters: DATA_WIDTH=8, ADDR_WIDTH=16, OPCODE_WIDTH=8 (defined in `hardware/src/constants/arch_defs_pkg.sv`).
-- CPU Architecture: Microcoded (`hardware/src/cpu/control_unit.sv`), with a 16-bit Stack Pointer. ALU operations that modify registers/flags generally take 3 execute microsteps (MS0: latch ALU op, MS1: ALU computes & registers results/flags, MS2: commit results/flags to registers/status).
+- CPU Architecture: Microcoded (`hardware/src/cpu/control_unit.sv`), with a 16-bit Stack Pointer. The stack is imlpemented as an "Empty descending stack (SP points to next *free* location). ALU operations that modify registers/flags generally take 3 execute microsteps (MS0: latch ALU op, MS1: ALU computes & registers results/flags, MS2: commit results/flags to registers/status).
 - Assembler: A custom Python two-pass assembler (`software/assembler/src/assembler.py`) generates .hex files from .asm.
 - Simulation Flow:
   - Individual tests are run with `scripts/simulate.sh --tb <path_to_tb>`. This script *always* uses `sv2v` to transpile SystemVerilog to Verilog-2005, then compiles with Icarus Verilog (`iverilog`) and runs with `vvp`.
@@ -16,24 +16,16 @@ Project State & Toolchain:
   - A Python script `scripts/python/run_tests.py` automates running all testbenches using the same `sv2v` -> `iverilog` -> `vvp` flow as `simulate.sh`.
 - CPU Features: Includes an `instruction_finished` pulse signal for testbench synchronization.
 
-Recent Accomplishments (Phase 6 - Stack & Subroutines):
-
-- Hardware implemented and microcode written/tested for SP, `PHA`, `PLA`, `JSR`, `RET`, `PHP`, `PLP`.
-- ISA refined with `SEC`, `CLC`, and associated conditional jumps (`JC`, `JNC`).
-- Assembler updated for all new mnemonics.
-- Significant improvements to test scripts (`simulate.sh`, `run_tests.py`) and test organization. Most tests are now passing with the automated flow.
-
-Current Focus / Next Steps:
-
-- TODAY'S SPECIFIC LEARNING GOAL/QUESTION: Debuging why my program's don't seem to be running on my FPGA, even though the simulations look good. Yesterday I implemented a reset_vector in hardware, and modified the FSM. Things looked good in simulation, but none of the programs that used to work (setting simple LEDs on my FPGA) are working now.
-
-I have just hacked in my old working approach which was hardcoding the Program Counter to start at F000 upon a reset. I'm hoping to get old simple programs working again to help determine if the changes for the software reset_vector are causing issues in synthesis.
-
--
-
 </meta prompt 1>
 
-<meta prompt 2 = "Dialog rules and preferences">
+<meta prompt 2 = "Immediate Task">
+Current Focus / Next Steps:
+
+I want to ensure the robustness and correctness of my PHA and PLA instructions. I have a test case that tests 3 levels of pushing and popping the strack. The microdode logic is based on an "empty descending stack" paradigm. The stack is memory mapped in ram in Page One, $0100—$01FF. The stack pointer is initialized to $01FF after a CPU reset by the control-unit's FSM.
+
+</prompt>
+
+<meta prompt 3 = "Dialog rules and preferences">
 To best support my learning on this FPGA project, please act as my 'seasoned teacher/coach' and follow these interaction preferences:
 — I prefer to talk about things conceptually first. Rather than jump to solutions—and esepcially code—i want to just discuss general concepts. This will allow me to attempt solutions myself, which is how i learn best.
 once i have a game plan, based on our conceptual discussions, i will then run my idea back by you and we can discuss if it's on the right track.
