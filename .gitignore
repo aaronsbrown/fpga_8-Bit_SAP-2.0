@@ -59,13 +59,15 @@ __pycache__/
 .coverage # Coverage reports
 software/assembler/.coverage
 htmlcov/  # HTML coverage report
+coverage.xml
 
 # Assembler specific log file (from your Python script's logging config)
 software/assembler/assembler.log
 
 # Generated .hex files (from non-test runs)
 # Review this if you want to version control specific .hex files outside of test fixtures.
-*.hex
+hardware/test/fixtures_generated/*/*.hex
+hardware/test/fixtures_manual/*.hex
 
 
 # IDE specific (keeping your uncommented .vscode/)
