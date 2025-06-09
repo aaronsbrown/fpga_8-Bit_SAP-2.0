@@ -53,31 +53,8 @@ jobs:
       - name: Generate .hex fixtures for Verilog tests
         run: |
           echo "Generating .hex files for ISA tests..."
-          find hardware/test/instruction_set -name '*_tb.sv' -print0 | while IFS= read -r -d $'\0' tb_file; do
-            test_name=$(basename "${tb_file}" _tb.sv)
-            echo "Assembling for: ${test_name}"
-            python3 scripts/python/assemble_test.py --test-name "${test_name}" --sub-dir instruction_set 
-          done
-          
-          echo "Generating .hex files for CPU Control tests..."
-          find hardware/test/cpu_control -name '*_tb.sv' -print0 | while IFS= read -r -d $'\0' tb_file; do
-            test_name=$(basename "${tb_file}" _tb.sv)
-            echo "Assembling for: ${test_name}"
-            python3 scripts/python/assemble_test.py --test-name "${test_name}" --sub-dir cpu_control
-          done
-
-          echo "Generating .hex files for Module tests (if any need .asm fixtures)..."
-          find hardware/test/modules -name '*_tb.sv' -print0 | while IFS= read -r -d $'\0' tb_file; do
-            test_name=$(basename "${tb_file}" _tb.sv)
-            if [ -f "software/asm/src/${test_name}.asm" ]; then
-              echo "Assembling for: ${test_name}"
-              python3 scripts/python/assemble_test.py --test-name "${test_name}" --sub-dir modules
-            else
-              echo "No ASM file found for module test: ${test_name}, skipping assembly."
-            fi
-          done
-          echo "Fixture generation complete."
-          echo "Listing generated fixtures directory:"
+          python3 scripts/python/generate_verilog_fixtures.py
+          echo "Listing generated fixtures directory after Python script execution:"
           ls -R hardware/test/fixtures_generated/
 
       - name: Execute all Verilog tests
