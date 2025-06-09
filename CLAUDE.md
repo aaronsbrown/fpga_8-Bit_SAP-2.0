@@ -92,12 +92,20 @@ async def render_feed(...):
 
 ---
 
-## Commit discipline
+## Git Workflow & Commit Discipline
+
+### Branching Strategy
+
+- **Always use feature branches** for development work (never commit directly to main)
+- **Branch naming**: Use descriptive names like `feature/enhance-rar-testbench`, `fix/uart-timeout-bug`
+- **Create branches early**: Before making any code changes
+- **Single developer workflow**: Create feature branch → develop → test → merge to main
+
+### Commit Standards
 
 - **Granular commits**: One logical change per commit.
 - **Tag AI-generated commits**: e.g., `feat: optimise feed query [AI]`.
 - **Clear commit messages**: Explain the *why*; link to issues/ADRs if architectural.
-- **Use `git worktree`** for parallel/long-running AI branches (e.g., `git worktree add ../wip-foo -b wip-foo`).
 - **Review AI-generated code**: Never merge code you don't understand.
 
 ---
@@ -253,13 +261,14 @@ When responding to user instructions, the AI assistant (Claude, Cursor, GPT, etc
 1. **Consult Relevant Guidance**: When the user gives an instruction, consult the relevant files in the project directory to gather insight
 2. **Clarify Ambiguities**: Based on what you could gather, see if there's any need for clarifications. If so, ask the user targeted questions before proceeding.
 3. **Break Down & Plan**: Break down the task at hand and chalk out a rough plan for carrying it out, referencing project conventions and best practices.
-4. **Trivial Tasks**: If the plan/request is trivial, go ahead and get started immediately.
-5. **Non-Trivial Tasks**: Otherwise, present the plan to the user for review and iterate based on their feedback.
-6. **Track Progress**: Use a to-do list (internally, or optionally in a `TODOS.md` file) to keep track of your progress on multi-step or complex tasks.
-7. **If Stuck, Re-plan**: If you get stuck or blocked, return to step 3 to re-evaluate and adjust your plan.
-8. **Update Documentation**: Once the user's request is fulfilled, update relevant anchor comments (`AIDEV-NOTE`, etc.) and `AGENTS.md` files in the files and directories you touched.
-9. **User Review**: After completing the task, ask the user to review what you've done, and repeat the process as needed.
-10. **Session Boundaries**: If the user's request isn't directly related to the current context and can be safely started in a fresh session, suggest starting from scratch to avoid context confusion.
+4. **Create Feature Branch**: For any code changes, create a feature branch before starting work (never work directly on main)
+5. **Trivial Tasks**: If the plan/request is trivial, go ahead and get started immediately.
+6. **Non-Trivial Tasks**: Otherwise, present the plan to the user for review and iterate based on their feedback.
+7. **Track Progress**: Use a to-do list (internally, or optionally in a `TODOS.md` file) to keep track of your progress on multi-step or complex tasks.
+8. **If Stuck, Re-plan**: If you get stuck or blocked, return to step 3 to re-evaluate and adjust your plan.
+9. **Update Documentation**: Once the user's request is fulfilled, update relevant anchor comments (`AIDEV-NOTE`, etc.) and `AGENTS.md` files in the files and directories you touched.
+10. **User Review**: After completing the task, ask the user to review what you've done, and repeat the process as needed.
+11. **Session Boundaries**: If the user's request isn't directly related to the current context and can be safely started in a fresh session, suggest starting from scratch to avoid context confusion.
 
 --
 
