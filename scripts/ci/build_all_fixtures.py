@@ -11,7 +11,7 @@ print(f"INFO: Project Root detected as: {PROJECT_ROOT}")
 # --- Define Paths (relative to PROJECT_ROOT) ---
 HARDWARE_TEST_BASE_DIR = PROJECT_ROOT / "hardware/test"
 SOFTWARE_ASM_SRC_DIR = PROJECT_ROOT / "software/asm/src"
-ASSEMBLE_TEST_SCRIPT_PATH = PROJECT_ROOT / "scripts/python/assemble_test.py"
+TEST_MANAGER_SCRIPT_PATH = PROJECT_ROOT / "scripts/devtools/test_manager.py"
 
 # Define test categories and their subdirectories
 TEST_CATEGORIES = {
@@ -57,7 +57,7 @@ def run_command(command_list, cwd=None):
 def generate_fixtures_for_category(category_name: str, test_dir: Path):
     """
     Finds _tb.sv files in the given directory and attempts to assemble
-    corresponding .asm files using assemble_test.py.
+    corresponding .asm files using test_manager.py.
     Returns True if all assemblies in this category succeed, False otherwise.
     """
     print(f"\n--- Generating .hex files for {category_name.replace('_', ' ').title()} tests ---")
@@ -85,24 +85,22 @@ def generate_fixtures_for_category(category_name: str, test_dir: Path):
                 print(f"INFO: No ASM file at '{asm_file_path.relative_to(PROJECT_ROOT)}'. Skipping assembly for module test: {test_name}.")
                 continue
             else:
-                # For non-module tests, if assemble_test.py is robust, it will print an error
+                # For non-module tests, if test_manager.py is robust, it will print an error
                 # and run_command will return False.
                 print(f"WARNING: ASM source file not found: {asm_file_path.relative_to(PROJECT_ROOT)}")
                 print(f"         Assembly will likely fail for test: {test_name}")
 
-
         print(f"Attempting to assemble for: {test_name}")
         assemble_command = [
             sys.executable,
-            str(ASSEMBLE_TEST_SCRIPT_PATH),
+            str(TEST_MANAGER_SCRIPT_PATH),
+            "assemble",
             "--test-name",
             test_name,
-            "--sub-dir",
-            category_name,
         ]
 
         if not run_command(assemble_command):
-            # If run_command returns False, it means assemble_test.py failed
+            # If run_command returns False, it means test_manager.py failed
             print(f"--- FAILED to generate/assemble fixtures for test: {test_name} ---")
             print(f"Stopping script due to error in category '{category_name}'.")
             return False # Stop processing this category and signal failure
@@ -113,8 +111,8 @@ def generate_fixtures_for_category(category_name: str, test_dir: Path):
 def main():
     print("Starting Verilog fixture generation process...\n")
 
-    if not ASSEMBLE_TEST_SCRIPT_PATH.is_file():
-        print(f"CRITICAL ERROR: The 'assemble_test.py' script was not found at {ASSEMBLE_TEST_SCRIPT_PATH.relative_to(PROJECT_ROOT)}")
+    if not TEST_MANAGER_SCRIPT_PATH.is_file():
+        print(f"CRITICAL ERROR: The 'test_manager.py' script was not found at {TEST_MANAGER_SCRIPT_PATH.relative_to(PROJECT_ROOT)}")
         print("Please ensure the path is correct and the script exists.")
         sys.exit(1)
 
