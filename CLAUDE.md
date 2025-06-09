@@ -23,9 +23,21 @@ This is an FPGA-based 8-bit CPU project implementing a custom SAP2-style compute
 ### Simulation Commands
 - **Run single test**: `./scripts/simulate.sh --tb <testbench_path>`
   - Example: `./scripts/simulate.sh --tb hardware/test/instruction_set/ADD_B_tb.sv`
-- **Run all tests**: `python3 scripts/python/run_tests.py [--category <name>]`
-  - Categories: Instruction_Set_Tests, CPU_Control_Tests, Module_Tests
+- **Run all tests**: `python3 scripts/ci/run_test_suite.py`
+  - Runs comprehensive test suite across all categories
 - **Skip visualization**: Add `--no-viz` flag to simulate.sh
+
+### Test Management Commands (Developer Tools)
+- **Initialize new test**: `python3 scripts/devtools/test_manager.py init --test-name <name> --sub-dir <category> [--force] [--dry-run]`
+- **Assemble single test**: `python3 scripts/devtools/test_manager.py assemble --test-name <name> [--asm-args "<args>"] [--dry-run]`
+- **Assemble all tests**: `python3 scripts/devtools/test_manager.py assemble-all-sources [--asm-args "<args>"] [--dry-run]`
+- **Clean test artifacts**: `python3 scripts/devtools/test_manager.py clean --test-name <name> --sub-dir <category> [--dry-run]`
+
+### CI/Build Commands
+- **Generate all fixtures**: `python3 scripts/ci/build_all_fixtures.py`
+  - Builds .hex fixtures for all testbenches before running tests
+- **Run complete test suite**: `python3 scripts/ci/run_test_suite.py`
+  - Executes all Verilog tests (assumes fixtures are already built)
 
 ### Assembly Development
 - **Assemble program**: `python3 software/assembler/src/assembler.py <input.asm> <output_dir> [--region <name> <start> <end>]`
@@ -82,6 +94,14 @@ This is an FPGA-based 8-bit CPU project implementing a custom SAP2-style compute
 - `hardware/test/`: All testbenches organized by category
 - `hardware/test/fixtures_generated/`: Test data generated from assembly
 - `hardware/sim/`: GTKWave session files
+
+### Scripts Organization
+- `scripts/devtools/`: Developer utilities for test management
+  - `test_manager.py`: Subcommand-based CLI for test file creation, assembly, and cleanup
+- `scripts/ci/`: CI pipeline scripts for automated testing
+  - `build_all_fixtures.py`: Generates .hex fixtures for all testbenches
+  - `run_test_suite.py`: Compiles and runs complete Verilog test suite
+- `scripts/build.sh` & `scripts/simulate.sh`: Hardware build and simulation
 
 ### Build Outputs
 - `build/`: All build artifacts and logs

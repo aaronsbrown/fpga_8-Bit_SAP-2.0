@@ -47,19 +47,20 @@ jobs:
 
       - name: Make Verilog test scripts executable
         run: |
-          chmod +x scripts/python/run_tests.py
-          chmod +x scripts/python/assemble_test.py
+          chmod +x scripts/ci/run_test_suite.py
+          chmod +x scripts/ci/build_all_fixtures.py
+          chmod +x scripts/devtools/test_manager.py
 
       - name: Generate .hex fixtures for Verilog tests
         run: |
           echo "Generating .hex files for ISA tests..."
-          python3 scripts/python/generate_verilog_fixtures.py
+          python3 scripts/ci/build_all_fixtures.py
           echo "Listing generated fixtures directory after Python script execution:"
           ls -R hardware/test/fixtures_generated/
 
       - name: Execute all Verilog tests
         run: |
-          python3 scripts/python/run_tests.py
+          python3 scripts/ci/run_test_suite.py
 
       - name: Upload Verilog test artifacts
         if: always() 
