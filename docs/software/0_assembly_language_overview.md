@@ -350,7 +350,90 @@ START:
 * **Duplicate Definition:** Defining a macro twice generates an error.
 * **Missing ENDM:** Macro definition without ENDM generates an error.
 
-## 6. Instruction Mnemonics and Operands
+## 6. Conditional Assembly Directives
+
+The assembler supports conditional assembly directives that allow code to be included or excluded based on whether symbols are defined. These directives support nesting and are useful for creating configurable library code and managing build variants.
+
+* **`IFDEF <symbol_name>`** (If Defined)
+  * Begins a conditional block that is assembled only if `<symbol_name>` has been previously defined (via a label or EQU directive).
+  * Must be paired with a matching `ENDIF`.
+  * Example:
+    ```assembly
+    DEBUG_MODE EQU 1
+    IFDEF DEBUG_MODE
+        ; This code will be assembled since DEBUG_MODE is defined
+        LDI A, #$FF
+        DB "Debug build"
+    ENDIF
+    ```
+
+* **`IFNDEF <symbol_name>`** (If Not Defined)
+  * Begins a conditional block that is assembled only if `<symbol_name>` has NOT been previously defined.
+  * Must be paired with a matching `ENDIF`.
+  * Example:
+    ```assembly
+    IFNDEF USER_CONFIG
+        ; This code will be assembled only if USER_CONFIG is not defined
+        USER_CONFIG EQU $10  ; Provide default value
+    ENDIF
+    ```
+
+* **`ELSE`** (Conditional Else)
+  * Used optionally within an `IFDEF` or `IFNDEF` block to specify code that should be assembled when the initial condition is false.
+  * Can only appear once per conditional block.
+  * Example:
+    ```assembly
+    IFDEF FAST_MODE
+        LDI A, #$01    ; Fast configuration
+    ELSE
+        LDI A, #$10    ; Normal configuration
+    ENDIF
+    ```
+
+* **`ENDIF`** (End Conditional)
+  * Marks the end of an `IFDEF`, `IFNDEF`, or `ELSE` block.
+  * Every `IFDEF` or `IFNDEF` must have a corresponding `ENDIF`.
+
+* **Nesting Support:**
+  * Conditional blocks can be nested to create complex conditional logic.
+  * Each `IFDEF`/`IFNDEF` must be properly matched with its own `ENDIF`.
+  * Example:
+    ```assembly
+    IFDEF UART_ENABLED
+        LDI A, #UART_BASE
+        IFDEF DEBUG_MODE
+            ; Both UART_ENABLED and DEBUG_MODE are defined
+            LDI B, #VERBOSE_LOGGING
+        ELSE
+            ; UART_ENABLED is defined but DEBUG_MODE is not
+            LDI B, #NORMAL_LOGGING
+        ENDIF
+    ENDIF
+    ```
+
+* **Common Use Case - Library Defaults:**
+  * Conditional assembly is particularly useful for providing default constants in library files while allowing users to override them:
+  ```assembly
+  ; In main program:
+  USER_DELAY_TIME EQU $50  ; User override
+  INCLUDE "delay_library.inc"
+  
+  ; In delay_library.inc:
+  IFNDEF USER_DELAY_TIME
+      USER_DELAY_TIME EQU $10  ; Default if not overridden
+  ENDIF
+  
+  delay_routine:
+      LDI A, #USER_DELAY_TIME  ; Uses $50 (user value) or $10 (default)
+      ; ... delay implementation
+  ```
+
+* **Error Handling:**
+  * Unmatched `IFDEF`/`IFNDEF` directives without corresponding `ENDIF` will result in assembly errors.
+  * `ELSE` or `ENDIF` without a preceding `IFDEF`/`IFNDEF` will result in assembly errors.
+  * Multiple `ELSE` blocks within the same conditional are not allowed.
+
+## 7. Instruction Mnemonics and Operands
 
 This section provides a general overview. For the complete list of supported CPU instructions, their opcodes, byte sizes, and precise operand requirements, refer to the **`docs/0_ISA.md`** document. Operands can be complex expressions as described in Section 2.
 
