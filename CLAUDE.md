@@ -266,3 +266,5 @@ When responding to user instructions, the AI assistant (Claude, Cursor, GPT, etc
 ## Project Memories
 
 - Remember the unconventional operand ordering of this ISA's MOV instructon: MOV Src, Dest
+- When creating new verilog test benches, base code on hardware/test/templates/test_template.sv
+- When creating new assembly files, base code on software/asm/templates/test_template.asm

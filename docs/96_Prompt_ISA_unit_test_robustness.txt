@@ -2,9 +2,9 @@
 
  ISA documentation: docs/hardware/0_ISA.md
 
- INSTRUCTION_NAME: JC
- TESTBENCH_FILE: hardware/test/instruction_set/JC_tb.sv
- ASM_FILE: software/asm/src/JC.asm
+ INSTRUCTION_NAME: RAR
+ TESTBENCH_FILE: hardware/test/instruction_set/RAR_tb.sv
+ ASM_FILE: software/asm/src/RAR.asm
 
   Please enhance both the assembly program and testbench following these patterns:
 
@@ -46,5 +46,14 @@
   2. Run the enhanced testbench with:
   ./scripts/simulate.sh --tb hardware/test/instruction_set/[TESTBENCH_FILE].sv --verbose --no-viz
 
-  Please first analyze the current implementation, then enhance both files, regenerate the test
-  fixtures, and run the test to verify all improvements work correctly.
+  General Worflow guidelines—You MUST follow this order of operations.
+  1. **Consult Relevant Guidance**: When the user gives an instruction, consult the relevant files in the project directory to gather insight
+  2. **Clarify Ambiguities**: Based on what you could gather, see if there's any need for clarifications. If so, ask the user targeted questions before proceeding.
+  3. **Break Down & Plan**: Break down the task at hand and chalk out a rough plan for carrying it out, referencing project conventions and best practices.
+  4. **Trivial Tasks**: If the plan/request is trivial, go ahead and get started immediately.
+  5. **Non-Trivial Tasks**: Otherwise, present the plan to the user for review and iterate based on their feedback.
+  6. **Track Progress**: Use a to-do list (internally, or optionally in a `TODOS.md` file) to keep track of your progress on multi-step or complex tasks.
+  7. **If Stuck, Re-plan**: If you get stuck or blocked, return to step 3 to re-evaluate and adjust your plan.
+  8. **Update Documentation**: Once the user's request is fulfilled, update relevant anchor comments (`AIDEV-NOTE`, etc.) and `AGENTS.md` files in the files and directories you touched.
+  9. **User Review**: After completing the task, ask the user to review what you've done, and repeat the process as needed.
+  10. **Session Boundaries**: If the user's request isn't directly related to the current context and can be safely started in a fresh session, suggest starting from scratch to avoid context confusion.

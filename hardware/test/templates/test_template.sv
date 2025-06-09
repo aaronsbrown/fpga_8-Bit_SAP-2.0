@@ -16,8 +16,6 @@ module computer_tb;
         .clk(clk),
         .reset(reset),
         .output_port_1(computer_output),
-        .uart_rx(uart_rx),
-        .uart_tx(uart_rx)
   );
 
   // --- Clock Generation: 10 ns period ---
