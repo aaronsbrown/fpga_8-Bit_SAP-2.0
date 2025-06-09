@@ -136,4 +136,45 @@ package test_utils_pkg;
     end
   endtask
 
+  task safe_readmemh_ram; // Specific task for RAM
+    input string file_path;
+    // No memory_array port needed if using hierarchical path like for ROM
+
+    integer file_handle;
+    string task_msg_prefix = "Task safe_readmemh (RAM)";
+
+    begin
+      // Check if an empty or "NONE" string is passed, indicating no RAM file to load
+      if (file_path == "" || file_path == "NONE" || file_path == "UNUSED") begin
+        $display("--- %s: No RAM file specified or marked as unused ('%s'). Skipping RAM load. ---", task_msg_prefix, file_path);
+        return; // Exit the task gracefully
+      end
+
+      $display("--- %s: Attempting to load hex file: %s ---", task_msg_prefix, file_path);
+      file_handle = $fopen(file_path, "r");
+
+      if (file_handle == 0) begin
+        // For RAM, not finding the file might be acceptable for some tests.
+        // Let's make it a WARNING instead of a FATAL ERROR, unless the test *requires* it.
+        // If a test absolutely needs RAM data, it should fail later if the data isn't there.
+        // Alternatively, you could have a flag to make this fatal if needed.
+        $display("--------------------------------------------------------------------");
+        $warning("WARNING [%s]: Could not open HEX_FILE for RAM: %s", task_msg_prefix, file_path);
+        $display("RAM will not be initialized from this file. Test may proceed with uninitialized/default RAM contents.");
+        $display("If this test requires pre-loaded RAM, this will likely lead to a test failure.");
+        $display("--------------------------------------------------------------------");
+        // $finish(2); // Optionally make it fatal if all tests with RAM.hex *must* find it.
+      end else begin
+        $fclose(file_handle); // Close file handle after checking existence
+        $display("--- %s: File found. Loading hex file into RAM memory array ---", task_msg_prefix);
+        // Use the hierarchical path to the RAM memory
+        // Assumes your RAM instance within `UUT_PATH` (e.g., 'uut') is named 'u_ram' and its memory is 'mem'
+        $readmemh(file_path, `UUT_PATH.u_ram.mem);
+        $display("--- %s: $readmemh call completed for %s. ---", task_msg_prefix, file_path);
+        // Optionally, you could call a RAM dump here if `UUT_PATH.u_ram.dump()` exists
+        // `UUT_PATH.u_ram.dump();
+      end
+    end
+  endtask
+
 endpackage : test_utils_pkg

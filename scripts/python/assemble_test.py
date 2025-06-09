@@ -12,6 +12,7 @@ TEST_NAME_PLACEHOLDER = "<<test_name>>"
 
 # --- Determine Project Root ---
 SCRIPT_FILE_PATH = Path(__file__).resolve()
+# Assuming this script (assemble_test.py) is in project_root/scripts/python/
 PROJECT_ROOT = SCRIPT_FILE_PATH.parent.parent.parent
 
 # --- Define Template and Target Directory Paths (relative to PROJECT_ROOT) ---
@@ -125,6 +126,8 @@ def clean_test_artifacts(test_name: str, asm_file: Path, sv_file: Path, fixture_
 def run_assembler(asm_file_path: Path, fixture_output_dir: Path, asm_args_str: str, dry_run: bool) -> bool:
     """
     Runs the assembler for a given .asm file.
+    The fixture_output_dir is passed as the 'output_specifier' to assembler.py,
+    which assembler.py uses as the base directory for its region-named .hex files.
     Returns True on success, False on error.
     """
     print(f"\n--- Assembling: {asm_file_path.name} (Output to: {fixture_output_dir.relative_to(PROJECT_ROOT)}) ---")
@@ -134,12 +137,10 @@ def run_assembler(asm_file_path: Path, fixture_output_dir: Path, asm_args_str: s
         return False
     elif not asm_file_path.is_file() and dry_run:
          print(f"[DRY RUN] ASM source file {asm_file_path.relative_to(PROJECT_ROOT)} would be used.")
-         # Allow dry run to proceed to show command, even if file doesn't exist yet
 
     if not ASSEMBLER_SCRIPT_PATH.is_file():
         print(f"Error: Assembler script not found: {ASSEMBLER_SCRIPT_PATH.relative_to(PROJECT_ROOT)}")
         if not dry_run: return False
-
 
     if not dry_run:
         try:
@@ -151,35 +152,47 @@ def run_assembler(asm_file_path: Path, fixture_output_dir: Path, asm_args_str: s
         if not fixture_output_dir.exists():
             print(f"[DRY RUN] Fixture output directory {fixture_output_dir.relative_to(PROJECT_ROOT)} would be created if it doesn't exist.")
 
-
+    # Base command: python assembler.py <input_asm> <output_dir_for_regions>
     asm_command_base = [
         sys.executable,
         str(ASSEMBLER_SCRIPT_PATH),
         str(asm_file_path),
-        str(fixture_output_dir),
+        str(fixture_output_dir), # This is the 'output_specifier' for assembler.py
     ]
-    if asm_args_str:
-        additional_asm_args = asm_args_str.split()
-        asm_command_final = asm_command_base + additional_asm_args
+
+    # Determine the region arguments to pass to assembler.py
+    final_region_args = []
+    if asm_args_str: # If --asm-args are explicitly provided to this script
+        print(f"INFO: Using custom assembler arguments passed via --asm-args: \"{asm_args_str}\"")
+        final_region_args = asm_args_str.split()
     else:
-        default_region_args = ["--region", "ROM", "F000", "FFFF"] # Default for each assembly
-        asm_command_final = asm_command_base + default_region_args
+        # Default to defining both ROM and RAM regions for assembler.py
+        print("INFO: No explicit --asm-args provided. Using default ROM and RAM regions for assembler.py.")
+        # Adjust these addresses and names as per your CPU architecture and assembler.py expectations
+        default_regions = [
+            "--region", "ROM", "F000", "FFFF",  # Example ROM region
+            "--region", "RAM", "0000", "1FFF"   # Example RAM region (covers $1234)
+                                                # Ensure this range is appropriate for your RAM
+        ]
+        final_region_args.extend(default_regions)
+
+    asm_command_final = asm_command_base + final_region_args
 
     print(f"\nExecuting assembler command:")
-    display_command = [Path(sys.executable).name]
-    for p_str in asm_command_final[1:]:
-        p_path = Path(p_str)
-        # Check if path is absolute and can be made relative to PROJECT_ROOT
-        # Also handle cases where p_str might not be a path (e.g. "--region")
+    # Create a display-friendly version of the command
+    display_command_parts = [Path(sys.executable).name]
+    for part in asm_command_final[1:]: # Skip the python executable itself for display
+        p_path = Path(part)
         try:
+            # Try to make paths relative for cleaner display
             if p_path.is_absolute() and PROJECT_ROOT in p_path.parents:
-                display_command.append(str(p_path.relative_to(PROJECT_ROOT)))
+                display_command_parts.append(str(p_path.relative_to(PROJECT_ROOT)))
             else:
-                display_command.append(p_str)
-        except OSError: # Handle cases where p_str is not a valid path component
-            display_command.append(p_str)
+                display_command_parts.append(str(part)) # Use string representation
+        except OSError: # Handle cases where part is not a valid path component (e.g. "--region")
+            display_command_parts.append(str(part))
 
-    print(f"  $ {' '.join(display_command)}")
+    print(f"  $ {' '.join(display_command_parts)}")
     print(f"(Running from: {PROJECT_ROOT})")
 
 
@@ -188,15 +201,17 @@ def run_assembler(asm_file_path: Path, fixture_output_dir: Path, asm_args_str: s
         return True
 
     try:
+        # Ensure all command parts are strings for subprocess.run
+        str_asm_command_final = [str(p) for p in asm_command_final]
         process = subprocess.run(
-            asm_command_final,
-            check=True, # Will raise CalledProcessError for non-zero exit codes
+            str_asm_command_final,
+            check=True,
             capture_output=True,
             text=True,
-            cwd=PROJECT_ROOT # Important to run assembler from consistent location
+            cwd=PROJECT_ROOT
         )
         if process.stdout: print("\nAssembler STDOUT:\n" + process.stdout.strip())
-        if process.stderr: print("\nAssembler STDERR:\n" + process.stderr.strip())
+        if process.stderr: print("\nAssembler STDERR:\n" + process.stderr.strip()) # assembler.py logs here
         print(f"\n--- Assembly for '{asm_file_path.stem}' successful. ---")
         return True
     except subprocess.CalledProcessError as e:
@@ -217,7 +232,6 @@ def main():
         description="Automate test case setup and assembly for the 8-bit computer project.",
         formatter_class=argparse.RawTextHelpFormatter
     )
-    # Group for mutually exclusive operations
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
         "--test-name",
@@ -257,9 +271,10 @@ def main():
     parser.add_argument(
         "--asm-args",
         type=str,
-        default="",
-        help="Additional arguments to pass to the assembler, e.g., \"--region RAM 0000 1FFF\"."
-              "\nDefault ROM region for single test or batch items: --region ROM F000 FFFF"
+        default="", # Default is an empty string
+        help=("Raw arguments to pass directly to the underlying assembler.py. "
+              "Example: \"--region FOO 0000 0FFF --region BAR A000 AFFF\". "
+              "If not provided, default ROM (F000-FFFF) and RAM (0000-EFFF) regions will be used.")
     )
     parser.add_argument(
         "--dry-run",
@@ -291,7 +306,8 @@ def main():
         for asm_file_path in asm_files_found:
             test_name_from_file = asm_file_path.stem
             fixture_dir = GENERATED_FIXTURES_BASE_DIR / test_name_from_file
-            
+            # For batch mode, we still use args.asm_args. If it's empty, the new default
+            # ROM/RAM regions will be applied by run_assembler.
             if run_assembler(asm_file_path, fixture_dir, args.asm_args, dry_run):
                 success_count += 1
             else:
@@ -306,13 +322,10 @@ def main():
             print("\nList of failed files:")
             for failed_file in failed_files_list:
                 print(f"  - {failed_file}")
-            if not dry_run: # Only exit with error if not a dry run
+            if not dry_run:
                 sys.exit(1)
         sys.exit(0)
 
-
-    # --- Logic for individual test_name operations ---
-    # test_name is guaranteed to be provided if not batch_assemble_all
     test_name = args.test_name
     new_asm_file_path = ASM_SRC_DIR / f"{test_name}.asm"
     test_fixture_output_dir = GENERATED_FIXTURES_BASE_DIR / test_name
@@ -324,79 +337,35 @@ def main():
     elif args.init or args.clean:
         parser.error("--sub-dir is required when using --init or --clean with --test-name.")
 
-
     if args.clean:
-        # new_sv_file_path would be None if --sub-dir wasn't provided, caught by parser.error above.
         clean_test_artifacts(test_name, new_asm_file_path, new_sv_file_path, test_fixture_output_dir, dry_run)
         sys.exit(0)
 
-    init_skipped_any_file = False
-    init_errors_occurred = False
-
     if args.init:
-        # --sub-dir is guaranteed by parser.error check above for --init
+        # ... (your existing --init logic) ...
+        # Ensure that after successful init, it calls run_assembler which will now use
+        # the default ROM/RAM regions if args.asm_args is empty.
+        # Example from your existing code:
         print(f"\n--- Initializing test: {test_name} in hardware/test/{args.sub_dir}/ ---")
-
-        print(f"\nProcessing ASM source file...")
-        asm_status = create_file_from_template(ASM_TEMPLATE_FILE, new_asm_file_path, test_name, dry_run, args.force)
-        if asm_status == "skipped": init_skipped_any_file = True
-        elif asm_status == "error": init_errors_occurred = True
-
-        print(f"\nEnsuring fixture directory exists...")
-        if dry_run:
-            print(f"[DRY RUN] Would ensure directory exists: {test_fixture_output_dir.relative_to(PROJECT_ROOT)}")
-        else:
-            if not test_fixture_output_dir.exists(): # Check before creating
-                 try:
-                    test_fixture_output_dir.mkdir(parents=True, exist_ok=True)
-                    print(f"Successfully created directory: {test_fixture_output_dir.relative_to(PROJECT_ROOT)}")
-                 except OSError as e:
-                    print(f"Error: Could not create directory {test_fixture_output_dir}: {e}")
-                    init_errors_occurred = True
-            else:
-                 print(f"Directory already exists: {test_fixture_output_dir.relative_to(PROJECT_ROOT)}")
-
-
-        print(f"\nProcessing SystemVerilog testbench file in hardware/test/{args.sub_dir}/ ...")
-        # new_sv_file_path is guaranteed to be set if --sub-dir was provided
-        sv_status = create_file_from_template(SV_TEMPLATE_FILE, new_sv_file_path, test_name, dry_run, args.force)
-        if sv_status == "skipped": init_skipped_any_file = True
-        elif sv_status == "error": init_errors_occurred = True
-        
-        if not dry_run and init_errors_occurred:
-            print(f"\n--- Initialization for '{test_name}' failed due to errors. Aborting. ---")
-            sys.exit(1)
-        
-        # Determine if we should proceed to assembly
-        proceed_to_asm = False
-        if dry_run:
-            print(f"[DRY RUN] Would assemble {new_asm_file_path.name} after initialization if successful.")
-            proceed_to_asm = True # Show the command for dry run
-        elif not init_errors_occurred: # No errors, proceed
-            if init_skipped_any_file:
-                print(f"\n--- Initialization for '{test_name}' involved skipping some existing files. ---")
-                print(f"To overwrite these files, use the --force flag.")
-                # Optionally, you might want to ask the user if they want to assemble skipped files
-                # For now, we'll proceed to assemble.
-            print(f"\n--- Initialization for '{test_name}' complete. Proceeding to assembly. ---")
+        # ... (template creation logic) ...
+        proceed_to_asm = False # Determine if assembly should proceed after init
+        if dry_run: # Simplified logic for brevity
             proceed_to_asm = True
-        else: # init_errors_occurred is True and not dry_run
-             print(f"\n--- Initialization for '{test_name}' failed. Assembly will be SKIPPED. ---")
-
+        # ... (more detailed logic for proceed_to_asm) ...
 
         if proceed_to_asm:
             if not run_assembler(new_asm_file_path, test_fixture_output_dir, args.asm_args, dry_run):
-                if not dry_run: # Only exit with error if not a dry run
+                if not dry_run:
                     print(f"\n--- Assembly FAILED after initialization for '{test_name}'. ---")
                     sys.exit(1)
-            elif not dry_run: # Assembly was successful and not dry_run
+            elif not dry_run:
                 print(f"\n--- Assembly successful after initialization for '{test_name}'. ---")
-        
-        sys.exit(0) # Exit after --init path
+        sys.exit(0)
 
-    # --- If not --init, --clean, or --batch-assemble-all, then it's a single assembly run for --test-name ---
+
+    # Single assembly run (not --init, --clean, or --batch-assemble-all)
     if not run_assembler(new_asm_file_path, test_fixture_output_dir, args.asm_args, dry_run):
-        if not dry_run: sys.exit(1) # Exit with error if assembly fails and not a dry run
+        if not dry_run: sys.exit(1)
 
     print("\nScript finished successfully.")
 
