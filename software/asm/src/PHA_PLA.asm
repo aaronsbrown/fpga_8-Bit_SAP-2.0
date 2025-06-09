@@ -1,15 +1,7 @@
-
 ; op_PHA_PLA.asm
 ; Tests basic push and pull to the stack, plus PLA flag behavior and top-of-stack.
 
 INCLUDE "includes/mmio_defs.inc"
-
-; ======================================================================
-; == VECTORS TABLE
-; ======================================================================
-    ORG $FFFC
-    DW START           ; Reset Vector points to START label
-
 
 ; ======================================================================
 ; == CONSTANTS

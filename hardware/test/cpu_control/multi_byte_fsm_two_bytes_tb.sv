@@ -4,7 +4,7 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_generated/LDI_A/ROM.hex";
+  localparam string HEX_FILE = "../hardware/test/fixtures_generated/multi_byte_fsm_two_bytes/ROM.hex";
 
   reg clk;
   reg reset;

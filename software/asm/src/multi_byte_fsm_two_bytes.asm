@@ -1,19 +1,8 @@
-; JMP.asm
-; TODO: Add short description
-
-INCLUDE "includes/mmio_defs.inc"
-
 ; ======================================================================
 ; == PROGRAM
 ; ======================================================================
     ORG $F000
 
-
 START:
-    LDI A, #$55
-    JMP HALT
-
-    LDI A, #$FF
-
-HALT:
-    HLT
+    LDI A, #$F5         ; LDI A with direct hex immediate
+    HLT                ; Halt
