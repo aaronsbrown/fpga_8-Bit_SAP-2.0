@@ -10,9 +10,11 @@ log_success() { echo -e "${GREEN}[$(date +"%T")] SUCCESS:${NC} $1"; }
 log_error()   { echo -e "${RED}[$(date +"%T")] ERROR:${NC} $1" >&2; }
 
 usage() {
-    echo "Usage: $0 [--verbose|-v] [--sv2v] --top <top_module_name> [--asm_src <assembly_file.asm>] [verilog_files...]"
+    echo "Usage: $0 [--verbose|-v] --top <top_module_name> [--asm_src <assembly_file.asm>] [verilog_files...]"
     echo "       If no verilog_files are provided, sources from _files_synth.f will be used."
     echo "       If --asm_src is not provided, a default ROM path will be attempted."
+    echo "       sv2v is ALWAYS used for .sv files."
+    echo "       Source sources are ALWAYS loaded from hardware/src/_files_synth.f."
     exit 1
 }
 
@@ -24,7 +26,7 @@ run_cmd() {
 # --- Argument Parsing ---
 VERBOSE=false
 VERILOG_FILES_ARG=()
-USE_SV2V=false
+USE_SV2V=true
 TOP_MODULE=""
 ASSEMBLY_SOURCE_FILE="" # Path to the .asm file for ROM
 
@@ -33,7 +35,6 @@ if [[ $# -eq 0 ]]; then usage; fi
 while [[ $# -gt 0 ]]; do
     case "$1" in
         --verbose|-v) VERBOSE=true; shift ;;
-        --sv2v) USE_SV2V=true; shift ;;
         --top) if [[ -z "$2" ]]; then log_error "--top requires a module name."; usage; fi; TOP_MODULE="$2"; shift 2 ;;
         --asm_src) if [[ -z "$2" ]]; then log_error "--asm_src requires a file path."; usage; fi; ASSEMBLY_SOURCE_FILE="$2"; shift 2 ;;
         -*) log_error "Unknown option: $1"; usage ;;
