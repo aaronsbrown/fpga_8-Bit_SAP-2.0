@@ -25,6 +25,15 @@ class Token:
     mnemonic: Optional[str]
     operand:  Optional[str] # Operand string, local labels may be mangled here by parser
 
+@dataclass(frozen=True)
+class MacroDefinition:
+    """Represents a macro definition with parameters and body."""
+    name: str                    # Macro name
+    parameters: List[str]        # Parameter names
+    body_lines: List[str]        # Raw body lines (before expansion)
+    source_file: str             # File where macro was defined
+    line_no: int                 # Line number where macro was defined
+
 class ParserError(Exception):
     """Custom exception for parsing errors, includes context."""
     def __init__(self, message: str, source_file: Optional[str] = None, line_no: Optional[int] = None):
@@ -82,16 +91,181 @@ class Parser:
         self.main_input_filepath: str = os.path.normpath(main_input_filepath)
         self.symbol_table: Dict[str, int] = {}
         self.tokens: List[Token] = []
+        self.macros: Dict[str, MacroDefinition] = {}  # Macro storage
         self._files_in_recursion_stack: List[str] = []
+        self._macro_expansion_counter: int = 0  # For unique local label generation
 
         logger.info(f"Parser initialized for main file: {self.main_input_filepath}")
-        # Initial call, no current global label scope, start address 0
+        
+        # First: collect all macro definitions from all files
+        self._collect_macros_from_file(self.main_input_filepath)
+        
+        # Then: process all files with macro expansion
         self._parse_and_process_file(self.main_input_filepath, 0, None) 
 
         logger.info("Parsing complete. Final symbol table:")
         for sym, val in sorted(self.symbol_table.items()): # Sort for consistent logging
             logger.info(f"  {sym!r} -> 0x{val:04X}")
         logger.info(f"Total tokens collected for assembler: {len(self.tokens)}")
+
+    def _parse_macro_definition(self, macro_line: str, lines: List[str], line_index: int, 
+                                source_file: str) -> Tuple[MacroDefinition, int]:
+        """
+        Parse a macro definition starting from MACRO line.
+        
+        Args:
+            macro_line: The line containing "MACRO name [params]"
+            lines: All lines in the file
+            line_index: Current line index (0-based)
+            source_file: Source file path
+            
+        Returns:
+            Tuple of (MacroDefinition, end_line_index)
+            
+        Raises:
+            ParserError: If macro definition is malformed
+        """
+        line_no = line_index + 1  # Convert to 1-based
+        
+        # Parse MACRO line
+        macro_match = re.match(r'^\s*MACRO\s+([A-Za-z_]\w*)(?:\s+(.+?))?\s*(?:;.*)?$', macro_line, re.IGNORECASE)
+        if not macro_match:
+            raise ParserError("Malformed MACRO directive", source_file, line_no)
+        
+        macro_name = macro_match.group(1).upper()
+        params_str = macro_match.group(2)
+        
+        # Check for duplicate macro definition
+        if macro_name in self.macros:
+            raise ParserError(f"Macro '{macro_name}' already defined at {self.macros[macro_name].source_file}:{self.macros[macro_name].line_no}", 
+                              source_file, line_no)
+        
+        # Parse parameters
+        parameters: List[str] = []
+        if params_str:
+            # Split by comma and clean up parameter names
+            param_parts = [p.strip() for p in params_str.split(',')]
+            for param in param_parts:
+                if not param:
+                    continue
+                if not re.match(r'^[A-Za-z_]\w*$', param):
+                    raise ParserError(f"Invalid parameter name '{param}' in macro definition", source_file, line_no)
+                parameters.append(param)
+        
+        # Collect macro body lines until ENDM
+        body_lines: List[str] = []
+        current_line_index = line_index + 1
+        
+        while current_line_index < len(lines):
+            current_line = lines[current_line_index].rstrip()
+            current_line_no = current_line_index + 1
+            
+            # Check for ENDM
+            if re.match(r'^\s*ENDM\s*(?:;.*)?$', current_line, re.IGNORECASE):
+                # Found end of macro
+                macro_def = MacroDefinition(
+                    name=macro_name,
+                    parameters=parameters,
+                    body_lines=body_lines,
+                    source_file=source_file,
+                    line_no=line_no
+                )
+                return macro_def, current_line_index
+            
+            # Skip empty lines and comments in macro body
+            stripped_line = current_line.strip()
+            if stripped_line and not stripped_line.startswith(';'):
+                body_lines.append(current_line)
+            elif stripped_line:  # Keep comments for formatting
+                body_lines.append(current_line)
+            
+            current_line_index += 1
+        
+        # If we get here, we never found ENDM
+        raise ParserError(f"Macro '{macro_name}' not closed with ENDM", source_file, line_no)
+
+    def _expand_macro(self, macro_name: str, args: List[str], source_file: str, line_no: int) -> List[str]:
+        """
+        Expand a macro invocation into assembly lines with recursive expansion support.
+        
+        Args:
+            macro_name: Name of macro to expand
+            args: Arguments for macro expansion
+            source_file: Source file of macro invocation
+            line_no: Line number of macro invocation
+            
+        Returns:
+            List of expanded assembly lines
+            
+        Raises:
+            ParserError: If macro expansion fails
+        """
+        if macro_name not in self.macros:
+            raise ParserError(f"Unknown mnemonic or macro: '{macro_name}'", source_file, line_no)
+        
+        macro_def = self.macros[macro_name]
+        
+        # Check parameter count
+        if len(args) != len(macro_def.parameters):
+            raise ParserError(f"Parameter count mismatch for macro '{macro_name}': expected {len(macro_def.parameters)}, got {len(args)}", 
+                              source_file, line_no)
+        
+        # Generate unique expansion ID for local labels
+        self._macro_expansion_counter += 1
+        expansion_id = self._macro_expansion_counter
+        
+        # Create parameter substitution map
+        param_map = dict(zip(macro_def.parameters, args))
+        
+        # Expand macro body
+        expanded_lines: List[str] = []
+        for body_line in macro_def.body_lines:
+            expanded_line = body_line
+            
+            # Substitute parameters
+            for param, arg in param_map.items():
+                # Use word boundaries to avoid partial matches
+                pattern = r'\b' + re.escape(param) + r'\b'
+                expanded_line = re.sub(pattern, arg, expanded_line)
+            
+            # Handle local labels (@@label -> unique label)
+            local_label_pattern = r'@@([A-Za-z_]\w*)'
+            expanded_line = re.sub(local_label_pattern, 
+                                   rf'__MACRO_{expansion_id}_\1', 
+                                   expanded_line)
+            
+            # Check if the expanded line contains another macro invocation
+            nested_parsed = self._parse_line_components(expanded_line, source_file, line_no)
+            if nested_parsed:
+                nested_label, nested_mnemonic, nested_operand = nested_parsed
+                if nested_mnemonic and self._is_macro_invocation(nested_mnemonic.upper()):
+                    # Parse nested macro arguments
+                    nested_args: List[str] = []
+                    if nested_operand:
+                        nested_args = [arg.strip() for arg in CSV_SPLIT_REGEX.split(nested_operand)]
+                        nested_args = [arg for arg in nested_args if arg]
+                    
+                    # Recursively expand nested macro
+                    nested_expanded = self._expand_macro(nested_mnemonic.upper(), nested_args, source_file, line_no)
+                    
+                    # Add label to first line of nested expansion if present
+                    if nested_label and nested_expanded:
+                        nested_expanded[0] = f"{nested_label}: {nested_expanded[0]}"
+                    elif nested_label:
+                        expanded_lines.append(f"{nested_label}:")
+                    
+                    # Add all nested expanded lines
+                    expanded_lines.extend(nested_expanded)
+                    continue
+            
+            expanded_lines.append(expanded_line)
+        
+        logger.debug(f"Expanded macro '{macro_name}' with {len(args)} args into {len(expanded_lines)} lines")
+        return expanded_lines
+
+    def _is_macro_invocation(self, mnemonic: str) -> bool:
+        """Check if a mnemonic is a macro invocation."""
+        return mnemonic.upper() in self.macros
 
     def _load_lines_from_physical_file(self, filepath: str, requesting_file: str, requesting_line_no: int) -> List[str]:
         try:
@@ -315,7 +489,7 @@ class Parser:
         elif mnem_upper not in ['ORG', 'EQU']: # Regular instruction or DB/DW
             instr_info = INSTRUCTION_SET.get(mnem_upper)
             if instr_info is None:
-                raise ParserError(f"Unknown mnemonic or directive: '{mnem_upper}'.", normalized_filepath, line_no_in_file)
+                raise ParserError(f"Unknown mnemonic or macro: '{mnem_upper}'.", normalized_filepath, line_no_in_file)
             
             num_bytes_for_line = 0
             if mnem_upper in ["DB", "DW"]:
@@ -460,6 +634,51 @@ class Parser:
         return total_bytes
 
 
+    def _collect_macros_from_file(self, filepath_to_process: str) -> None:
+        """
+        Collect macro definitions from a file and all its includes recursively.
+        This must be done first before any macro expansion.
+        """
+        # Load and validate file
+        normalized_filepath, lines = self._load_and_validate_file(filepath_to_process)
+        
+        line_index = 0
+        while line_index < len(lines):
+            raw_line = lines[line_index]
+            line_no_in_file = line_index + 1
+            
+            # Check for macro definition
+            if re.match(r'^\s*MACRO\s+', raw_line, re.IGNORECASE):
+                macro_def, end_index = self._parse_macro_definition(raw_line, lines, line_index, normalized_filepath)
+                self.macros[macro_def.name] = macro_def
+                logger.debug(f"Collected macro definition: {macro_def.name} with {len(macro_def.parameters)} parameters")
+                line_index = end_index + 1  # Skip to after ENDM
+                continue
+            
+            # Check for ENDM without MACRO
+            if re.match(r'^\s*ENDM\s*(?:;.*)?$', raw_line, re.IGNORECASE):
+                raise ParserError("ENDM without corresponding MACRO definition", normalized_filepath, line_no_in_file)
+            
+            # Check for INCLUDE directive to recursively collect macros
+            parsed_comps = self._parse_line_components(raw_line, normalized_filepath, line_no_in_file)
+            if parsed_comps:
+                _, mnemonic_candidate, operand_candidate = parsed_comps
+                if mnemonic_candidate and mnemonic_candidate.upper() == "INCLUDE":
+                    if not operand_candidate:
+                        raise ParserError("INCLUDE directive missing filename.", normalized_filepath, line_no_in_file)
+                    
+                    include_filename_rel = operand_candidate.strip('"')
+                    base_dir_of_current_file = os.path.dirname(normalized_filepath)
+                    abs_path_to_include_file = os.path.normpath(os.path.join(base_dir_of_current_file, include_filename_rel))
+                    
+                    # Recursively collect macros from included file
+                    self._collect_macros_from_file(abs_path_to_include_file)
+            
+            line_index += 1
+        
+        # Clean up recursion stack
+        self._files_in_recursion_stack.pop()
+
     def _parse_and_process_file(self, filepath_to_process: str, current_address: int, 
                                 current_global_label_scope: Optional[str]) -> Tuple[int, Optional[str]]:
         """
@@ -484,9 +703,59 @@ class Parser:
         effective_address = current_address
         logger.debug(f"Starting processing of file: {normalized_filepath} (initial active_global_scope: {active_global_label})")
 
-        # Process each line in the file
-        for line_no_in_file, raw_line in enumerate(lines, start=1):
+        # Process lines with macro expansion (macros already collected globally)
+        line_index = 0
+        expanded_lines: List[Tuple[str, int, str]] = []  # (line_content, original_line_no, source_file)
+        
+        while line_index < len(lines):
+            raw_line = lines[line_index]
+            line_no_in_file = line_index + 1
+            
+            # Skip macro definitions (already processed in global collection phase)
+            if re.match(r'^\s*MACRO\s+', raw_line, re.IGNORECASE):
+                # Find corresponding ENDM and skip
+                while line_index < len(lines) and not re.match(r'^\s*ENDM\s*(?:;.*)?$', lines[line_index], re.IGNORECASE):
+                    line_index += 1
+                line_index += 1  # Skip ENDM line
+                continue
+            
+            # Check for macro invocation
             parsed_comps = self._parse_line_components(raw_line, normalized_filepath, line_no_in_file)
+            if parsed_comps:
+                original_label_str, mnemonic_candidate, operand_candidate = parsed_comps
+                
+                # Check if mnemonic is a macro
+                if mnemonic_candidate and self._is_macro_invocation(mnemonic_candidate.upper()):
+                    # Parse macro arguments
+                    args: List[str] = []
+                    if operand_candidate:
+                        args = [arg.strip() for arg in CSV_SPLIT_REGEX.split(operand_candidate)]
+                        args = [arg for arg in args if arg]  # Remove empty args
+                    
+                    # Expand macro
+                    macro_lines = self._expand_macro(mnemonic_candidate.upper(), args, normalized_filepath, line_no_in_file)
+                    
+                    # Add label to first expanded line if present
+                    if original_label_str and macro_lines:
+                        macro_lines[0] = f"{original_label_str}: {macro_lines[0]}"
+                    elif original_label_str:
+                        # Label but no macro body - just add the label line
+                        expanded_lines.append((f"{original_label_str}:", line_no_in_file, normalized_filepath))
+                    
+                    # Add all expanded lines
+                    for macro_line in macro_lines:
+                        expanded_lines.append((macro_line, line_no_in_file, normalized_filepath))
+                    
+                    line_index += 1
+                    continue
+            
+            # Regular line - add as-is
+            expanded_lines.append((raw_line, line_no_in_file, normalized_filepath))
+            line_index += 1
+
+        # Process expanded lines
+        for expanded_line, original_line_no, source_file in expanded_lines:
+            parsed_comps = self._parse_line_components(expanded_line, source_file, original_line_no)
             if not parsed_comps:
                 continue
             
@@ -495,14 +764,14 @@ class Parser:
             # Handle INCLUDE directive
             if mnemonic_candidate and mnemonic_candidate.upper() == "INCLUDE":
                 effective_address, active_global_label = self._process_include_directive(
-                    operand_candidate, normalized_filepath, line_no_in_file, 
+                    operand_candidate, source_file, original_line_no, 
                     effective_address, active_global_label)
                 continue
 
             # Normalize components with current scope
             _, final_mnemonic, final_operand = self._normalize_token_components(
                 original_label_str, mnemonic_candidate, operand_candidate, 
-                active_global_label, normalized_filepath, line_no_in_file
+                active_global_label, source_file, original_line_no
             )
             
             # Determine label name for symbol table and update global scope
@@ -511,7 +780,7 @@ class Parser:
             if original_label_str:
                 if original_label_str.startswith('.'): # Local label
                     if not active_global_label:
-                        raise ParserError(f"Local label '{original_label_str}' defined without a preceding global label.", normalized_filepath, line_no_in_file)
+                        raise ParserError(f"Local label '{original_label_str}' defined without a preceding global label.", source_file, original_line_no)
                     label_name_for_symbol_table = f"{active_global_label}{original_label_str}"
                 else: # Global label
                     label_name_for_symbol_table = original_label_str
@@ -522,18 +791,18 @@ class Parser:
             # Handle label-only lines
             if not final_mnemonic:
                 if label_name_for_symbol_table:
-                    self._add_symbol_to_table(label_name_for_symbol_table, effective_address, normalized_filepath, line_no_in_file)
+                    self._add_symbol_to_table(label_name_for_symbol_table, effective_address, source_file, original_line_no)
                 continue 
 
             # Create and add token
-            token = Token(line_no_in_file, normalized_filepath, original_label_str, final_mnemonic, final_operand)
+            token = Token(original_line_no, source_file, original_label_str, final_mnemonic, final_operand)
             self.tokens.append(token)
             logger.debug(f"Token created: {token} (current effective_address: 0x{effective_address:04X}, next active_global_label for subsequent lines: {active_global_label})")
 
             # Update symbol table and calculate new address
             effective_address = self._update_symbol_table_and_address(
                 label_name_for_symbol_table, final_mnemonic, final_operand,
-                effective_address, normalized_filepath, line_no_in_file)
+                effective_address, source_file, original_line_no)
 
         # Clean up and return
         self._files_in_recursion_stack.pop()

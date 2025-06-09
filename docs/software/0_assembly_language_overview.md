@@ -216,7 +216,141 @@ Each part is optional, but certain combinations are required (e.g., a mnemonic o
   * Included files inherit the current address and global label scope from the point of inclusion.
   * Example: `INCLUDE "macros.asm"`
 
-## 5. Instruction Mnemonics and Operands
+## 5. Macro System
+
+The assembler supports a comprehensive macro system for creating reusable blocks of assembly code with parameters and automatic local label management.
+
+### 5.1 Macro Definition
+
+**Syntax:** 
+```assembly
+MACRO <macro_name> [parameter1, parameter2, ...]
+    ; macro body with assembly instructions
+    ; can reference parameters and use local labels
+ENDM
+```
+
+* **Macro Name:** Must be a valid identifier (alphanumeric and underscore, starting with letter or underscore).
+* **Parameters:** Optional comma-separated list of parameter names for substitution.
+* **Body:** Assembly instructions, directives, and comments that form the macro template.
+* **ENDM:** Required directive to mark the end of the macro definition.
+
+**Example:**
+```assembly
+MACRO LOAD_REG reg, value
+    LDI reg, value
+ENDM
+
+MACRO DELAY_LOOP count
+    LDI A, count
+@@loop:
+    DCR A
+    JNZ @@loop
+ENDM
+```
+
+### 5.2 Macro Invocation
+
+**Syntax:** `<macro_name> [argument1, argument2, ...]`
+
+* The number of arguments must match the number of parameters in the macro definition.
+* Arguments are substituted for parameters throughout the macro body.
+* Arguments can be registers, immediate values, labels, or expressions.
+
+**Example:**
+```assembly
+; Invoke macros defined above
+LOAD_REG A, #$42        ; Expands to: LDI A, #$42
+LOAD_REG B, #MY_CONST   ; Expands to: LDI B, #MY_CONST
+DELAY_LOOP #$10         ; Expands to delay loop with count $10
+```
+
+### 5.3 Local Labels in Macros
+
+**Problem:** Regular labels in macros would conflict if the macro is invoked multiple times.
+
+**Solution:** Use `@@label` syntax for macro-local labels that are automatically made unique.
+
+* **Syntax:** `@@identifier` creates a local label within the macro.
+* **Automatic Uniqueness:** Each macro expansion gets unique local labels to prevent conflicts.
+* **Scope:** Local labels are only visible within the same macro expansion.
+
+**Example:**
+```assembly
+MACRO COUNT_DOWN start_value
+    LDI A, start_value
+@@loop:                 ; This becomes unique label like __MACRO_1_loop
+    DCR A
+    JNZ @@loop          ; References the same unique label
+@@done:                 ; Another unique label __MACRO_1_done
+    HLT
+ENDM
+
+; Multiple invocations create separate unique labels
+COUNT_DOWN #$05         ; Uses __MACRO_1_loop, __MACRO_1_done
+COUNT_DOWN #$0A         ; Uses __MACRO_2_loop, __MACRO_2_done
+```
+
+### 5.4 Nested Macro Invocations
+
+Macros can invoke other macros, enabling hierarchical code organization.
+
+**Example:**
+```assembly
+MACRO CLEAR_REG reg
+    LDI reg, #$00
+ENDM
+
+MACRO INIT_ALL_REGS
+    CLEAR_REG A
+    CLEAR_REG B  
+    CLEAR_REG C
+ENDM
+
+INIT_ALL_REGS           ; Expands to three LDI instructions
+```
+
+### 5.5 Macros in Include Files
+
+Macros can be defined in include files and used in the main assembly file:
+
+**macros.inc:**
+```assembly
+MACRO SAVE_REGS
+    PHA
+    PHB  
+    PHC
+ENDM
+```
+
+**main.asm:**
+```assembly
+INCLUDE "macros.inc"
+
+START:
+    SAVE_REGS           ; Uses macro from included file
+    ; ... other code
+```
+
+### 5.6 Macro Limitations and Guidelines
+
+* **No Recursion:** A macro cannot invoke itself directly or indirectly.
+* **Parameter Scope:** Parameters are simple text substitution; they don't have type checking.
+* **Definition Order:** Macros must be defined before they are used (including in include files processed first).
+* **Global Labels:** Regular global labels in macros create shared labels across all invocations.
+* **Best Practices:**
+  * Use `@@label` for all labels that should be local to each macro expansion
+  * Use descriptive macro and parameter names
+  * Keep macros focused on a single, well-defined task
+  * Document complex macros with comments
+
+**Error Handling:**
+* **Unknown Macro:** Invoking an undefined macro generates an error.
+* **Parameter Mismatch:** Wrong number of arguments generates an error.
+* **Duplicate Definition:** Defining a macro twice generates an error.
+* **Missing ENDM:** Macro definition without ENDM generates an error.
+
+## 6. Instruction Mnemonics and Operands
 
 This section provides a general overview. For the complete list of supported CPU instructions, their opcodes, byte sizes, and precise operand requirements, refer to the **`docs/0_ISA.md`** document. Operands can be complex expressions as described in Section 2.
 
