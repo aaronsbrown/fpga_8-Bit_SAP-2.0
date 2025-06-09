@@ -1,1 +1,0 @@
-DW $12345  ; Too large for 16-bit DW
