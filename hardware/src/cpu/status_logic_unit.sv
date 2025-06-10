@@ -75,7 +75,8 @@ module status_logic_unit (
         if(load_sets_zn_in) begin
             zero_flag_out = loaded_data_is_zero;
             negative_flag_out = loaded_data_is_neg;
-        end else begin
+        end else if (!set_carry_flag_in && !clear_carry_flag_in) begin
+            // AIDEV-NOTE: Only process ALU operations when not doing explicit flag operations (SEC/CLC)
             unique case (alu_op_in)
                 
                 // Case 1: ALU Operations that set Z, N; preserve C 
