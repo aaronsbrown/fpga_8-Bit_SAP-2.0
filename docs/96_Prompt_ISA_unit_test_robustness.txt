@@ -1,9 +1,9 @@
  I'd like to make a testbench for a CPU microinstruction more robust.
 
 
- INSTRUCTION_NAME: LDI_B
- TESTBENCH_FILE: hardware/test/instruction_set/to_convert/LDI_B_tb.sv
- ASM_FILE: software/asm/src/LDI_B.asm — or, we might need to create one from scratch!
+ INSTRUCTION_NAME: RAL
+ TESTBENCH_FILE: hardware/test/instruction_set/to_convert/RAL.sv
+ ASM_FILE: software/asm/src/SUB_B.asm — or, we might need to create one from scratch!
 
   Please enhance both the assembly program and testbench following these patterns:
 
