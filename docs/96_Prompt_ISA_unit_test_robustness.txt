@@ -2,9 +2,9 @@
 
  ISA documentation: docs/hardware/0_ISA.md
 
- INSTRUCTION_NAME: RAR
- TESTBENCH_FILE: hardware/test/instruction_set/RAR_tb.sv
- ASM_FILE: software/asm/src/RAR.asm
+ INSTRUCTION_NAME: MOV
+ TESTBENCH_FILE: hardware/test/instruction_set/to_convert/MOV_tb.sv
+ ASM_FILE: software/asm/src/MOV.asm — or, we might need to create one from scratch!
 
   Please enhance both the assembly program and testbench following these patterns:
 
@@ -33,6 +33,9 @@
   - When updating a testbench, to support correct function of 'run_tests.py', the final log statement *must* be: 
     $display("LDA_I test finished.===========================\n\n");
   
+  IMPORTANT: Before making any code changes, create a feature branch per CLAUDE.md workflow requirements.
+  IMPORTANT: Declaring logic variables inside an initial block (or any procedural block) is not allowed in
+  SystemVerilog. Instead, declare logic variables at the module level.
 
   Please first analyze the current implementation, then enhance both files and regenerate the test
   fixtures. Run the test to verify all improvements work correctly.

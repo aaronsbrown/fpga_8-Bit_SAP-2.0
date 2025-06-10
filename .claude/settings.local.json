@@ -14,7 +14,13 @@
       "Bash(git merge:*)",
       "Bash(grep:*)",
       "Bash(python -m pytest: *)",
-      "Bash(ls:*)"
+      "Bash(ls:*)",
+      "Bash(./scripts/simulate.sh:*)",
+      "Bash(cat:*)",
+      "Bash(rm:*)",
+      "Bash(git commit:*)",
+      "Bash(git push:*)",
+      "Bash(git branch:*)"
     ],
     "deny": []
   }

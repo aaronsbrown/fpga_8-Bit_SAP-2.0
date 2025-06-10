@@ -32,6 +32,7 @@ This is an FPGA-based 8-bit CPU project implementing a custom SAP2-style compute
 | G-1 | Add/update **`AIDEV-NOTE:` anchor comments** near non-trivial edited code. | ❌ Delete or mangle existing `AIDEV-` comments.                                     |
 | G-2 | For changes >300 LOC or >3 files, **ask for confirmation**.            | ❌ Refactor large modules without human guidance.                                     |
 | G-3 | Stay within the current task context. Inform the dev if it'd be better to start afresh.     | ❌ Continue work from a prior prompt after "new task" – start a fresh session.      |
+| G-4 | Analyze verilog hardware implementation if it seems like there are bugs in implementation.      | ❌ Make changes to verilog files or hardware implementation without human guidance.     |
 
 ---
 
@@ -277,3 +278,5 @@ When responding to user instructions, the AI assistant (Claude, Cursor, GPT, etc
 - Remember the unconventional operand ordering of this ISA's MOV instructon: MOV Src, Dest
 - When creating new verilog test benches, base code on hardware/test/templates/test_template.sv
 - When creating new assembly files, base code on software/asm/templates/test_template.asm
+— Declaring logic variables inside an initial block (or any procedural block) is not allowed in
+  SystemVerilog. Instead, declare logic variables at the module level
