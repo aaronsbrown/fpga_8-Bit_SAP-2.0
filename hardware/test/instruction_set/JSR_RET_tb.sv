@@ -177,7 +177,7 @@ module computer_tb;
     $display("\n--- TEST 5: Stack behavior test ---");
     
     // Initial stack pointer value (should be at $01FF initially)
-    initial_sp = uut.u_cpu.u_stack_pointer.stack_pointer_out;
+    initial_sp = uut.u_cpu.u_stack_pointer.address_out;
     $display("Initial stack pointer: $%04X", initial_sp);
     
     // After LDI A, #$10
@@ -186,14 +186,14 @@ module computer_tb;
     
     // Navigate through nested stack operations
     wait(uut.cpu_instr_complete); @(posedge clk); #0.1; // JSR STACK_TEST
-    sp_after_first_call = uut.u_cpu.u_stack_pointer.stack_pointer_out;
+    sp_after_first_call = uut.u_cpu.u_stack_pointer.address_out;
     $display("Stack pointer after JSR STACK_TEST: $%04X (should be decreased by 2)", sp_after_first_call);
     
     wait(uut.cpu_instr_complete); @(posedge clk); #0.1; // JSR STACK_HELPER1
     wait(uut.cpu_instr_complete); @(posedge clk); #0.1; // JSR STACK_HELPER2
     wait(uut.cpu_instr_complete); @(posedge clk); #0.1; // LDI A, #$DD
     inspect_register(uut.u_cpu.a_out, 8'hDD, "In STACK_HELPER2: Register A", DATA_WIDTH);
-    sp_at_deepest = uut.u_cpu.u_stack_pointer.stack_pointer_out;
+    sp_at_deepest = uut.u_cpu.u_stack_pointer.address_out;
     $display("Stack pointer at deepest level: $%04X", sp_at_deepest);
     
     // Return through all levels
@@ -201,7 +201,7 @@ module computer_tb;
     wait(uut.cpu_instr_complete); @(posedge clk); #0.1; // RET from HELPER1
     wait(uut.cpu_instr_complete); @(posedge clk); #0.1; // RET from STACK_TEST
     
-    final_sp = uut.u_cpu.u_stack_pointer.stack_pointer_out;
+    final_sp = uut.u_cpu.u_stack_pointer.address_out;
     $display("Stack pointer after all returns: $%04X (should match initial)", final_sp);
     pretty_print_assert_vec(final_sp, initial_sp, "Stack pointer restored to initial value");
     
@@ -232,7 +232,7 @@ module computer_tb;
     wait(uut.cpu_instr_complete); @(posedge clk); #0.1; // LDI A, #$D5
     
     inspect_register(uut.u_cpu.a_out, 8'hD5, "At deepest level (DEEP_SUB5): Register A", DATA_WIDTH);
-    sp_deep_nest = uut.u_cpu.u_stack_pointer.stack_pointer_out;
+    sp_deep_nest = uut.u_cpu.u_stack_pointer.address_out;
     $display("Stack pointer at 5-level deep: $%04X", sp_deep_nest);
     
     // Return through all 5 levels
