@@ -1,4 +1,6 @@
-# UART Peripheral Datasheet (v0.2 - Enhanced Error Handling)
+# UART Peripheral Datasheet (v0.3 - Clarified Register Behavior)
+
+<!-- AIDEV-NOTE: v0.3 update clarifies that Data/Command registers don't store values, trigger immediate actions -->
 
 ## 1. Overview
 
@@ -63,7 +65,9 @@ The UART peripheral is mapped into the system's I/O address space.
 
 * **Type:** Read/Write (behavior depends on operation)
 * **Write Operation (CPU `STA $E002`): Transmit Data Register (TXDR)**
-  * Writing an 8-bit value loads the byte into the UART transmitter. Transmission begins if `TX_BUF_EMPTY` is 1.
+  * Writing an 8-bit value loads the byte into the UART transmitter and **immediately triggers transmission**.
+  * **Important:** This register does **not** store the written value - it passes the data directly to the transmitter hardware.
+  * The transmitter becomes busy (TX_BUF_EMPTY = 0) during transmission.
 * **Read Operation (CPU `LDA $E002`): Receive Data Register (RXDR)**
   * Reading retrieves the 8-bit byte from the receiver buffer.
   * **This action also acknowledges receipt to the UART, causing the `RX_DATA_READY` flag in the Status Register to be cleared.**
@@ -72,8 +76,9 @@ The UART peripheral is mapped into the system's I/O address space.
 
 ### 4.4. Command Register (Address: `$E003`)
 
-* **Type:** Write-Only
-* **Purpose:** Allows the CPU to issue commands to the UART, primarily for clearing status flags. Writing a byte to this register with specific bits set will trigger actions. The register itself does not store the written value; the bits act as one-cycle command strobes.
+* **Type:** Write-Only  
+* **Purpose:** Allows the CPU to issue commands to the UART, primarily for clearing status flags. 
+* **Behavioral Note:** This register does **not** store written values. Instead, it executes commands immediately based on the bit pattern written. The bits act as one-cycle command strobes that trigger actions within the UART peripheral.
 
 | Bit Written | Name                             | Action if Bit is 1 on Write                                |
 |-------------|----------------------------------|------------------------------------------------------------|
@@ -165,8 +170,23 @@ PROCESS_ERROR_DATA:
     ; ... A might contain specific char, B might contain error type ...
     JMP POLL_RX_EVENT       ; Example: loop back
 
-## 6. Notes
-Error flags (ERROR_FRAME, ERROR_OVERSHOOT) are sticky and must be cleared by writing to the Command Register.
-Reading the Data Register ($E002) clears the RX_DATA_READY flag.
-The CPU should poll the Status Register to manage data flow and check for errors.
+## 6. Implementation Notes
+
+### 6.1. Register Storage Behavior
+* **Config Register ($E000):** Stores written values and can be read back.
+* **Status Register ($E001):** Read-only - reflects real-time UART status.
+* **Data Register ($E002):** **Does not store values** - writes trigger immediate transmission, reads return received data.
+* **Command Register ($E003):** **Does not store values** - writes execute immediate commands.
+
+### 6.2. Error Handling
+* Error flags (ERROR_FRAME, ERROR_OVERSHOOT) are sticky and must be cleared by writing to the Command Register.
+* Reading the Data Register ($E002) clears the RX_DATA_READY flag.
+* The CPU should poll the Status Register to manage data flow and check for errors.
+
+### 6.3. Integration Testing
+* UART functionality can be verified using memory-mapped writes to the UART address space ($E000-$E003).
+* Only the Config Register will show persistent stored values during testing.
+* Data and Command register operations trigger hardware actions rather than storing test values.
+
+### 6.4. Future Enhancements
 Future enhancements may include runtime configuration of baud rate, parity, etc., via the Config Register and FIFO buffers.
