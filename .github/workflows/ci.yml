@@ -56,7 +56,7 @@ jobs:
           echo "Generating .hex files for ISA tests..."
           python3 scripts/ci/build_all_fixtures.py
           echo "Listing generated fixtures directory after Python script execution:"
-          ls -R hardware/test/fixtures_generated/
+          ls -R hardware/test/_fixtures_generated/
 
       - name: Execute all Verilog tests
         run: |

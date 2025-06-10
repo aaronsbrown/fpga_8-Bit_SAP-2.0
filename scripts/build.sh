@@ -85,7 +85,7 @@ if [ -n "$ASSEMBLY_SOURCE_FILE" ]; then
     fi
 else
     # Use a default manual fixture if no assembly source is provided
-    ROM_CONTENT_SOURCE_PATH="$HARDWARE_DIR/test/fixtures_generated/fpga/default_synth_rom.hex" # ADJUST THIS DEFAULT
+    ROM_CONTENT_SOURCE_PATH="$HARDWARE_DIR/test/_fixtures_generated/fpga/default_synth_rom.hex" # ADJUST THIS DEFAULT
     log_info "Using default manual ROM: $ROM_CONTENT_SOURCE_PATH"
     if [ ! -f "$ROM_CONTENT_SOURCE_PATH" ]; then log_error "Default ROM fixture not found: $ROM_CONTENT_SOURCE_PATH"; exit 1; fi
 fi

@@ -4,7 +4,7 @@ import arch_defs_pkg::*;
 // TODO-TB: Make robust with Claude
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_generated/PHP_PLP/ROM.hex";
+  localparam string HEX_FILE = "../hardware/test/_fixtures_generated/PHP_PLP/ROM.hex";
 
   logic clk;
   logic reset;

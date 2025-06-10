@@ -210,7 +210,7 @@ async def render_feed(...):
 ### Test Files
 
 - `hardware/test/`: All testbenches organized by category
-- `hardware/test/fixtures_generated/`: Test data generated from assembly
+- `hardware/test/_fixtures_generated/`: Test data generated from assembly
 - `hardware/sim/`: GTKWave session and filter files
 
 ### Scripts Organization

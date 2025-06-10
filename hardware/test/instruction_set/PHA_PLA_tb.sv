@@ -4,7 +4,7 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_generated/PHA_PLA/ROM.hex"; // Ensure this path is correct for your build system
+  localparam string HEX_FILE = "../hardware/test/_fixtures_generated/PHA_PLA/ROM.hex"; // Ensure this path is correct for your build system
 
   localparam logic [DATA_WIDTH-1:0] SUCCESS_CODE = 8'h88; // Match EQU SUCCESS_CODE in .asm
 

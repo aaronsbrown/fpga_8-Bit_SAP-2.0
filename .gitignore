@@ -66,7 +66,7 @@ software/assembler/assembler.log
 
 # Generated .hex files (from non-test runs)
 # Review this if you want to version control specific .hex files outside of test fixtures.
-hardware/test/fixtures_generated/*/*.hex
+hardware/test/_fixtures_generated/*/*.hex
 hardware/test/fixtures_manual/*.hex
 
 

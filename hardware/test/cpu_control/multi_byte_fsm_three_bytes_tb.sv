@@ -4,8 +4,8 @@ import arch_defs_pkg::*;
 
 module computer_tb;
 
-  localparam string HEX_FILE_PROG = "../hardware/test/fixtures_generated/multi_byte_fsm_three_bytes/ROM.hex";
-  localparam string HEX_FILE_DATA = "../hardware/test/fixtures_generated/multi_byte_fsm_three_bytes/RAM.hex"; 
+  localparam string HEX_FILE_PROG = "../hardware/test/_fixtures_generated/multi_byte_fsm_three_bytes/ROM.hex";
+  localparam string HEX_FILE_DATA = "../hardware/test/_fixtures_generated/multi_byte_fsm_three_bytes/RAM.hex"; 
 
   reg clk;
   reg reset;

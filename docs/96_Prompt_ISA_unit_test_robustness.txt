@@ -46,7 +46,7 @@
   1. After enhancing the assembly file, regenerate test fixtures with:
      ```bash
      python3 software/assembler/src/assembler.py software/asm/src/[ASM_FILE].asm
-  hardware/test/fixtures_generated/[INSTRUCTION_NAME]/ --region ROM 0xF000 0xFFFF
+  hardware/test/_fixtures_generated/[INSTRUCTION_NAME]/ --region ROM 0xF000 0xFFFF
 
   2. Run the enhanced testbench with:
   ./scripts/simulate.sh --tb hardware/test/instruction_set/[TESTBENCH_FILE].sv --verbose --no-viz

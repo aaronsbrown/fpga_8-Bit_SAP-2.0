@@ -43,6 +43,7 @@ Core build and simulation utilities that work with individual modules or testben
 **Purpose:** Interactive test case management with subcommand-based CLI.
 
 **Common Use Cases:**
+
 - Creating new test cases
 - Assembling individual tests during development
 - Cleaning up test artifacts
@@ -51,6 +52,7 @@ Core build and simulation utilities that work with individual modules or testben
 #### Subcommands
 
 ##### `init` - Initialize New Test
+
 Creates new test files from templates.
 
 ```bash
@@ -61,6 +63,7 @@ python3 scripts/devtools/test_manager.py init \
 ```
 
 **Example:**
+
 ```bash
 # Create a new instruction test
 python3 scripts/devtools/test_manager.py init \
@@ -72,11 +75,13 @@ python3 scripts/devtools/test_manager.py init \
 ```
 
 **What it creates:**
+
 - `software/asm/src/<TEST_NAME>.asm` (from template)
 - `hardware/test/<SUB_DIR>/<TEST_NAME>_tb.sv` (from template)
 - Assembles the new .asm file to generate initial fixtures
 
 ##### `assemble` - Assemble Single Test
+
 Assembles a specific test's .asm file to .hex fixtures.
 
 ```bash
@@ -86,6 +91,7 @@ python3 scripts/devtools/test_manager.py assemble \
 ```
 
 **Examples:**
+
 ```bash
 # Assemble with default ROM/RAM regions
 python3 scripts/devtools/test_manager.py assemble --test-name ADD_B
@@ -100,13 +106,15 @@ python3 scripts/devtools/test_manager.py assemble \
     --test-name ADD_B --dry-run
 ```
 
-**Output:** Creates `.hex` files in `hardware/test/fixtures_generated/<TEST_NAME>/`
+**Output:** Creates `.hex` files in `hardware/test/_fixtures_generated/<TEST_NAME>/`
 
 **Default Assembler Regions:**
+
 - ROM: `F000-FFFF` (4KB)
 - RAM: `0000-1FFF` (8KB)
 
 ##### `assemble-all-sources` - Batch Assembly
+
 Assembles all .asm files found in `software/asm/src/`.
 
 ```bash
@@ -115,6 +123,7 @@ python3 scripts/devtools/test_manager.py assemble-all-sources \
 ```
 
 **Examples:**
+
 ```bash
 # Assemble all tests with default regions
 python3 scripts/devtools/test_manager.py assemble-all-sources
@@ -125,6 +134,7 @@ python3 scripts/devtools/test_manager.py assemble-all-sources \
 ```
 
 ##### `clean` - Remove Test Artifacts
+
 Removes all generated files for a specific test.
 
 ```bash
@@ -135,15 +145,17 @@ python3 scripts/devtools/test_manager.py clean \
 ```
 
 **Example:**
+
 ```bash
 python3 scripts/devtools/test_manager.py clean \
     --test-name OLD_TEST --sub-dir instruction_set
 ```
 
 **What it removes:**
+
 - `software/asm/src/<TEST_NAME>.asm`
 - `hardware/test/<SUB_DIR>/<TEST_NAME>_tb.sv`
-- `hardware/test/fixtures_generated/<TEST_NAME>/` (entire directory)
+- `hardware/test/_fixtures_generated/<TEST_NAME>/` (entire directory)
 
 ---
 
@@ -152,11 +164,13 @@ python3 scripts/devtools/test_manager.py clean \
 **Purpose:** Generate .hex fixtures for all testbenches in the project.
 
 **Usage:**
+
 ```bash
 python3 scripts/ci/build_all_fixtures.py
 ```
 
 **What it does:**
+
 1. Scans `hardware/test/{instruction_set,cpu_control,modules}/` for `*_tb.sv` files
 2. For each testbench, derives the test name (removes `_tb` suffix)
 3. Calls `test_manager.py assemble` for each derived test name
@@ -164,6 +178,7 @@ python3 scripts/ci/build_all_fixtures.py
 5. Exits with error code if any assembly fails
 
 **When to use:**
+
 - Before running the full test suite
 - In CI pipelines to ensure all fixtures are up-to-date
 - When you want to regenerate all test fixtures at once
@@ -175,11 +190,13 @@ python3 scripts/ci/build_all_fixtures.py
 **Purpose:** Compile and execute the complete Verilog test suite.
 
 **Usage:**
+
 ```bash
 python3 scripts/ci/run_test_suite.py
 ```
 
 **What it does:**
+
 1. Compiles all testbenches using `sv2v` + `iverilog`
 2. Executes tests with `vvp`
 3. Parses output for pass/fail status
@@ -187,15 +204,18 @@ python3 scripts/ci/run_test_suite.py
 5. Exits with error code if any tests fail
 
 **Requirements:**
+
 - All necessary .hex fixtures must exist (run `build_all_fixtures.py` first)
 - `sv2v`, `iverilog`, and `vvp` must be in PATH
 
 **Output Files:**
+
 - `test_run_all.log` - Detailed execution log
 - `test_report_all.txt` - Summary report
 - `build/sim_run_all_temp/` - Individual test logs
 
 **When to use:**
+
 - Full project validation
 - CI/CD pipeline test execution
 - Before making pull requests
@@ -208,11 +228,13 @@ python3 scripts/ci/run_test_suite.py
 **Purpose:** FPGA synthesis and build using Yosys/nextpnr toolchain.
 
 **Usage:**
+
 ```bash
 ./scripts/build.sh --top <module_name> [--asm_src <file.asm>]
 ```
 
 **Examples:**
+
 ```bash
 # Synthesize top module with monitor program
 ./scripts/build.sh --top top --asm_src software/asm/src/monitor.asm
@@ -228,11 +250,13 @@ python3 scripts/ci/run_test_suite.py
 **Purpose:** Run a single testbench with simulation and optional waveform viewing.
 
 **Usage:**
+
 ```bash
 ./scripts/simulate.sh --tb <testbench_path> [--no-viz]
 ```
 
 **Examples:**
+
 ```bash
 # Run test with GTKWave visualization
 ./scripts/simulate.sh --tb hardware/test/instruction_set/ADD_B_tb.sv
@@ -306,13 +330,16 @@ python3 scripts/devtools/test_manager.py clean \
 ## Environment Requirements
 
 ### Required Tools
+
 - **Python 3.8+** - For all Python scripts
 - **sv2v** - SystemVerilog to Verilog conversion
 - **Icarus Verilog** (`iverilog`, `vvp`) - Verilog simulation
 - **GTKWave** (optional) - Waveform viewing
 
 ### Python Dependencies
+
 Install project dependencies:
+
 ```bash
 pip install -r requirements.txt
 ```
@@ -320,12 +347,14 @@ pip install -r requirements.txt
 ### Tool Installation
 
 **Ubuntu/Debian:**
+
 ```bash
 sudo apt-get install iverilog gtkwave
 # sv2v: Download from https://github.com/zachjs/sv2v/releases
 ```
 
 **macOS:**
+
 ```bash
 brew install icarus-verilog gtkwave
 # sv2v: Download from https://github.com/zachjs/sv2v/releases
@@ -348,6 +377,7 @@ A: Run `python3 scripts/ci/build_all_fixtures.py` to generate all fixtures befor
 
 **Q: "Template file not found"**
 A: Ensure template files exist:
+
 - `software/asm/templates/test_template.asm`
 - `hardware/test/templates/test_template.sv`
 
@@ -362,6 +392,7 @@ python3 scripts/devtools/test_manager.py assemble --test-name ADD_B --dry-run
 ### Verbose Output
 
 Check log files for detailed information:
+
 - Individual test logs: `build/sim_run_all_temp/<test_name>_*.log`
 - Full suite log: `test_run_all.log`
 - Assembly output: Displayed in terminal during execution
@@ -377,6 +408,7 @@ When adding new scripts:
 3. **Build/simulation** → `scripts/` (root level)
 
 Follow the existing patterns:
+
 - Use argparse for command-line interfaces
 - Include `--dry-run` for destructive operations
 - Provide helpful error messages

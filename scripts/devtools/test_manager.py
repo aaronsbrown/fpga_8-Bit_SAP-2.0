@@ -21,7 +21,7 @@ SV_TEMPLATE_FILE = PROJECT_ROOT / "hardware/test/templates/test_template.sv"
 
 ASM_SRC_DIR = PROJECT_ROOT / "software/asm/src"
 SV_TEST_BASE_DIR = PROJECT_ROOT / "hardware/test"
-GENERATED_FIXTURES_BASE_DIR = PROJECT_ROOT / "hardware/test/fixtures_generated"
+GENERATED_FIXTURES_BASE_DIR = PROJECT_ROOT / "hardware/test/_fixtures_generated"
 
 ASSEMBLER_SCRIPT_PATH = PROJECT_ROOT / "software/assembler/src/assembler.py"
 

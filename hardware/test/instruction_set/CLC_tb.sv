@@ -5,7 +5,7 @@ import arch_defs_pkg::*;
 // AIDEV-NOTE: Enhanced CLC testbench with systematic verification of all flag behaviors, register preservation, and comprehensive edge case testing
 module computer_tb;
 
-  localparam string HEX_FILE = "../hardware/test/fixtures_generated/CLC/ROM.hex";
+  localparam string HEX_FILE = "../hardware/test/_fixtures_generated/CLC/ROM.hex";
 
   // CPU-focused signals - no UART needed for microinstruction testing
   logic                  clk;
