@@ -280,3 +280,7 @@ When responding to user instructions, the AI assistant (Claude, Cursor, GPT, etc
 - When creating new assembly files, base code on software/asm/templates/test_template.asm
 — Declaring logic variables inside an initial block (or any procedural block) is not allowed in
   SystemVerilog. Instead, declare logic variables at the module level
+— If you run into "ERROR" messages during build, with no actual log output, it is likely a caching problem. Try
+  clearing build/ and reruning.
+— Continuous integration demands the following: test benches and related assembly files *must* have the same core file name.
+  For example: ADD_B.asm & ADD_B_tb.sv; sta_mmio_integration.asm and sta_mmio_integration_tb.sv
