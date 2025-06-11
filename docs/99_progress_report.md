@@ -121,7 +121,7 @@ These tooling enhancements provide a solid foundation for ongoing development an
   * [x] `simulate.sh` updated: mandatory `sv2v`, required `--tb`, robust file handling, correct timescale.
   * [x] Test directory restructured (`instruction_set`, `cpu_control`, `modules`).
   * [x] Test names simplified.
-  * [x_] Testbench "finished" messages standardized. *(Marking as mostly done as you're working on it)*
+  * [x] Testbench "finished" messages standardized. *(Marking as mostly done as you're working on it)*
   * [x] `run_tests.py` (automated batch testing script) now operational for compiling and running all tests.
   * [x] CPU `instruction_finished` signal implemented for improved test synchronization.
 
