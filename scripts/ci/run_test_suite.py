@@ -92,7 +92,24 @@ def main():
     parser = argparse.ArgumentParser(description="Run Verilog testbenches (sv2v is always used).")
     args = parser.parse_args() # args is not used in this version, but keep for future
 
-    SIM_TEMP_LOG_DIR.mkdir(parents=True, exist_ok=True)
+    # --- Clean and prepare build directory ---
+    if BUILD_DIR.exists():
+        print(f"Cleaning existing build directory: {BUILD_DIR.relative_to(PROJECT_ROOT)}")
+        try:
+            shutil.rmtree(BUILD_DIR)
+        except OSError as e:
+            print(f"Error: Could not remove build directory {BUILD_DIR}: {e}")
+            sys.exit(1)
+    
+    try:
+        BUILD_DIR.mkdir(parents=True, exist_ok=True)
+        print(f"Created build directory: {BUILD_DIR.relative_to(PROJECT_ROOT)}")
+    except OSError as e:
+        print(f"Error: Could not create build directory {BUILD_DIR}: {e}")
+        sys.exit(1)
+
+    SIM_TEMP_LOG_DIR.mkdir(parents=True, exist_ok=True) # This will now be inside the fresh BUILD_DIR
+    
     if MAIN_LOG_FILE.exists(): MAIN_LOG_FILE.unlink()
     if REPORT_FILE.exists(): REPORT_FILE.unlink()
     MAIN_LOG_FILE.touch(); REPORT_FILE.touch()
