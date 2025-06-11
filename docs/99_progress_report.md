@@ -125,7 +125,7 @@ These tooling enhancements provide a solid foundation for ongoing development an
   * [x] `run_tests.py` (automated batch testing script) now operational for compiling and running all tests.
   * [x] CPU `instruction_finished` signal implemented for improved test synchronization.
 
-> **Status:** **Largely Complete.** All core hardware, microcode, assembler support, and basic testing for stack operations and subroutines are implemented. Carry flag logic and related instructions (`SEC`, `CLC`, `JC`, `JNC`) are also complete. Significant testing infrastructure improvements were made. Final task is documentation updates.
+> ** Phase 6 Status:** **Complete.** All core hardware, microcode, assembler support, and basic testing for stack operations and subroutines are implemented. Carry flag logic and related instructions (`SEC`, `CLC`, `JC`, `JNC`) are also complete. Significant testing infrastructure improvements were made. Final task is documentation updates.
 
 ---
 
