@@ -135,12 +135,9 @@ These tooling enhancements provide a solid foundation for ongoing development an
 ## Critical Next Steps
 
 1. **Finalize Phase 6 (Stack & Subroutine Support):**
-    * **Documentation:** Update ISA documents (`0_ISA.md`) and CPU datasheets for all new instructions (`PHA`, `PLA`, `JSR`, `RET`, `PHP`, `PLP`, `SEC`, `CLC`, `JC`, `JNC`) and the stack pointer's behavior.
     * Ensure all testbenches (especially older ones in `instruction_set/`) are updated to use the new `wait(cpu_instr_complete)` synchronization and have standardized "finished" messages for `run_tests.py`.
-    * Address any remaining test failures in `run_tests.py`.
 2. **Review and Plan Phase 7 (Monitor Program):**
     * Design monitor commands and functionality.
-    * Plan reset vector implementation.
 3. **(Ongoing) Hardware Testing:** Continue to periodically synthesize and test key functionality on the FPGA as major features are completed.
 
 ---
