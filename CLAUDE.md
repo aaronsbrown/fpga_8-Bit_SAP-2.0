@@ -285,3 +285,4 @@ When responding to user instructions, the AI assistant (Claude, Cursor, GPT, etc
 — Continuous integration demands the following: test benches and related assembly files *must* have the same core file name.
   For example: ADD_B.asm & ADD_B_tb.sv; sta_mmio_integration.asm and sta_mmio_integration_tb.sv
 - Using "ORG" directive instead of ".ORG" when specifying memory regions in assembly source
+- A task must not be considered complete if any test are failing
