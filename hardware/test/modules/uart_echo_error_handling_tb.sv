@@ -1,15 +1,3 @@
-// SYMBOL TABLE from ASM log
-// UART_CONTROL_REG' -> 0xE000
-// INFO:   'UART_STATUS_REG' -> 0xE001
-// INFO:   'UART_DATA_REG' -> 0xE002
-// INFO:   'MASK_TX_BUF_EMPTY' -> 0x0001
-// INFO:   'MASK_RX_DATA_READY' -> 0x0002
-// INFO:   'MASK_ERROR_FRAME' -> 0x0004
-// INFO:   'MASK_ERROR_OVERSHOOT' -> 0x0008
-// INFO:   'START_ECHO' -> 0xF000
-// INFO:   'RX_POLL_LOOP' -> 0xF000
-// INFO:   'TX_POLL_LOOP' -> 0xF00C
-
 `timescale 1ns/1ps
 import test_utils_pkg::*; 
 import arch_defs_pkg::*;  

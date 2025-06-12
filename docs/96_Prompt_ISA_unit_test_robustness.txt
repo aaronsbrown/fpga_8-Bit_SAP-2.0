@@ -1,9 +1,9 @@
  I'd like to make a testbench for a CPU microinstruction more robust.
 
 
- INSTRUCTION_NAME:JNN
- TESTBENCH_FILE: hardware/test/instruction_set/JNN.sv
- ASM_FILE: software/asm/src/JNN.asm — or, we might need to create one from scratch!
+ INSTRUCTION_NAME:JZ
+ TESTBENCH_FILE: hardware/test/instruction_set/JZ.sv
+ ASM_FILE: software/asm/src/JZ.asm — or, we might need to create one from scratch!
 
   Please enhance both the assembly program and testbench following these patterns:
 
@@ -40,7 +40,7 @@
   IMPORTANT: Continuous integration demands the following: test benches and related assembly files *must* have the same core file name.
   For example: ADD_B.asm & ADD_B_tb.sv; sta_mmio_integration.asm and sta_mmio_integration_tb.sv
   
-  IMPORTANT: Strong example test files include:  JNC_tb, JN_tb
+  IMPORTANT: Strong example test files include:  JNC_tb, JZ_tb
   
   IMPORTANT: Aim for 12-15 tests, unless instruction complexity requires more. 
   
