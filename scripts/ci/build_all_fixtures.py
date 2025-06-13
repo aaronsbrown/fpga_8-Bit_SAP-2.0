@@ -10,7 +10,9 @@ print(f"INFO: Project Root detected as: {PROJECT_ROOT}")
 
 # --- Define Paths (relative to PROJECT_ROOT) ---
 HARDWARE_TEST_BASE_DIR = PROJECT_ROOT / "hardware/test"
+# AIDEV-NOTE: Updated for reorganized asm src structure with hardware_validation/ subdirectories
 SOFTWARE_ASM_SRC_DIR = PROJECT_ROOT / "software/asm/src"
+HARDWARE_VALIDATION_DIR = SOFTWARE_ASM_SRC_DIR / "hardware_validation"
 TEST_MANAGER_SCRIPT_PATH = PROJECT_ROOT / "scripts/devtools/test_manager.py"
 
 # Define test categories and their subdirectories
@@ -76,7 +78,16 @@ def generate_fixtures_for_category(category_name: str, test_dir: Path):
 
     for tb_file in tb_files_found:
         test_name = tb_file.stem.removesuffix("_tb")
-        asm_file_path = SOFTWARE_ASM_SRC_DIR / f"{test_name}.asm"
+        # AIDEV-NOTE: Look for assembly file in hardware_validation subdirectories
+        asm_file_path = None
+        for subdir in ["instruction_set", "integration", "peripherals"]:
+            candidate_path = HARDWARE_VALIDATION_DIR / subdir / f"{test_name}.asm"
+            if candidate_path.exists():
+                asm_file_path = candidate_path
+                break
+        
+        if asm_file_path is None:
+            asm_file_path = SOFTWARE_ASM_SRC_DIR / f"{test_name}.asm"  # fallback for backward compatibility
 
         print(f"\nProcessing Testbench: {tb_file.name} (Derived Test Name: {test_name})")
 

@@ -34,6 +34,30 @@ High-level scripts designed for CI pipelines and full project validation.
 
 Core build and simulation utilities that work with individual modules or testbenches.
 
+## Assembly Source Organization
+
+The assembly source directory is organized into logical categories:
+
+```
+software/asm/src/
+├── programs/                          # Actual programs/applications
+│   ├── monitor.asm                    # System monitor program
+│   └── includes/                      # Shared include files
+│       ├── mmio_defs.inc             # Memory-mapped I/O definitions
+│       ├── routines_delay.inc        # Delay routines
+│       └── routines_uart.inc         # UART communication routines
+└── hardware_validation/               # Hardware validation tests
+    ├── instruction_set/               # ISA instruction tests (47 tests)
+    │   ├── ADD_B.asm, ADD_C.asm, ...
+    │   └── (all individual instruction tests)
+    ├── integration/                   # Multi-component integration tests
+    │   ├── multi_byte_fsm_*.asm
+    │   └── sta_mmio_integration.asm
+    └── peripherals/                   # Peripheral-specific tests  
+        ├── uart_*.asm
+        └── (UART and other peripheral tests)
+```
+
 ---
 
 ## Script Reference
@@ -58,7 +82,8 @@ Creates new test files from templates.
 ```bash
 python3 scripts/devtools/test_manager.py init \
     --test-name <TEST_NAME> \
-    --sub-dir {instruction_set|cpu_control|modules} \
+    [--asm-category {instruction_set|integration|peripherals}] \
+    [--verilog-category {instruction_set|cpu_control|modules}] \
     [--force] [--dry-run]
 ```
 
@@ -67,11 +92,11 @@ python3 scripts/devtools/test_manager.py init \
 ```bash
 # Create a new instruction test
 python3 scripts/devtools/test_manager.py init \
-    --test-name SUB_C --sub-dir instruction_set
+    --test-name SUB_C --verilog-category instruction_set
 
 # Force overwrite existing files
 python3 scripts/devtools/test_manager.py init \
-    --test-name SUB_C --sub-dir instruction_set --force
+    --test-name SUB_C --verilog-category instruction_set --force
 ```
 
 **What it creates:**
@@ -140,7 +165,7 @@ Removes all generated files for a specific test.
 ```bash
 python3 scripts/devtools/test_manager.py clean \
     --test-name <TEST_NAME> \
-    --sub-dir {instruction_set|cpu_control|modules} \
+    --verilog-category {instruction_set|cpu_control|modules} \
     [--dry-run]
 ```
 
@@ -237,7 +262,7 @@ python3 scripts/ci/run_test_suite.py
 
 ```bash
 # Synthesize top module with monitor program
-./scripts/build.sh --top top --asm_src software/asm/src/monitor.asm
+./scripts/build.sh --top top --asm_src software/asm/src/programs/monitor.asm
 
 # Synthesize without assembly
 ./scripts/build.sh --top computer
@@ -274,10 +299,10 @@ python3 scripts/ci/run_test_suite.py
 ```bash
 # 1. Create new test files
 python3 scripts/devtools/test_manager.py init \
-    --test-name SBB_C --sub-dir instruction_set
+    --test-name SBB_C
 
 # 2. Edit the generated files
-# - software/asm/src/SBB_C.asm
+# - software/asm/src/hardware_validation/instruction_set/SBB_C.asm
 # - hardware/test/instruction_set/SBB_C_tb.sv
 
 # 3. Test your changes

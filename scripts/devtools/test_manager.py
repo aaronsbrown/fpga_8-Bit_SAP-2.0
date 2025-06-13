@@ -19,14 +19,18 @@ PROJECT_ROOT = SCRIPT_FILE_PATH.parent.parent.parent
 ASM_TEMPLATE_FILE = PROJECT_ROOT / "software/asm/templates/test_template.asm"
 SV_TEMPLATE_FILE = PROJECT_ROOT / "hardware/test/templates/test_template.sv"
 
+# AIDEV-NOTE: Updated for reorganized asm src structure with programs/ and hardware_validation/
 ASM_SRC_DIR = PROJECT_ROOT / "software/asm/src"
+HARDWARE_VALIDATION_DIR = ASM_SRC_DIR / "hardware_validation"
+PROGRAMS_DIR = ASM_SRC_DIR / "programs"
 SV_TEST_BASE_DIR = PROJECT_ROOT / "hardware/test"
 GENERATED_FIXTURES_BASE_DIR = PROJECT_ROOT / "hardware/test/_fixtures_generated"
 
 ASSEMBLER_SCRIPT_PATH = PROJECT_ROOT / "software/assembler/src/assembler.py"
 
-# Define valid subdirectories for tests
-VALID_TEST_SUBDIRS = ["instruction_set", "cpu_control", "modules"]
+# Define valid categories for tests
+VALID_VERILOG_CATEGORIES = ["instruction_set", "cpu_control", "modules"]
+VALID_ASM_CATEGORIES = ["instruction_set", "integration", "peripherals"]
 
 
 def create_file_from_template(template_path: Path, output_path: Path, test_name_value: str, dry_run: bool, force: bool) -> str:
@@ -235,12 +239,13 @@ def cmd_init(args):
         print("**************************************\n")
 
     test_name = args.test_name
-    new_asm_file_path = ASM_SRC_DIR / f"{test_name}.asm"
-    target_sv_test_dir = SV_TEST_BASE_DIR / args.sub_dir
+    # AIDEV-NOTE: Use specified asm-category for new test files
+    new_asm_file_path = HARDWARE_VALIDATION_DIR / args.asm_category / f"{test_name}.asm"
+    target_sv_test_dir = SV_TEST_BASE_DIR / args.verilog_category
     new_sv_file_path = target_sv_test_dir / f"{test_name}_tb.sv"
     test_fixture_output_dir = GENERATED_FIXTURES_BASE_DIR / test_name
 
-    print(f"\n--- Initializing test: {test_name} in hardware/test/{args.sub_dir}/ ---")
+    print(f"\n--- Initializing test: {test_name} in hardware/test/{args.verilog_category}/ ---")
 
     # Create ASM file from template
     asm_status = create_file_from_template(ASM_TEMPLATE_FILE, new_asm_file_path, test_name, args.dry_run, args.force)
@@ -284,7 +289,16 @@ def cmd_assemble(args):
         print("**************************************\n")
 
     test_name = args.test_name
-    new_asm_file_path = ASM_SRC_DIR / f"{test_name}.asm"
+    # AIDEV-NOTE: Look for existing assembly file in hardware_validation subdirectories
+    new_asm_file_path = None
+    for subdir in ["instruction_set", "integration", "peripherals"]:
+        candidate_path = HARDWARE_VALIDATION_DIR / subdir / f"{test_name}.asm"
+        if candidate_path.exists():
+            new_asm_file_path = candidate_path
+            break
+    if new_asm_file_path is None:
+        print(f"Error: Assembly file {test_name}.asm not found in any hardware_validation subdirectory.")
+        return
     test_fixture_output_dir = GENERATED_FIXTURES_BASE_DIR / test_name
 
     if not run_assembler(new_asm_file_path, test_fixture_output_dir, args.asm_args, args.dry_run):
@@ -301,8 +315,14 @@ def cmd_assemble_all_sources(args):
         print("* No commands will be executed.        *")
         print("**************************************\n")
 
-    print("\n--- Starting Batch Assembly of all .asm files in software/asm/src/ ---")
-    asm_files_found = sorted(list(ASM_SRC_DIR.glob("*.asm")))
+    print("\n--- Starting Batch Assembly of all .asm files in hardware_validation/ subdirectories ---")
+    # AIDEV-NOTE: Search hardware_validation subdirectories for test assembly files
+    asm_files_found = []
+    for subdir in ["instruction_set", "integration", "peripherals"]:
+        subdir_path = HARDWARE_VALIDATION_DIR / subdir
+        if subdir_path.exists():
+            asm_files_found.extend(list(subdir_path.glob("*.asm")))
+    asm_files_found = sorted(asm_files_found)
     if not asm_files_found:
         print(f"No .asm files found in {ASM_SRC_DIR.relative_to(PROJECT_ROOT)}.")
         return
@@ -341,8 +361,17 @@ def cmd_clean(args):
         print("**************************************\n")
 
     test_name = args.test_name
-    new_asm_file_path = ASM_SRC_DIR / f"{test_name}.asm"
-    target_sv_test_dir = SV_TEST_BASE_DIR / args.sub_dir
+    # AIDEV-NOTE: Look for existing assembly file in hardware_validation subdirectories
+    new_asm_file_path = None
+    for subdir in ["instruction_set", "integration", "peripherals"]:
+        candidate_path = HARDWARE_VALIDATION_DIR / subdir / f"{test_name}.asm"
+        if candidate_path.exists():
+            new_asm_file_path = candidate_path
+            break
+    if new_asm_file_path is None:
+        print(f"Error: Assembly file {test_name}.asm not found in any hardware_validation subdirectory.")
+        return
+    target_sv_test_dir = SV_TEST_BASE_DIR / args.verilog_category
     new_sv_file_path = target_sv_test_dir / f"{test_name}_tb.sv"
     test_fixture_output_dir = GENERATED_FIXTURES_BASE_DIR / test_name
 
@@ -366,8 +395,10 @@ def main():
     # Init subcommand
     init_parser = subparsers.add_parser('init', help='Initialize new test files (.asm, .sv) from templates')
     init_parser.add_argument('--test-name', type=str, required=True, help='The name of the test (e.g., "ADD_B")')
-    init_parser.add_argument('--sub-dir', type=str, choices=VALID_TEST_SUBDIRS, required=True,
-                           help=f'Sub-directory for testbench. Choices: {", ".join(VALID_TEST_SUBDIRS)}')
+    init_parser.add_argument('--asm-category', type=str, choices=VALID_ASM_CATEGORIES, default='instruction_set',
+                           help=f'Assembly category. Choices: {", ".join(VALID_ASM_CATEGORIES)} (default: instruction_set)')
+    init_parser.add_argument('--verilog-category', type=str, choices=VALID_VERILOG_CATEGORIES, default='instruction_set',
+                           help=f'Verilog testbench category. Choices: {", ".join(VALID_VERILOG_CATEGORIES)} (default: instruction_set)')
     init_parser.add_argument('--force', action='store_true', help='Force overwrite of existing files')
     init_parser.add_argument('--dry-run', action='store_true', help='Show what would be done without execution')
 
@@ -388,8 +419,8 @@ def main():
     # Clean subcommand
     clean_parser = subparsers.add_parser('clean', help='Remove generated artifacts for a test')
     clean_parser.add_argument('--test-name', type=str, required=True, help='The name of the test to clean')
-    clean_parser.add_argument('--sub-dir', type=str, choices=VALID_TEST_SUBDIRS, required=True,
-                            help=f'Sub-directory for testbench. Choices: {", ".join(VALID_TEST_SUBDIRS)}')
+    clean_parser.add_argument('--verilog-category', type=str, choices=VALID_VERILOG_CATEGORIES, required=True,
+                            help=f'Verilog testbench category. Choices: {", ".join(VALID_VERILOG_CATEGORIES)}')
     clean_parser.add_argument('--dry-run', action='store_true', help='Show what would be done without execution')
 
     args = parser.parse_args()

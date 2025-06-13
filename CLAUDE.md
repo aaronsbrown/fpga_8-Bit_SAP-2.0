@@ -122,7 +122,7 @@ async def render_feed(...):
 - **FPGA Synthesis**: `./scripts/build.sh --top <module_name> [--asm_src <file.asm>]`
   - Synthesizes hardware using Yosys/nextpnr toolchain for iCE40 FPGA
   - Optionally assembles source code for ROM initialization
-  - Example: `./scripts/build.sh --top top --asm_src software/asm/src/monitor.asm`
+  - Example: `./scripts/build.sh --top top --asm_src software/asm/src/programs/monitor.asm`
 
 ### Simulation Commands
 
@@ -134,10 +134,12 @@ async def render_feed(...):
 
 ### Test Management Commands (Developer Tools)
 
-- **Initialize new test**: `python3 scripts/devtools/test_manager.py init --test-name <name> --sub-dir <category> [--force] [--dry-run]`
+- **Initialize new test**: `python3 scripts/devtools/test_manager.py init --test-name <name> [--asm-category <category>] [--verilog-category <category>] [--force] [--dry-run]`
+  - Assembly categories: `instruction_set` (default), `integration`, `peripherals`
+  - Verilog categories: `instruction_set` (default), `cpu_control`, `modules`
 - **Assemble single test**: `python3 scripts/devtools/test_manager.py assemble --test-name <name> [--asm-args "<args>"] [--dry-run]`
 - **Assemble all tests**: `python3 scripts/devtools/test_manager.py assemble-all-sources [--asm-args "<args>"] [--dry-run]`
-- **Clean test artifacts**: `python3 scripts/devtools/test_manager.py clean --test-name <name> --sub-dir <category> [--dry-run]`
+- **Clean test artifacts**: `python3 scripts/devtools/test_manager.py clean --test-name <name> --verilog-category <category> [--dry-run]`
 
 ### CI/Build Commands
 
@@ -204,7 +206,14 @@ async def render_feed(...):
 - `hardware/src/`: RTL source code organized by module type
   - `_files_sim.f`: File list for simulation
   - `_files_synth.f`: File list for synthesis
-- `software/asm/src/`: Assembly source programs
+- `software/asm/src/`: Assembly source programs (organized into programs/ and hardware_validation/)
+  - `programs/`: Actual programs and shared includes
+    - `monitor.asm`: System monitor program
+    - `includes/`: Shared include files (mmio_defs.inc, routines_*.inc)
+  - `hardware_validation/`: Test programs organized by category
+    - `instruction_set/`: ISA instruction tests (47 individual instruction tests)
+    - `integration/`: Multi-component integration tests (FSM, MMIO integration)
+    - `peripherals/`: Peripheral-specific tests (UART, etc.)
 - `software/assembler/`: Python assembler implementation
 
 ### Test Files
@@ -231,7 +240,7 @@ async def render_feed(...):
 
 ### Simulation Workflow
 
-1. Write assembly program in `software/asm/src/`
+1. Write assembly program in `software/asm/src/hardware_validation/{category}/`
 2. Generate test fixtures using assembler with region mapping
 3. Create/update testbench to load fixtures
 4. Run simulation with `./scripts/simulate.sh --tb <testbench>`
@@ -241,11 +250,35 @@ async def render_feed(...):
 1. Update opcode enum in `arch_defs_pkg.sv`
 2. Add microcode sequence in `control_unit.sv`
 3. Update assembler's `INSTRUCTION_SET` in `constants.py`
-4. Create testbench and assembly test program
+4. Create testbench and assembly test program:
+   ```bash
+   # Create instruction test (uses defaults for instruction_set category)
+   python3 scripts/devtools/test_manager.py init --test-name NEW_INSTRUCTION
+   ```
+
+### Adding Integration Tests
+
+For multi-component tests like CPU control unit integration:
+
+```bash
+# Create integration test
+python3 scripts/devtools/test_manager.py init --test-name cpu_pipeline_test \
+  --asm-category integration --verilog-category cpu_control
+```
+
+### Adding Peripheral Tests
+
+For UART or other peripheral validation:
+
+```bash
+# Create peripheral test
+python3 scripts/devtools/test_manager.py init --test-name uart_new_feature \
+  --asm-category peripherals --verilog-category modules
+```
 
 ### UART Communication
 
-Access UART via memory-mapped registers at E000-E003. Status register indicates data ready, errors (frame, overshoot). Use assembler MMIO constants from `includes/mmio_defs.inc`.
+Access UART via memory-mapped registers at E000-E003. Status register indicates data ready, errors (frame, overshoot). Use assembler MMIO constants from `software/asm/src/programs/includes/mmio_defs.inc`.
 
 ### Debugging
 

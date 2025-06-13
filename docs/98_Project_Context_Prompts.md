@@ -7,21 +7,48 @@ Project State & Toolchain:
 
 - Key Parameters: DATA_WIDTH=8, ADDR_WIDTH=16, OPCODE_WIDTH=8 (defined in `hardware/src/constants/arch_defs_pkg.sv`).
 - CPU Architecture: Microcoded (`hardware/src/cpu/control_unit.sv`), with a 16-bit Stack Pointer. The stack is imlpemented as an "Empty descending stack (SP points to next *free* location). ALU operations that modify registers/flags generally take 3 execute microsteps (MS0: latch ALU op, MS1: ALU computes & registers results/flags, MS2: commit results/flags to registers/status).
-- Assembler: A custom Python two-pass assembler (`software/assembler/src/assembler.py`) generates .hex files from .asm.
+- Assembler: A custom Python two-pass assembler (`software/assembler/src/assembler.py`) generates .hex files from .asm. Assembly sources are organized in `software/asm/src/` with programs in `programs/` and validation tests in `hardware_validation/` subdirectories.
 - Simulation Flow:
   - Individual tests are run with `scripts/simulate.sh --tb <path_to_tb>`. This script *always* uses `sv2v` to transpile SystemVerilog to Verilog-2005, then compiles with Icarus Verilog (`iverilog`) and runs with `vvp`.
   - DUT source files are listed in `hardware/src/_files_sim.f` (paths relative to `hardware/src/`). `utils/timescale.v` is listed early and explicitly prepended in scripts to ensure `1ns/1ps` timescale.
 - Automated Testing:
-  - A Python script `scripts/python/assemble_test.py` generates testbench templates (`.sv`) and assembly file templates (`.asm`), and assembles the `.asm` to `.hex` fixtures. Testbenches are placed into categorized subdirectories (`hardware/test/{instruction_set,cpu_control,modules}`).
-  - A Python script `scripts/python/run_tests.py` automates running all testbenches using the same `sv2v` -> `iverilog` -> `vvp` flow as `simulate.sh`.
+  - Developer tools in `scripts/devtools/test_manager.py` provide subcommand-based test management: init, assemble, assemble-all-sources, clean. Supports organized assembly categories (instruction_set, integration, peripherals) and verilog categories (instruction_set, cpu_control, modules).
+  - CI scripts in `scripts/ci/` automate fixture generation (`build_all_fixtures.py`) and complete test suite execution (`run_test_suite.py`) using the same `sv2v` -> `iverilog` -> `vvp` flow as `simulate.sh`.
+  - Assembly sources organized: `hardware_validation/{instruction_set,integration,peripherals}/` for tests, `programs/` for actual programs with shared `includes/`.
 - CPU Features: Includes an `instruction_finished` pulse signal for testbench synchronization.
+- Assembly Source Organization:
+
+  ```
+  software/asm/src/
+  ├── programs/                    # Actual programs (monitor.asm) and shared includes/
+  └── hardware_validation/         # Test programs by category
+      ├── instruction_set/         # 47 ISA instruction tests  
+      ├── integration/            # Multi-component tests
+      └── peripherals/            # UART/peripheral tests
+  ```
+
+- Current Status: All 60 tests passing, comprehensive ISA validation complete, moving toward integration testing.
+- Development Workflow Examples:
+
+  ```bash
+  # Create instruction test (uses defaults)
+  python3 scripts/devtools/test_manager.py init --test-name NEW_INSTR
+  
+  # Create integration test
+  python3 scripts/devtools/test_manager.py init --test-name pipeline_test \
+    --asm-category integration --verilog-category cpu_control
+  
+  # Create peripheral test  
+  python3 scripts/devtools/test_manager.py init --test-name uart_feature \
+    --asm-category peripherals --verilog-category modules
+  ```
 
 </meta prompt 1>
 
 <meta prompt 2 = "Immediate Task">
 Current Focus / Next Steps:
 
-I want to ensure the robustness and correctness of my PHA and PLA instructions. I have a test case that tests 3 levels of pushing and popping the strack. The microdode logic is based on an "empty descending stack" paradigm. The stack is memory mapped in ram in Page One, $0100—$01FF. The stack pointer is initialized to $01FF after a CPU reset by the control-unit's FSM.
+[Update this section based on current development focus. The project now has comprehensive ISA instruction validation (60 tests passing) and organized assembly source structure. Focus has shifted toward integration testing and multi-component validation.]
 
 </prompt>
 
