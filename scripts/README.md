@@ -250,7 +250,7 @@ python3 scripts/ci/run_test_suite.py
 
 ### `build.sh`
 
-**Purpose:** FPGA synthesis and build using Yosys/nextpnr toolchain.
+**Purpose:** FPGA synthesis and build using Yosys/nextpnr toolchain with automatic bitstream upload.
 
 **Usage:**
 
@@ -258,15 +258,28 @@ python3 scripts/ci/run_test_suite.py
 ./scripts/build.sh --top <module_name> [--asm_src <file.asm>]
 ```
 
+**What it does:**
+
+1. Synthesizes hardware using Yosys/nextpnr for iCE40 FPGA
+2. Optionally assembles source code for ROM initialization  
+3. **Automatically uploads bitstream to FPGA** using appropriate tool:
+   - **Alchitry Cu V2**: Uses Alchitry Labs CLI (`/Applications/Alchitry Labs.app/Contents/MacOS/alchitry`)
+   - **Alchitry Cu V1**: Uses iceprog (legacy support)
+
 **Examples:**
 
 ```bash
-# Synthesize top module with monitor program
+# Synthesize top module with monitor program and upload to FPGA
 ./scripts/build.sh --top top --asm_src software/asm/src/programs/monitor.asm
 
-# Synthesize without assembly
+# Synthesize without assembly and upload
 ./scripts/build.sh --top computer
 ```
+
+**FPGA Upload Requirements:**
+
+- **For Cu V2 (current)**: Install [Alchitry Labs](https://alchitry.com/alchitry-labs)
+- **For Cu V1 (legacy)**: Install iceprog (part of IceStorm toolchain)
 
 ---
 
@@ -360,6 +373,15 @@ python3 scripts/devtools/test_manager.py clean \
 - **sv2v** - SystemVerilog to Verilog conversion
 - **Icarus Verilog** (`iverilog`, `vvp`) - Verilog simulation
 - **GTKWave** (optional) - Waveform viewing
+
+### FPGA Upload Tools
+
+- **Alchitry Labs** (recommended) - For Alchitry Cu V2 boards
+  - Download from [alchitry.com/alchitry-labs](https://alchitry.com/alchitry-labs)
+  - Provides GUI and CLI tools for FPGA programming
+- **iceprog** (legacy) - For Alchitry Cu V1 boards
+  - Part of the IceStorm toolchain
+  - Automatically used as fallback when Alchitry Labs CLI not available
 
 ### Python Dependencies
 

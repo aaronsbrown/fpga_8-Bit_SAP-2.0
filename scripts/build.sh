@@ -183,9 +183,44 @@ if run_cmd "$LOG_DIR/nextpnr.log" "${NEXTPNR_FULL_CMD[@]}"; then log_success "ne
 log_info "Packing bitstream with icepack..."
 if run_cmd "$LOG_DIR/icepack.log" icepack "$NEXTPNR_ASC" "$ICEPACK_BIN"; then log_success "Bitstream packed: $ICEPACK_BIN"; else log_error "icepack failed. Check $LOG_DIR/icepack.log."; cat "$LOG_DIR/icepack.log"; popd >/dev/null; exit 1; fi
 
-# --- Upload (Optional - uncomment to enable) ---
-log_info "Uploading bitstream to FPGA with iceprog..."
-if run_cmd "$LOG_DIR/iceprog.log" iceprog "$ICEPACK_BIN"; then log_success "Bitstream uploaded."; else log_error "iceprog upload failed. Check $LOG_DIR/iceprog.log."; fi
+# --- FPGA Upload Wrapper Function ---
+# AIDEV-NOTE: Board-agnostic upload function supporting both CuV1 (iceprog) and CuV2 (Alchitry CLI)
+upload_bitstream() {
+    local bitstream_file="$1"
+    local log_file="$2"
+    
+    # Check for Alchitry Labs CLI (CuV2 support)
+    if command -v "/Applications/Alchitry Labs.app/Contents/MacOS/alchitry" &> /dev/null; then
+        log_info "Detected Alchitry Labs CLI - using for CuV2 board..."
+        if [ "$VERBOSE" = true ]; then
+            "/Applications/Alchitry Labs.app/Contents/MacOS/alchitry" load --board CuV2 --bin "$bitstream_file" --flash 2>&1 | tee "$log_file"
+        else
+            "/Applications/Alchitry Labs.app/Contents/MacOS/alchitry" load --board CuV2 --bin "$bitstream_file" --flash > "$log_file" 2>&1
+        fi
+    # Fallback to iceprog (CuV1 or other iCE40 boards)
+    elif command -v iceprog &> /dev/null; then
+        log_info "Using iceprog for legacy board support..."
+        if [ "$VERBOSE" = true ]; then
+            iceprog "$bitstream_file" 2>&1 | tee "$log_file"
+        else
+            iceprog "$bitstream_file" > "$log_file" 2>&1
+        fi
+    else
+        log_error "No suitable FPGA programming tool found. Install either:"
+        log_error "  - Alchitry Labs (for CuV2): https://alchitry.com/alchitry-labs"
+        log_error "  - iceprog (for CuV1): part of IceStorm tools"
+        return 1
+    fi
+}
+
+# --- Upload Bitstream ---
+log_info "Uploading bitstream to FPGA..."
+if upload_bitstream "$ICEPACK_BIN" "$LOG_DIR/upload.log"; then 
+    log_success "Bitstream uploaded successfully."
+else 
+    log_error "Bitstream upload failed. Check $LOG_DIR/upload.log."
+    [ "$VERBOSE" = true ] && cat "$LOG_DIR/upload.log"
+fi
 
 popd > /dev/null # Return from BUILD_OUT_DIR
 log_success "Build process complete!"

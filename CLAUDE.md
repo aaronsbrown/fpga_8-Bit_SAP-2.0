@@ -19,8 +19,9 @@ This is an FPGA-based 8-bit CPU project implementing a custom SAP2-style compute
 
 ## Targeted Hardware
 
-— Alchtiry Cu FPGA development board (<https://shop.alchitry.com/products/alchitry-cu-v2>)
+— Alchitry Cu FPGA development board V2 (<https://shop.alchitry.com/products/alchitry-cu-v2>)
 — ICE40HX8K-CB132 FPGA (<https://www.latticesemi.com/ice40>)
+— **Note**: Project supports both CuV1 (legacy, using iceprog) and CuV2 (current, using Alchitry Labs CLI)
 
 ---
 
@@ -114,6 +115,9 @@ async def render_feed(...):
 ## Dev Environment
 
 - DevEnv: Macbook Pro, OSX 15.5, iTerm2, VSCode, Claude Code
+- FPGA Upload Tools:
+  - **Alchitry Labs** (required for CuV2): Download from [alchitry.com/alchitry-labs](https://alchitry.com/alchitry-labs)
+  - **iceprog** (legacy CuV1 support): Part of IceStorm toolchain
 
 ## Development Commands
 
@@ -121,6 +125,7 @@ async def render_feed(...):
 
 - **FPGA Synthesis**: `./scripts/build.sh --top <module_name> [--asm_src <file.asm>]`
   - Synthesizes hardware using Yosys/nextpnr toolchain for iCE40 FPGA
+  - Automatically uploads bitstream to FPGA (CuV2 via Alchitry Labs CLI, CuV1 via iceprog)
   - Optionally assembles source code for ROM initialization
   - Example: `./scripts/build.sh --top top --asm_src software/asm/src/programs/monitor.asm`
 

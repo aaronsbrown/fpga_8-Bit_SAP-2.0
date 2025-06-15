@@ -9,7 +9,7 @@ This document outlines the planned evolution of a custom 8-bit CPU implemented o
 - **Stable Core v0.1**: (Conceptual starting point) 8‑bit data (`DATA_WIDTH=8`), 4‑bit address (`ADDR_WIDTH=4`), microcoded control unit, 16‑instruction set (`OPCODE_WIDTH=4`), shared internal bus, synchronous design.
 - **Modular Structure**: CPU logic encapsulated (`cpu.sv`), separated from memory (`ram_8k.sv`, etc.) and top-level wrapper (`computer.sv`, `top.v`).
 - **Toolchain & Testbench**: Working simulation (Icarus + GTKWave), open‑source synthesis (Yosys + nextpnr for iCE40), testbenches for current instructions, ability to load `.hex` files.
-- **Target Platform:** Confirmed FPGA board and toolchain (Alchitry Cu - iCE40HX8K + Yosys/nextpnr).
+- **Target Platform:** Alchitry Cu V2 FPGA board with iCE40HX8K + Yosys/nextpnr toolchain (V1 legacy support maintained).
 
 ---
 
